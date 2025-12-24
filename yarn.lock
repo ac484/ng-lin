@@ -8110,9 +8110,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"functions-ai-document@workspace:functions-ai-document":
+"functions-ai-document@workspace:src/firebase/functions-ai-document":
   version: 0.0.0-use.local
-  resolution: "functions-ai-document@workspace:functions-ai-document"
+  resolution: "functions-ai-document@workspace:src/firebase/functions-ai-document"
   dependencies:
     "@cfworker/json-schema": "npm:^4.1.1"
     "@google-cloud/documentai": "npm:^9.5.0"
@@ -8128,9 +8128,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"functions-ai@workspace:functions-ai":
+"functions-ai@workspace:src/firebase/functions-ai":
   version: 0.0.0-use.local
-  resolution: "functions-ai@workspace:functions-ai"
+  resolution: "functions-ai@workspace:src/firebase/functions-ai"
   dependencies:
     "@google-cloud/aiplatform": "npm:^6.0.0"
     "@google-cloud/vertexai": "npm:^1.10.0"
@@ -8147,9 +8147,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"functions-analytics@workspace:functions-analytics":
+"functions-analytics@workspace:src/firebase/functions-analytics":
   version: 0.0.0-use.local
-  resolution: "functions-analytics@workspace:functions-analytics"
+  resolution: "functions-analytics@workspace:src/firebase/functions-analytics"
   dependencies:
     "@typescript-eslint/eslint-plugin": "npm:^5.12.0"
     "@typescript-eslint/parser": "npm:^5.12.0"
@@ -8163,9 +8163,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"functions-auth@workspace:functions-auth":
+"functions-auth@workspace:src/firebase/functions-auth":
   version: 0.0.0-use.local
-  resolution: "functions-auth@workspace:functions-auth"
+  resolution: "functions-auth@workspace:src/firebase/functions-auth"
   dependencies:
     "@typescript-eslint/eslint-plugin": "npm:^5.12.0"
     "@typescript-eslint/parser": "npm:^5.12.0"
@@ -8179,9 +8179,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"functions-calculation@workspace:functions-calculation":
+"functions-calculation@workspace:src/firebase/functions-calculation":
   version: 0.0.0-use.local
-  resolution: "functions-calculation@workspace:functions-calculation"
+  resolution: "functions-calculation@workspace:src/firebase/functions-calculation"
   dependencies:
     "@typescript-eslint/eslint-plugin": "npm:^5.12.0"
     "@typescript-eslint/parser": "npm:^5.12.0"
@@ -8195,9 +8195,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"functions-event@workspace:functions-event":
+"functions-event@workspace:src/firebase/functions-event":
   version: 0.0.0-use.local
-  resolution: "functions-event@workspace:functions-event"
+  resolution: "functions-event@workspace:src/firebase/functions-event"
   dependencies:
     "@typescript-eslint/eslint-plugin": "npm:^5.12.0"
     "@typescript-eslint/parser": "npm:^5.12.0"
@@ -8211,9 +8211,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"functions-fcm@workspace:functions-fcm":
+"functions-fcm@workspace:src/firebase/functions-fcm":
   version: 0.0.0-use.local
-  resolution: "functions-fcm@workspace:functions-fcm"
+  resolution: "functions-fcm@workspace:src/firebase/functions-fcm"
   dependencies:
     "@typescript-eslint/eslint-plugin": "npm:^5.12.0"
     "@typescript-eslint/parser": "npm:^5.12.0"
@@ -8227,9 +8227,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"functions-firestore@workspace:functions-firestore":
+"functions-firestore@workspace:src/firebase/functions-firestore":
   version: 0.0.0-use.local
-  resolution: "functions-firestore@workspace:functions-firestore"
+  resolution: "functions-firestore@workspace:src/firebase/functions-firestore"
   dependencies:
     "@typescript-eslint/eslint-plugin": "npm:^5.12.0"
     "@typescript-eslint/parser": "npm:^5.12.0"
@@ -8243,9 +8243,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"functions-governance@workspace:functions-governance":
+"functions-governance@workspace:src/firebase/functions-governance":
   version: 0.0.0-use.local
-  resolution: "functions-governance@workspace:functions-governance"
+  resolution: "functions-governance@workspace:src/firebase/functions-governance"
   dependencies:
     "@typescript-eslint/eslint-plugin": "npm:^5.12.0"
     "@typescript-eslint/parser": "npm:^5.12.0"
@@ -8266,9 +8266,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"functions-integration@workspace:functions-integration":
+"functions-integration@workspace:src/firebase/functions-integration":
   version: 0.0.0-use.local
-  resolution: "functions-integration@workspace:functions-integration"
+  resolution: "functions-integration@workspace:src/firebase/functions-integration"
   dependencies:
     "@typescript-eslint/eslint-plugin": "npm:^5.12.0"
     "@typescript-eslint/parser": "npm:^5.12.0"
@@ -8282,9 +8282,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"functions-observability@workspace:functions-observability":
+"functions-observability@workspace:src/firebase/functions-observability":
   version: 0.0.0-use.local
-  resolution: "functions-observability@workspace:functions-observability"
+  resolution: "functions-observability@workspace:src/firebase/functions-observability"
   dependencies:
     "@typescript-eslint/eslint-plugin": "npm:^5.12.0"
     "@typescript-eslint/parser": "npm:^5.12.0"
@@ -8298,9 +8298,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"functions-orchestration@workspace:functions-orchestration":
+"functions-orchestration@workspace:src/firebase/functions-orchestration":
   version: 0.0.0-use.local
-  resolution: "functions-orchestration@workspace:functions-orchestration"
+  resolution: "functions-orchestration@workspace:src/firebase/functions-orchestration"
   dependencies:
     "@typescript-eslint/eslint-plugin": "npm:^5.12.0"
     "@typescript-eslint/parser": "npm:^5.12.0"
@@ -8314,9 +8314,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"functions-scheduler@workspace:functions-scheduler":
+"functions-scheduler@workspace:src/firebase/functions-scheduler":
   version: 0.0.0-use.local
-  resolution: "functions-scheduler@workspace:functions-scheduler"
+  resolution: "functions-scheduler@workspace:src/firebase/functions-scheduler"
   dependencies:
     "@typescript-eslint/eslint-plugin": "npm:^5.12.0"
     "@typescript-eslint/parser": "npm:^5.12.0"
@@ -8330,9 +8330,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"functions-shared@workspace:functions-shared":
+"functions-shared@workspace:src/firebase/functions-shared":
   version: 0.0.0-use.local
-  resolution: "functions-shared@workspace:functions-shared"
+  resolution: "functions-shared@workspace:src/firebase/functions-shared"
   dependencies:
     "@typescript-eslint/eslint-plugin": "npm:^5.12.0"
     "@typescript-eslint/parser": "npm:^5.12.0"
@@ -8346,9 +8346,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"functions-storage@workspace:functions-storage":
+"functions-storage@workspace:src/firebase/functions-storage":
   version: 0.0.0-use.local
-  resolution: "functions-storage@workspace:functions-storage"
+  resolution: "functions-storage@workspace:src/firebase/functions-storage"
   dependencies:
     "@typescript-eslint/eslint-plugin": "npm:^5.12.0"
     "@typescript-eslint/parser": "npm:^5.12.0"

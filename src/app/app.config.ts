@@ -1,24 +1,6 @@
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { default as ngLang } from '@angular/common/locales/zh';
 import { ApplicationConfig, EnvironmentProviders, Provider } from '@angular/core';
-import { getAnalytics, provideAnalytics, ScreenTrackingService, UserTrackingService } from '@angular/fire/analytics';
-import { initializeApp, provideFirebaseApp, getApp } from '@angular/fire/app';
-import { initializeAppCheck, ReCaptchaEnterpriseProvider, provideAppCheck } from '@angular/fire/app-check';
-import { getAuth, provideAuth as provideAuth_alias } from '@angular/fire/auth';
-import { getDatabase, provideDatabase } from '@angular/fire/database';
-import {
-  initializeFirestore,
-  provideFirestore,
-  persistentLocalCache,
-  persistentMultipleTabManager,
-  Firestore
-} from '@angular/fire/firestore';
-import { getFunctions, provideFunctions } from '@angular/fire/functions';
-import { getMessaging, provideMessaging } from '@angular/fire/messaging';
-import { getPerformance, providePerformance } from '@angular/fire/performance';
-import { getRemoteConfig, provideRemoteConfig } from '@angular/fire/remote-config';
-import { getStorage, provideStorage } from '@angular/fire/storage';
-import { getVertexAI, provideVertexAI } from '@angular/fire/vertexai';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import {
   provideRouter,
@@ -43,6 +25,7 @@ import { zh_CN as zorroLang } from 'ng-zorro-antd/i18n';
 
 import { ICONS } from '../style-icons';
 import { ICONS_AUTO } from '../style-icons-auto';
+import { firebaseProviders } from './firebase/config/firebase.providers';
 import { routes } from './routes/routes';
 
 const defaultLang: AlainProvideLang = {
@@ -153,56 +136,6 @@ const providers: Array<Provider | EnvironmentProviders> = [
 if (environment.api?.refreshTokenEnabled && environment.api.refreshTokenType === 'auth-refresh') {
   providers.push(provideBindAuthRefresh());
 }
-
-// Firebase configuration
-// 啟用 Firestore 離線持久化 (Enable Firestore Offline Persistence)
-// 使用 multi-tab IndexedDB 持久化，支援多分頁同步
-const firebaseProviders: Array<Provider | EnvironmentProviders> = [
-  provideFirebaseApp(() =>
-    initializeApp({
-      apiKey: 'AIzaSyCJ-eayGjJwBKsNIh3oEAG2GjbfTrvAMEI',
-      authDomain: 'elite-chiller-455712-c4.firebaseapp.com',
-      projectId: 'elite-chiller-455712-c4',
-      storageBucket: 'elite-chiller-455712-c4.firebasestorage.app',
-      messagingSenderId: '7807661688',
-      appId: '1:7807661688:web:5f96a5fe30b799f31d1f8d',
-      measurementId: 'G-5KJJ3DD2G7'
-    })
-  ),
-  provideAuth_alias(() => getAuth()),
-  provideAnalytics(() => getAnalytics()),
-  ScreenTrackingService,
-  UserTrackingService,
-  provideAppCheck(() => {
-    const provider = new ReCaptchaEnterpriseProvider('6LcGnSUsAAAAAMIm1aYeWqoYNEmLphGIbwEfWJlc');
-    return initializeAppCheck(undefined, { provider, isTokenAutoRefreshEnabled: true });
-  }),
-  // 使用 initializeFirestore 啟用持久化，而非 getFirestore
-  // Use initializeFirestore with persistence enabled instead of getFirestore
-  // 參考文檔: https://firebase.google.com/docs/firestore/manage-data/enable-offline
-  provideFirestore((): Firestore => {
-    // 獲取已初始化的 Firebase App 實例
-    // Get the already initialized Firebase App instance
-    const app = getApp();
-
-    // 啟用多分頁 IndexedDB 持久化
-    // Enable multi-tab IndexedDB persistence for offline data caching
-    // This allows data to persist across page refreshes and be accessible offline
-    return initializeFirestore(app, {
-      localCache: persistentLocalCache({
-        tabManager: persistentMultipleTabManager()
-      })
-    });
-  }),
-  provideDatabase(() => getDatabase()),
-  provideFunctions(() => getFunctions(getApp(), 'asia-east1')),
-  provideMessaging(() => getMessaging()),
-  providePerformance(() => getPerformance()),
-  provideStorage(() => getStorage()),
-  provideRemoteConfig(() => getRemoteConfig()),
-  // TODO: Migrate to Firebase AI SDK when stable (getVertexAI is deprecated)
-  provideVertexAI(() => getVertexAI())
-];
 
 export const appConfig: ApplicationConfig = {
   providers: [...providers, ...firebaseProviders]

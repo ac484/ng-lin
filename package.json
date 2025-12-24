@@ -22,8 +22,7 @@
   ],
   "packageManager": "yarn@4.9.2",
   "workspaces": [
-    "functions",
-    "functions-*"
+    "src/firebase/functions-*"
   ],
   "engines": {
     "node": "22"

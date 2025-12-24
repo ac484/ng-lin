@@ -13,41 +13,54 @@ export const routes: Routes = [
       accountContext: AccountContextResolver
     },
     children: [
-      { path: '', redirectTo: 'user', pathMatch: 'full' },
+      { path: '', redirectTo: 'profile', pathMatch: 'full' },
       {
-        path: 'user',
-        loadChildren: () => import('./user/routes').then(m => m.routes),
-        data: { title: '個人設定' }
+        path: 'profile',
+        loadComponent: () =>
+          import('../../features/account/profile/components/account-profile-page.component').then(
+            m => m.AccountProfilePageComponent
+          ),
+        data: { title: '個人設定', defaultProfileId: 'profile-default' }
       },
       {
-        path: 'organization',
-        loadChildren: () => import('./organization/routes').then(m => m.routes),
-        data: { title: '組織管理' }
+        path: 'profile/:profileId',
+        loadComponent: () =>
+          import('../../features/account/profile/components/account-profile-page.component').then(
+            m => m.AccountProfilePageComponent
+          ),
+        data: { title: '個人設定', defaultProfileId: 'profile-default' }
       },
       {
-        path: 'team',
-        loadChildren: () => import('./team/routes').then(m => m.routes),
-        data: { title: '團隊管理' }
+        path: 'dashboard',
+        loadComponent: () =>
+          import('../../features/account/dashboard/components/account-dashboard-page.component').then(
+            m => m.AccountDashboardPageComponent
+          ),
+        data: { title: '儀表板', defaultDashboardId: 'dashboard-default' }
       },
       {
-        path: 'partner',
-        loadChildren: () => import('./partner/routes').then(m => m.routes),
-        data: { title: '夥伴管理' }
+        path: 'dashboard/:dashboardId',
+        loadComponent: () =>
+          import('../../features/account/dashboard/components/account-dashboard-page.component').then(
+            m => m.AccountDashboardPageComponent
+          ),
+        data: { title: '儀表板', defaultDashboardId: 'dashboard-default' }
       },
       {
-        path: 'admin',
-        children: [
-          {
-            path: '',
-            redirectTo: 'monitoring',
-            pathMatch: 'full'
-          },
-          {
-            path: 'monitoring',
-            loadChildren: () => import('./admin/monitoring/routes').then(m => m.routes),
-            data: { title: '系統監控' }
-          }
-        ]
+        path: 'settings',
+        loadComponent: () =>
+          import('../../features/account/settings/components/account-settings-page.component').then(
+            m => m.AccountSettingsPageComponent
+          ),
+        data: { title: '偏好設定', defaultSettingsId: 'settings-default' }
+      },
+      {
+        path: 'settings/:settingsId',
+        loadComponent: () =>
+          import('../../features/account/settings/components/account-settings-page.component').then(
+            m => m.AccountSettingsPageComponent
+          ),
+        data: { title: '偏好設定', defaultSettingsId: 'settings-default' }
       }
     ]
   }

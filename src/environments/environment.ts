@@ -17,5 +17,32 @@ export const environment = {
   firebaseMessagingPublicKey: 'BMfTfys7cErI2JVFmjkWSeCb7ClvFklQ4r69lWGIYT2dSq5VD2eguZlckvdq2QJhdGskeyUg0G6RcC8WmlBztFY',
   // CWA API Key - 開發環境請設定實際 API Key
   // 正式環境將從 Firebase App Hosting secrets 載入
-  CWA_API_KEY: 'CWA-8055E55C-EBCB-40A2-92F4-8A84399F3A45' // 中央氣象署 API 授權碼
-} as Environment & { firebaseMessagingPublicKey: string; CWA_API_KEY: string };
+  CWA_API_KEY: 'CWA-8055E55C-EBCB-40A2-92F4-8A84399F3A45', // 中央氣象署 API 授權碼
+  // reCAPTCHA site key for client-side validation
+  recaptchaSiteKey: '6LcGnSUsAAAAAMIm1aYeWqoYNEmLphGIbwEfWJlc',
+  // Firebase config for development (replace with env-specific values if needed)
+  firebase: {
+    apiKey: 'AIzaSyCJ-eayGjJwBKsNIh3oEAG2GjbfTrvAMEI',
+    authDomain: 'elite-chiller-455712-c4.firebaseapp.com',
+    projectId: 'elite-chiller-455712-c4',
+    storageBucket: 'elite-chiller-455712-c4.firebasestorage.app',
+    messagingSenderId: '7807661688',
+    appId: '1:7807661688:web:5f96a5fe30b799f31d1f8d',
+    measurementId: 'G-5KJJ3DD2G7',
+    databaseURL: 'https://elite-chiller-455712-c4-default-rtdb.asia-southeast1.firebasedatabase.app'
+  }
+} as Environment & {
+  firebaseMessagingPublicKey: string;
+  CWA_API_KEY: string;
+  recaptchaSiteKey: string;
+  firebase: {
+    apiKey: string;
+    authDomain: string;
+    projectId: string;
+    storageBucket: string;
+    messagingSenderId: string;
+    appId: string;
+    measurementId: string;
+    databaseURL: string;
+  };
+};

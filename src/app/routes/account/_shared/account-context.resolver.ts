@@ -1,16 +1,25 @@
 import { Injectable, inject } from '@angular/core';
 import { Resolve, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
-import { Observable, of } from 'rxjs';
+import { AccountService } from '../../../features/account';
 
 /**
- * Minimal Account context resolver.
- * Replace the body of `resolve` with real fetching logic (e.g., from an AccountService).
+ * Account context resolver that preloads profile/dashboard/settings through the account facade.
  */
 @Injectable({ providedIn: 'root' })
-export class AccountContextResolver implements Resolve<any> {
-  resolve(_route: ActivatedRouteSnapshot, _state: RouterStateSnapshot): Observable<any> {
-    // Placeholder: return an empty context so routes depending on resolved data work.
-    // In a real app inject an AccountService with `inject(AccountService)` and fetch the context.
-    return of({});
+export class AccountContextResolver implements Resolve<Promise<any>> {
+  private readonly accountService = inject(AccountService);
+
+  async resolve(route: ActivatedRouteSnapshot, _state: RouterStateSnapshot): Promise<any> {
+    const profileId = route.paramMap.get('profileId') ?? 'profile-default';
+    const dashboardId = route.paramMap.get('dashboardId') ?? 'dashboard-default';
+    const settingsId = route.paramMap.get('settingsId') ?? 'settings-default';
+
+    const [profile, dashboard, settings] = await Promise.all([
+      this.accountService.loadProfile(profileId),
+      this.accountService.loadDashboard(dashboardId),
+      this.accountService.loadSettings(settingsId)
+    ]);
+
+    return { profile, dashboard, settings };
   }
 }
