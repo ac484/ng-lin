@@ -70,6 +70,67 @@ Create components using:
 - Responsive layouts
 - Theming and dark mode
 
+### 7. [delon-form](./delon-form/)
+**When to use**: Creating dynamic schema-based forms
+
+Build forms using @delon/form SF component:
+- JSON Schema-driven form generation
+- Custom widgets (input, select, date, upload, etc.)
+- Async data loading for dropdowns
+- Conditional field visibility
+- Custom validators
+- Multi-step forms (wizards)
+- Grid layouts and responsive design
+
+### 8. [delon-auth](./delon-auth/)
+**When to use**: Implementing authentication and authorization
+
+Integrate authentication using @delon/auth:
+- JWT token management
+- Login/logout flows
+- Role-based access control (RBAC)
+- Permission checking
+- Route guards
+- HTTP token interceptors
+- Firebase Auth integration
+- Session management
+
+### 9. [delon-cache](./delon-cache/)
+**When to use**: Implementing caching strategies
+
+Optimize performance with @delon/cache:
+- Memory cache (fast, non-persistent)
+- LocalStorage cache (persistent across sessions)
+- SessionStorage cache (session-only)
+- TTL-based expiration
+- Cache invalidation
+- HTTP request caching
+- Lazy loading patterns
+
+### 10. [rxjs-patterns](./rxjs-patterns/)
+**When to use**: Working with reactive programming and async data
+
+Master RxJS patterns for Angular:
+- Signal/Observable interop (`toSignal()`, `toObservable()`)
+- Common operators (switchMap, debounceTime, catchError)
+- Subscription management (`takeUntilDestroyed()`)
+- Error handling and retry logic
+- Combining observables (combineLatest, forkJoin)
+- Real-time data patterns
+
+### 11. [tinymce-editor](./tinymce-editor/)
+**When to use**: Integrating rich text editor functionality
+
+Implement WYSIWYG editor using ngx-tinymce:
+- TinyMCE configuration
+- Custom toolbar and plugins
+- Image upload to Firebase Storage
+- Content sanitization
+- Reactive forms integration
+- Auto-save functionality
+- Templates and code highlighting
+- Mobile responsive editor
+
 ## How Skills Work
 
 ### Automatic Loading
@@ -107,7 +168,10 @@ These skills are tailored for:
 ### Tech Stack
 - **Frontend**: Angular 20 + TypeScript 5.9
 - **UI Framework**: ng-alain 20.1 + ng-zorro-antd 20
+- **UI Components**: @delon/abc, @delon/form, @delon/auth, @delon/cache, @delon/chart
 - **State Management**: Angular Signals
+- **Reactive Programming**: RxJS 7.8
+- **Rich Text Editor**: ngx-tinymce 20
 - **Backend**: Firebase (Firestore, Auth, Storage, Functions)
 - **Architecture**: Three-layer (UI → Service → Repository)
 
@@ -283,5 +347,6 @@ To improve skills:
 ---
 
 **Last Updated**: 2025-12-25  
-**Skills Version**: 1.0.0  
-**Compatible with**: Angular 20.3.x, ng-alain 20.1.x, Firebase 20.0.1
+**Skills Version**: 1.1.0  
+**Skills Count**: 11  
+**Compatible with**: Angular 20.3.x, ng-alain 20.1.x, Firebase 20.0.1, RxJS 7.8.x, ngx-tinymce 20.0.0
