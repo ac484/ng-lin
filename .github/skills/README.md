@@ -170,6 +170,69 @@ Add fullscreen capabilities using screenfull:
 - Browser compatibility handling
 - Mobile fullscreen support
 
+### 15. [delon-chart](./delon-chart/)
+**When to use**: Creating data visualizations and charts
+
+Build enterprise charts using @delon/chart:
+- G2 Bar/Mini-Bar charts
+- G2 Pie/Donut charts
+- G2 Radar charts
+- Timeline charts
+- Chart cards with trend indicators
+- Dashboard statistics visualization
+- Responsive chart layouts
+- Real-time data updates with signals
+
+### 16. [delon-util](./delon-util/)
+**When to use**: Using utility functions for data manipulation
+
+Leverage @delon/util for common operations:
+- Array utilities (deepCopy, deepMerge, groupBy, orderBy)
+- String formatting and case conversion
+- Date utilities (getTimeDistance, formatDistanceToNow)
+- Number formatting (currency, toPercent, toThousands)
+- Browser utilities (copy, scrollToTop, isEmpty)
+- Type-safe deep object access
+- Immutable state management helpers
+
+### 17. [delon-acl](./delon-acl/)
+**When to use**: Implementing access control and permissions
+
+Manage permissions using @delon/acl:
+- Role-based access control (RBAC)
+- Ability-based permissions
+- ACL directives (*aclIf)
+- Route guards (role/ability-based)
+- Blueprint permission integration
+- UI element visibility control
+- Dynamic permission checking
+- Combined with Security Rules
+
+### 18. [uuid](./uuid/)
+**When to use**: Generating unique identifiers
+
+Generate UUIDs using uuid library:
+- v4 (random) for general entity IDs
+- v7 (timestamp-based) for sortable IDs
+- Task, user, blueprint ID generation
+- Session and file upload tracking
+- Audit log entries (v7 for chronological order)
+- Database primary keys
+- Request tracking IDs
+
+### 19. [monaco-editor](./monaco-editor/)
+**When to use**: Integrating code/text editor functionality
+
+Implement Monaco Editor using @ng-util/monaco-editor:
+- VS Code-powered code editor
+- Syntax highlighting for multiple languages
+- IntelliSense and autocomplete
+- JSON/TypeScript/HTML/CSS editing
+- Diff viewer for comparisons
+- Configuration file editor
+- Firestore Security Rules editor
+- Read-only code display
+
 ## How Skills Work
 
 ### Automatic Loading
@@ -207,12 +270,14 @@ These skills are tailored for:
 ### Tech Stack
 - **Frontend**: Angular 20 + TypeScript 5.9
 - **UI Framework**: ng-alain 20.1 + ng-zorro-antd 20
-- **UI Components**: @delon/abc, @delon/form, @delon/auth, @delon/cache, @delon/chart, @delon/theme
+- **UI Components**: @delon/abc, @delon/form, @delon/auth, @delon/cache, @delon/chart, @delon/theme, @delon/acl, @delon/util
 - **State Management**: Angular Signals
 - **Reactive Programming**: RxJS 7.8
 - **Rich Text Editor**: ngx-tinymce 20
+- **Code Editor**: @ng-util/monaco-editor 20.0.1
 - **UI Utilities**: @angular/cdk 20.x (drag-drop, overlay, virtual scroll)
 - **Fullscreen API**: screenfull 6.0
+- **UUID Generation**: uuid 13.0.0
 - **Backend**: Firebase (Firestore, Auth, Storage, Functions)
 - **Architecture**: Three-layer (UI → Service → Repository)
 
@@ -388,6 +453,6 @@ To improve skills:
 ---
 
 **Last Updated**: 2025-12-25  
-**Skills Version**: 1.2.0  
-**Skills Count**: 14  
-**Compatible with**: Angular 20.3.x, ng-alain 20.1.x, Firebase 20.0.1, RxJS 7.8.x, ngx-tinymce 20.0.0, @angular/cdk 20.x, screenfull 6.0.x
+**Skills Version**: 1.3.0  
+**Skills Count**: 19  
+**Compatible with**: Angular 20.3.x, ng-alain 20.1.x, Firebase 20.0.1, RxJS 7.8.x, ngx-tinymce 20.0.0, @angular/cdk 20.x, screenfull 6.0.x, uuid 13.0.0, @ng-util/monaco-editor 20.0.1
