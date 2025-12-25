@@ -15,9 +15,8 @@
       "type": "http",
       "url": "https://mcp.context7.com/mcp",
       "headers": {
-        "CONTEXT7_API_KEY": "${COPILOT_MCP_CONTEXT7}"
+        "CONTEXT7_API_KEY": "ctx7sk-a6b61fdc-d440-4e26-bcb0-7fd6807c4787"
       },
-      "tools": ["get-library-docs", "resolve-library-id"]
     }
   }
 }
