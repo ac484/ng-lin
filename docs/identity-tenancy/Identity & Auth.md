@@ -111,6 +111,20 @@ src/app/
 │   │
 │   └── core.module.ts
 │
+```
+
+## Lite 對齊母體的範圍聲明（必讀）
+
+為避免偏離母體與重複造輪子，Identity & Auth 現階段僅保留「必要且已實作」的功能，邊界如下：
+
+- **核心鏈路**：`@angular/fire/auth` → `@delon/auth` → `DA_SERVICE_TOKEN`。僅允許在這條鏈路上處理 ID Token 注入、Session/Token 持久化、守衛與攔截器；禁止新增自訂 Firebase wrapper 或額外中介層。
+- **必留流程**：Email/Password 登入、註冊、重設密碼、Email 驗證、Google/GitHub OAuth、Session 續期、Token 自動注入、Auth/Role/Permission 守衛。
+- **明確不做**：MFA/Phone/TOTP、新增 Auth 專屬 Event Bus 或 Audit 管線（沿用現有 `src/app/core/event-bus` 能力即可）、引入新的租戶層級或額外上下文切換模型。
+- **租戶/組織**：沿用既有組織/團隊/Blueprint 成員模型與守衛，不新增額外的租戶複雜度。
+
+若需新增功能，必須先對照上述「Lite 範圍」與母體行為再提需求，避免技術債與二次重工。
+
+```
 ├── firebase/
 │   ├── auth/                                    # Firebase Auth 封裝層
 │   │   ├── services/
