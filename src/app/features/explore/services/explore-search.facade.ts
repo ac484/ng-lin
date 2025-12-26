@@ -209,10 +209,7 @@ export class ExploreSearchFacade {
       // Update state
       this._allResults.set(allResults);
       this.applyPagination(allResults);
-
-      this.logger.info('[ExploreSearch]', `Found ${allResults.length} results for "${sanitizedQuery}"`);
     } catch (error) {
-      this.logger.error('[ExploreSearch]', 'Search failed', error instanceof Error ? error : new Error(String(error)));
       this._error.set('搜尋失敗，請稍後再試。');
     } finally {
       this._loading.set(false);
@@ -337,7 +334,6 @@ export class ExploreSearchFacade {
           return this.transformAccountToResult(doc.id, data, searchQuery);
         });
     } catch (error) {
-      this.logger.error('[ExploreSearch]', 'Account search failed', error instanceof Error ? error : new Error(String(error)));
       return [];
     }
   }
@@ -371,7 +367,6 @@ export class ExploreSearchFacade {
           return this.transformOrganizationToResult(doc.id, data, searchQuery);
         });
     } catch (error) {
-      this.logger.error('[ExploreSearch]', 'Organization search failed', error instanceof Error ? error : new Error(String(error)));
       return [];
     }
   }
@@ -414,7 +409,6 @@ export class ExploreSearchFacade {
           return result.title.toLowerCase().includes(normalizedQuery);
         });
     } catch (error) {
-      this.logger.error('[ExploreSearch]', 'Blueprint search failed', error instanceof Error ? error : new Error(String(error)));
       return [];
     }
   }
