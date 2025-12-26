@@ -37,6 +37,7 @@ import { DomainEvent } from '@core/event-bus/models/base-event';
 
 // New audit infrastructure
 import { ClassificationEngineService } from '../services/classification-engine.service';
+import { PolicyEngineService } from '../services/policy-engine.service';
 import { AuditEventRepository } from '../repositories/audit-event.repository';
 import { AuditEvent } from '../models/audit-event.interface';
 import { EventCategory } from '../models/event-category.enum';
@@ -86,6 +87,7 @@ export class AuditCollectorEnhancedService implements OnDestroy {
   // Dependencies
   private eventBus = inject(BlueprintEventBus);
   private classificationEngine = inject(ClassificationEngineService);
+  private policyEngine = inject(PolicyEngineService);
   private auditRepository = inject(AuditEventRepository);
   private logger = console;
   private tenantContext = inject(TenantContextService);
@@ -198,8 +200,35 @@ export class AuditCollectorEnhancedService implements OnDestroy {
       // Convert domain events to audit events
       const auditEvents = domainEvents.map(event => this.convertDomainEventToAuditEvent(event));
 
+      // Apply policy/rules before classification
+      const filteredEvents = auditEvents
+        .map(event => {
+          const decision = this.policyEngine.evaluate(event);
+
+          if (decision.action === 'suppress') {
+            return null; // drop noisy events
+          }
+
+          const augmented = {
+            ...event,
+            metadata: {
+              ...event.metadata,
+              policy: {
+                rule: decision.rule,
+                reasons: decision.reasons,
+                action: decision.action
+              }
+            },
+            autoReviewRequired: decision.action === 'flag' || decision.action === 'escalate' || event.autoReviewRequired
+          };
+
+          // Future: emit alert/notification via event-bus when decision.notify is true
+          return augmented;
+        })
+        .filter((event): event is AuditEvent => !!event);
+
       // Classify events (bulk operation)
-      const classifiedEvents = auditEvents.map(event => {
+      const classifiedEvents = filteredEvents.map(event => {
         const classification = this.classificationEngine.classify(event);
         this.stats.eventsClassified++;
 

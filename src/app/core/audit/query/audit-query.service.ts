@@ -497,4 +497,87 @@ export class AuditQueryService {
     // Filter for AI-related events
     return events.filter(e => e.eventType.startsWith('ai.') || e.aiGenerated === true || e.complianceTags?.includes('AI_GOVERNANCE'));
   }
+
+  /**
+   * Aggregation helper for dashboards/reports.
+   */
+  async aggregate(options: { tenantId: string; startTime: Date; endTime: Date; tier?: StorageTier }): Promise<AggregationResult> {
+    const events = await this.repository.query({
+      tenantId: options.tenantId,
+      startTime: options.startTime,
+      endTime: options.endTime,
+      tier: options.tier || StorageTier.HOT,
+      limit: 5000
+    });
+
+    const result: AggregationResult = {
+      totalEvents: events.length,
+      byCategory: {} as Record<AuditCategory, number>,
+      byLevel: {} as Record<AuditLevel, number>,
+      byActor: {},
+      byResult: { success: 0, failure: 0 },
+      averageRiskScore: 0,
+      highRiskCount: 0,
+      criticalCount: 0
+    };
+
+    let riskSum = 0;
+
+    events.forEach(event => {
+      // Category
+      result.byCategory[event.category] = (result.byCategory[event.category] || 0) + 1;
+      // Level
+      result.byLevel[event.level] = (result.byLevel[event.level] || 0) + 1;
+      // Actor
+      const actorId = event.actor?.id || 'unknown';
+      result.byActor[actorId] = (result.byActor[actorId] || 0) + 1;
+      // Result
+      if ((event as any).result === 'failure') {
+        result.byResult.failure++;
+      } else {
+        result.byResult.success++;
+      }
+      // Risk
+      const risk = (event as any).riskScore || 0;
+      riskSum += risk;
+      if (risk >= 60) result.highRiskCount++;
+      if (event.level === AuditLevel.CRITICAL) result.criticalCount++;
+    });
+
+    result.averageRiskScore = events.length > 0 ? Math.round(riskSum / events.length) : 0;
+    return result;
+  }
+
+  /**
+   * Generate a lightweight compliance report for a given framework.
+   */
+  async generateComplianceReport(options: ComplianceQueryOptions) {
+    const events = await this.repository.query({
+      tenantId: options.tenantId,
+      startTime: options.startTime,
+      endTime: options.endTime,
+      tier: options.tier || StorageTier.HOT,
+      limit: 5000
+    });
+
+    const filtered = events.filter(event => {
+      const hasFramework = event.complianceTags?.includes(options.framework);
+      const highRiskOk = !options.includeHighRiskOnly || ((event as any).riskScore || 0) >= 60;
+      const reviewOk = !options.includeReviewRequired || (event as any).autoReviewRequired === true;
+      return hasFramework && highRiskOk && reviewOk;
+    });
+
+    return {
+      framework: options.framework,
+      totalEvents: filtered.length,
+      timeWindow: { start: options.startTime, end: options.endTime },
+      highRisk: filtered.filter(e => ((e as any).riskScore || 0) >= 60).length,
+      requiresReview: filtered.filter(e => (e as any).autoReviewRequired === true).length,
+      actors: [...new Set(filtered.map(e => e.actor?.id).filter(Boolean))],
+      topCategories: filtered.reduce<Record<AuditCategory, number>>((acc, e) => {
+        acc[e.category] = (acc[e.category] || 0) + 1;
+        return acc;
+      }, {} as Record<AuditCategory, number>)
+    };
+  }
 }
