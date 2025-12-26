@@ -1,6 +1,10 @@
-import { Injectable, signal, WritableSignal } from '@angular/core';
-import { Subject, Subscription } from 'rxjs';
+import { Injectable, inject, signal, WritableSignal } from '@angular/core';
+import { Subscription as RxSubscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
+
+import { EVENT_BUS } from '@core/event-bus/constants/event-bus-tokens';
+import type { IEventBus as CoreEventBus } from '@core/event-bus/interfaces/event-bus.interface';
+import { DomainEvent } from '@core/event-bus/models/base-event';
 
 import type { IBlueprintEvent, IEventBus, EventHandler } from './event-bus.interface';
 
@@ -34,61 +38,42 @@ import type { IBlueprintEvent, IEventBus, EventHandler } from './event-bus.inter
  * unsubscribe();
  * ```
  */
+class BlueprintDomainEvent<T> extends DomainEvent<T> {
+  readonly eventType: string;
+
+  constructor(params: { type: string; payload: T; blueprintId: string; userId: string }) {
+    super({
+      aggregateId: params.blueprintId || 'blueprint',
+      aggregateType: 'blueprint',
+      payload: params.payload,
+      metadata: {
+        version: '1.0',
+        source: 'blueprint',
+        correlationId: params.userId,
+        tenantId: params.blueprintId
+      } as any
+    });
+    this.eventType = params.type;
+  }
+}
+
 @Injectable({ providedIn: 'root' })
 export class EventBus implements IEventBus {
-  /**
-   * Internal RxJS Subject for event streaming
-   * All events flow through this central Subject
-   */
-  private readonly eventSubject = new Subject<IBlueprintEvent>();
+  private readonly coreBus = inject<CoreEventBus>(EVENT_BUS);
 
-  /**
-   * Event history store
-   * Maintains a complete audit trail of all events
-   */
-  private readonly history: IBlueprintEvent[] = [];
-
-  /**
-   * Maximum number of events to keep in history
-   * Prevents memory issues with long-running applications
-   */
-  private readonly maxHistorySize = 1000;
-
-  /**
-   * Event counter for generating unique IDs
-   */
-  private eventCounter = 0;
-
-  /**
-   * Execution context for events
-   * Set by the Blueprint Container during initialization
-   */
+  /** Execution context for events (set by Blueprint Container) */
   private blueprintId = '';
   private userId = '';
 
-  /**
-   * Active subscriptions tracking
-   * Useful for debugging and monitoring
-   */
-  private readonly subscriptions = new Map<string, Set<Subscription>>();
+  /** Active subscriptions tracking */
+  private readonly subscriptions = new Map<string, Set<RxSubscription>>();
 
-  /**
-   * Event throttling map
-   * Tracks last emission time for each event type to prevent event storms
-   */
-  private readonly eventThrottle = new Map<string, number>();
+  /** Local history for backward compatibility */
+  private readonly history: IBlueprintEvent[] = [];
+  private readonly maxHistorySize = 1000;
 
-  /**
-   * Throttle duration in milliseconds
-   * Events of the same type within this window will be dropped
-   */
-  private readonly throttleMs = 100;
-
-  /**
-   * Event emission count signal
-   * Reactive counter for monitoring event activity
-   */
-  public readonly eventCount: WritableSignal<number> = signal(0);
+  /** Local counter for legacy consumers */
+  readonly eventCount: WritableSignal<number> = signal(0);
 
   /**
    * Initialize the event bus with context
@@ -114,13 +99,14 @@ export class EventBus implements IEventBus {
    * @param source - ID of the module emitting the event
    */
   emit<T>(type: string, payload: T, source: string): void {
-    // Check if event should be throttled
-    if (this.shouldThrottle(type)) {
-      console.warn(`[EventBus] Event "${type}" throttled (too frequent)`);
-      return;
-    }
+    const event = new BlueprintDomainEvent<T>({
+      type,
+      payload,
+      blueprintId: this.blueprintId || source || 'blueprint',
+      userId: this.userId || 'anonymous'
+    });
 
-    const event: IBlueprintEvent<T> = {
+    this.addToHistory({
       type,
       payload,
       timestamp: Date.now(),
@@ -129,17 +115,14 @@ export class EventBus implements IEventBus {
         blueprintId: this.blueprintId,
         userId: this.userId
       },
-      id: this.generateEventId()
-    };
+      id: event.eventId
+    });
 
-    // Add to history
-    this.addToHistory(event);
-
-    // Emit through Subject
-    this.eventSubject.next(event);
-
-    // Update counter
     this.eventCount.update(count => count + 1);
+
+    void this.coreBus.publish(event).catch(error => {
+      console.error(`[EventBus] Error publishing "${type}":`, error);
+    });
   }
 
   /**
@@ -153,13 +136,27 @@ export class EventBus implements IEventBus {
    * @returns Unsubscribe function
    */
   on<T>(type: string, handler: EventHandler<T>): () => void {
-    const subscription = this.eventSubject.pipe(filter(event => event.type === type)).subscribe(async event => {
-      try {
-        await handler(event as IBlueprintEvent<T>);
-      } catch (error) {
-        console.error(`[EventBus] Error in handler for event "${type}":`, error);
-      }
-    });
+    const subscription = this.coreBus
+      .observeAll()
+      .pipe(filter(event => event.eventType === type))
+      .subscribe(async event => {
+        try {
+          const mapped: IBlueprintEvent<T> = {
+            type: event.eventType,
+            payload: event.payload as T,
+            timestamp: event.timestamp.getTime(),
+            source: (event.metadata as any)?.source ?? 'core-event-bus',
+            context: {
+              blueprintId: this.blueprintId,
+              userId: this.userId
+            },
+            id: event.eventId
+          };
+          await handler(mapped);
+        } catch (error) {
+          console.error(`[EventBus] Error in handler for event "${type}":`, error);
+        }
+      });
 
     // Track subscription
     this.trackSubscription(type, subscription);
@@ -289,20 +286,8 @@ export class EventBus implements IEventBus {
     // Clear history
     this.clearHistory();
 
-    // Complete the Subject
-    this.eventSubject.complete();
-
-    // Reset counter
+    // Reset legacy counters
     this.eventCount.set(0);
-  }
-
-  /**
-   * Generate a unique event ID
-   *
-   * @returns Unique event identifier
-   */
-  private generateEventId(): string {
-    return `${Date.now()}-${++this.eventCounter}`;
   }
 
   /**
@@ -323,48 +308,16 @@ export class EventBus implements IEventBus {
     }
   }
 
-  /**
-   * Check if event should be throttled
-   *
-   * Prevents event storms by limiting emission frequency per event type.
-   *
-   * @param type - Event type to check
-   * @returns True if event should be throttled (dropped)
-   */
-  private shouldThrottle(type: string): boolean {
-    const lastEmit = this.eventThrottle.get(type) || 0;
-    const now = Date.now();
-
-    // Check if enough time has passed since last emission
-    if (now - lastEmit < this.throttleMs) {
-      return true; // Too soon, throttle this event
-    }
-
-    // Update last emission time
-    this.eventThrottle.set(type, now);
-    return false;
-  }
-
-  /**
-   * Track a subscription
-   *
-   * @param type - Event type
-   * @param subscription - RxJS subscription to track
-   */
-  private trackSubscription(type: string, subscription: Subscription): void {
+  /** Track a subscription */
+  private trackSubscription(type: string, subscription: RxSubscription): void {
     if (!this.subscriptions.has(type)) {
       this.subscriptions.set(type, new Set());
     }
     this.subscriptions.get(type)!.add(subscription);
   }
 
-  /**
-   * Untrack a subscription
-   *
-   * @param type - Event type
-   * @param subscription - RxJS subscription to untrack
-   */
-  private untrackSubscription(type: string, subscription: Subscription): void {
+  /** Untrack a subscription */
+  private untrackSubscription(type: string, subscription: RxSubscription): void {
     const subs = this.subscriptions.get(type);
     if (subs) {
       subs.delete(subscription);
