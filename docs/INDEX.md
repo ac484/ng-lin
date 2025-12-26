@@ -64,7 +64,7 @@ The GitHub Platform Architect view treats GitHub as a governable platform. The s
 | Security, Compliance & Auditability | [audit/](./audit/), [security/](./security/), [Global Audit Log.md](./Global%20Audit%20Log.md), [Audit Log.md](./Audit%20Log.md), [Platform-Contract-Management.md](./Platform-Contract-Management.md) (contract controls), [Identity & Auth.md](./Identity%20%26%20Auth.md) |
 | Observability & Operations | [operations/](./operations/), [audit/MONITORING_COST_OPTIMIZATION.md](./audit/MONITORING_COST_OPTIMIZATION.md), [Level.md](./Level.md) (maturity view), [Global全域系統交互拓撲.md](./Global%E5%85%A8%E5%9F%9F%E7%B3%BB%E7%B5%B1%E4%BA%A4%E4%BA%92%E6%8B%93%E6%89%91.md) |
 | Enablement & Experience | [getting-started/](./getting-started/), [overview/](./overview/), [design/](./design/), [ui-theme/](./ui-theme/), [reference/FRONTEND.md](./reference/FRONTEND.md), [overview(總覽)/](./overview(%E7%B8%BD%E8%A6%BD)/) |
-| Legacy / To Consolidate | [architecture(架構)/](./architecture(%E6%9E%B6%E6%A7%8B)/), [getting-started(快速開始)/](./getting-started(%E5%BF%AB%E9%80%9F%E9%96%8B%E5%A7%8B)/), [event-bus(Global Event Bus)-*.md](./event-bus(Global%20Event%20Bus)-0.md), [Platform-0.md](./Platform-0.md) (keep canonical in Strategy), [Platform-1.md](./Platform-1.md) |
+| Legacy / To Consolidate | [architecture(架構)/](./architecture(%E6%9E%B6%E6%A7%8B)/), [getting-started(快速開始)/](./getting-started(%E5%BF%AB%E9%80%9F%E9%96%8B%E5%A7%8B)/), [legacy-archive/](./legacy-archive/) |
 
 Use the table as the canonical mapping when adding or relocating documents; new docs should declare which pillar they belong to in the opening section.
 
