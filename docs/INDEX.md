@@ -62,15 +62,15 @@ The GitHub Platform Architect view treats GitHub as a governable platform. The s
 
 | Pillar | Current coverage |
 | --- | --- |
-| Strategy & Governance | [⭐️/](./⭐️/) (strategic), [strategy-governance/](./strategy-governance/) (includes architecture/, overview/, principles/, Standard.md, Level.md, Platform-0/1/Contract-Management, ng-gighub-tree.md, role.md) |
+| Strategy & Governance | [⭐️/](./⭐️/) (strategic), [strategy-governance/](./strategy-governance/) (includes architecture/, overview/, principles/, Standard.md, Level.md, Platform-0/1/Contract-Management, ng-gighub-tree.md) |
 | Identity, Access & Tenancy | [identity-tenancy/](./identity-tenancy/) (includes identity/, multi-tenancy/ suites), [account/](./account/) (planned), [SaaS.md](./identity-tenancy/SaaS.md), [saas-ddd-structure.md](./identity-tenancy/saas-ddd-structure.md), [ACCOUNT_CONTEXT_SWITCHER_ANALYSIS.md](./identity-tenancy/ACCOUNT_CONTEXT_SWITCHER_ANALYSIS.md), [ACCOUNT_REORGANIZATION_SUMMARY.md](./identity-tenancy/ACCOUNT_REORGANIZATION_SUMMARY.md) |
 | Source of Truth & Change Control | [change-control/](./change-control/) (api/, data-model/), [reference/](./reference/), [ROUTE_ARCHITECTURE_ANALYSIS.md](./strategy-governance/ROUTE_ARCHITECTURE_ANALYSIS.md), [0.md](./legacy-archive/0.md) |
 | Collaboration & Work Management | (Planned: issues/discussions/notifications) — track gaps in [collaboration/](./collaboration/) |
-| Automation & Delivery | [automation-delivery/](./automation-delivery/) (deployment/, functions/, dev.md, event-bus/), [Global Event Bus.md](./legacy-archive/Global%20Event%20Bus.md), [event-bus(Global Event Bus)-0..9.md](./legacy-archive/event-bus(Global%20Event%20Bus)-0.md) |
-| Security, Compliance & Auditability | [security-compliance/](./security-compliance/) (audit/ suite, security/), [Global Audit Log.md](./security-compliance/Global%20Audit%20Log.md), [Audit Log.md](./security-compliance/Audit%20Log.md), [Identity & Auth.md](./identity-tenancy/Identity%20%26%20Auth.md) |
-| Observability & Operations | [observability-operations/](./observability-operations/) (operations/, topology), [security-compliance/audit/MONITORING_COST_OPTIMIZATION.md](./security-compliance/audit/MONITORING_COST_OPTIMIZATION.md), [Level.md](./strategy-governance/Level.md) (maturity view) |
+| Automation & Delivery | [automation-delivery/](./automation-delivery/) (deployment/, functions/, dev.md, event-bus/), [Global Event Bus.md](./⭐️/Global%20Event%20Bus.md), [event-bus(Global Event Bus)-0..9.md](./legacy-archive/event-bus(Global%20Event%20Bus)-0.md) |
+| Security, Compliance & Auditability | [security-compliance/](./security-compliance/) (audit/ suite, security/), [Global Audit Log.md](./⭐️/Global%20Audit%20Log.md), [Audit Log.md](./security-compliance/Audit%20Log.md), [Identity & Auth.md](./identity-tenancy/Identity%20%26%20Auth.md) |
+| Observability & Operations | [observability-operations/](./observability-operations/) (operations/, topology), [security-compliance/audit/MONITORING_COST_OPTIMIZATION.md](./security-compliance/audit/MONITORING_COST_OPTIMIZATION.md), [Level.md](./strategy-governance/Level.md) (maturity view), [⭐️/Global全域系統交互拓撲.md](./⭐️/Global全域系統交互拓撲.md) |
 | Enablement & Experience | [enablement-experience/](./enablement-experience/) (design/, getting-started/, ui-theme/), [reference/FRONTEND.md](./reference/FRONTEND.md) |
-| Legacy / To Consolidate | [legacy-archive/](./legacy-archive/) (historical event-bus notes, 0.md), [observability-operations/Global全域系統交互拓撲.md](./observability-operations/Global%E5%85%A8%E5%9F%9F%E7%B3%BB%E7%B5%B1%E4%BA%A4%E4%BA%92%E6%8B%93%E6%89%91.md) |
+| Legacy / To Consolidate | [legacy-archive/](./legacy-archive/) (historical event-bus notes, 0.md) |
 
 Use the table as the canonical mapping when adding or relocating documents; new docs should declare which pillar they belong to in the opening section.
 
@@ -170,7 +170,7 @@ Complete operational documentation for Global Event Bus.
 - Integration with Audit system (11 topic patterns)
 
 **Existing Strategic Docs** (to consolidate):
-- `Global Event Bus.md` - Strategic architecture
+- `docs/⭐️/Global Event Bus.md` - Strategic architecture
 - `event-bus-0.md` through `event-bus-9.md` - Scattered implementation notes
 
 ---
@@ -190,7 +190,7 @@ Blueprint-based multi-tenancy model documentation.
 - Account context switching
 
 **Existing Strategic Docs** (to consolidate):
-- `整體架構設計.md` - Overall architecture design
+- `docs/⭐️/整體架構設計.md` - Overall architecture design
 - `docs/⭐️/Global全域系統交互拓撲.md` - System interaction topology
 
 #### 5. SaaS Account Management (`docs/account/`)
@@ -243,15 +243,15 @@ Strategic architecture and planning documents:
 - `AUDIT_SYSTEM_MASTER_INDEX.md` - Audit system master index
 - `AUDIT_SYSTEM_TASK_BREAKDOWN.md` - Audit task breakdown
 - `BEHAVIORAL_COMPLIANCE_FRAMEWORK.md` - Compliance framework
-- `Global Audit Log.md` - Global audit log architecture
-- `Global Event Bus.md` - Global event bus architecture
+- `docs/⭐️/Global Audit Log.md` - Global audit log architecture
+- `docs/⭐️/Global Event Bus.md` - Global event bus architecture
 - `Global-Audit-Log-系統拆解與對齊方案.md` - Audit log alignment plan
 - `Global-Audit-Log-系統拓撲分析與實施路徑.md` - Audit topology analysis
-- `Global全域系統交互拓撲.md` - Global system interaction topology
+- `docs/⭐️/Global全域系統交互拓撲.md` - Global system interaction topology
 - `Heatmap Architecture Diagram.md` - Architecture heatmap
 - `Identity & Auth.md` - Identity & auth strategic design
 - `Shared Module 完整結構樹圖與設計.md` - Shared module design
-- `整體架構設計.md` - Overall architecture design
+- `docs/⭐️/整體架構設計.md` - Overall architecture design
 
 **Sub-directories**:
 - `audit-architecture/` - Audit architecture analysis (4 files)

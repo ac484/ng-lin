@@ -18,3 +18,14 @@ This folder holds AI role and governance artifacts.
 - Behavior guidelines and governance rules
 - Decision checklists and approval workflows
 - Audit and traceability notes for AI activity
+
+
+## Canonical sources
+
+All authoritative AI role definitions and behavior guidelines are maintained in `docs/⭐️/` to avoid drift:
+- `docs/⭐️/🤖AI_Character_Profile_Impl.md`
+- `docs/⭐️/🥚GitHub Platform Architect.md`
+- `docs/⭐️/🧠AI_Behavior_Guidelines.md`
+- `docs/⭐️/📘AI_Character_Profile_Suggest.md`
+
+Use this folder for governance notes or pointers without duplicating the source content.
