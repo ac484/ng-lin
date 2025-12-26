@@ -36,6 +36,40 @@ docs/
 
 ---
 
+## 🧭 GitHub Platform–Aligned Structure
+
+The GitHub Platform Architect view treats GitHub as a governable platform. The structure below reflects that lens and is the target information architecture for all docs.
+
+### Platform Pillars (design)
+
+1. **Strategy & Governance** — ownership models, branching policy, risk gates (PR), compliance invariants.
+2. **Identity, Access & Tenancy** — who can act, which blueprint/organization they belong to, and how context switches.
+3. **Source of Truth & Change Control** — repositories, data contracts, interfaces, and change lifecycles.
+4. **Collaboration & Work Management** — issues/discussions/notifications as the social layer.
+5. **Automation & Delivery** — GitHub Actions/CI/CD, event flows, and workflow contracts.
+6. **Security, Compliance & Auditability** — policies, secrets, audit trails, validation reports.
+7. **Observability & Operations** — monitoring, runbooks, SLIs/SLOs, incident response.
+8. **Enablement & Experience** — onboarding, design system, UI themes, references.
+9. **Legacy / To Consolidate** — historical or duplicate docs awaiting consolidation.
+
+### Classification Map (current docs mapped to pillars)
+
+| Pillar | Current coverage |
+| --- | --- |
+| Strategy & Governance | [⭐️/](./⭐️/) (strategic), [architecture/](./architecture/), [principles/](./principles/), [Standard.md](./Standard.md), [Level.md](./Level.md), [Platform-0.md](./Platform-0.md), [Platform-1.md](./Platform-1.md), [Platform-Contract-Management.md](./Platform-Contract-Management.md), [ng-gighub-tree.md](./ng-gighub-tree.md) |
+| Identity, Access & Tenancy | [identity/](./identity/), [multi-tenancy/](./multi-tenancy/), [account/](./account/) (planned), [role.md](./role.md), [ACCOUNT_CONTEXT_SWITCHER_ANALYSIS.md](./ACCOUNT_CONTEXT_SWITCHER_ANALYSIS.md), [ACCOUNT_REORGANIZATION_SUMMARY.md](./ACCOUNT_REORGANIZATION_SUMMARY.md), [SaaS.md](./SaaS.md), [saas-ddd-structure.md](./saas-ddd-structure.md) |
+| Source of Truth & Change Control | [api/](./api/), [data-model/](./data-model/), [reference/](./reference/), [ROUTE_ARCHITECTURE_ANALYSIS.md](./ROUTE_ARCHITECTURE_ANALYSIS.md), [0.md](./0.md), [Platform-Contract-Management.md](./Platform-Contract-Management.md) |
+| Collaboration & Work Management | (Planned: issues/discussions/notifications) — track gaps in [overview/](./overview/) and [getting-started/](./getting-started/) for contribution; no dedicated docs yet |
+| Automation & Delivery | [deployment/](./deployment/), [event-bus/](./event-bus/), [functions/](./functions/), [dev.md](./dev.md), [Global Event Bus.md](./Global%20Event%20Bus.md), [event-bus(Global Event Bus)-0.md](./event-bus(Global%20Event%20Bus)-0.md) … [event-bus(Global Event Bus)-9.md](./event-bus(Global%20Event%20Bus)-9.md) |
+| Security, Compliance & Auditability | [audit/](./audit/), [security/](./security/), [Global Audit Log.md](./Global%20Audit%20Log.md), [Audit Log.md](./Audit%20Log.md), [Platform-Contract-Management.md](./Platform-Contract-Management.md) (contract controls), [Identity & Auth.md](./Identity%20%26%20Auth.md) |
+| Observability & Operations | [operations/](./operations/), [audit/MONITORING_COST_OPTIMIZATION.md](./audit/MONITORING_COST_OPTIMIZATION.md), [Level.md](./Level.md) (maturity view), [Global全域系統交互拓撲.md](./Global%E5%85%A8%E5%9F%9F%E7%B3%BB%E7%B5%B1%E4%BA%A4%E4%BA%92%E6%8B%93%E6%89%91.md) |
+| Enablement & Experience | [getting-started/](./getting-started/), [overview/](./overview/), [design/](./design/), [ui-theme/](./ui-theme/), [reference/FRONTEND.md](./reference/FRONTEND.md), [overview(總覽)/](./overview(%E7%B8%BD%E8%A6%BD)/) |
+| Legacy / To Consolidate | [architecture(架構)/](./architecture(%E6%9E%B6%E6%A7%8B)/), [getting-started(快速開始)/](./getting-started(%E5%BF%AB%E9%80%9F%E9%96%8B%E5%A7%8B)/), [event-bus(Global Event Bus)-*.md](./event-bus(Global%20Event%20Bus)-0.md), [Platform-0.md](./Platform-0.md) (keep canonical in Strategy), [Platform-1.md](./Platform-1.md) |
+
+Use the table as the canonical mapping when adding or relocating documents; new docs should declare which pillar they belong to in the opening section.
+
+---
+
 ## 🎯 Priority System Features
 
 ### ✅ **Complete Documentation Suites** (Production-Ready)
