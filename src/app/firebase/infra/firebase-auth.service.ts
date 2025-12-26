@@ -25,7 +25,12 @@ export class FirebaseAuthService {
   readonly isAuthenticated = this.state.isAuthenticated;
 
   constructor() {
-    this.user$.subscribe(user => this.state.currentUser.set(user));
+    this.user$.subscribe(user => {
+      this.state.currentUser.set(user);
+      if (!user) {
+        this.tokenService.clear();
+      }
+    });
   }
 
   private runInCtx<T>(fn: () => Promise<T>): Promise<T> {
