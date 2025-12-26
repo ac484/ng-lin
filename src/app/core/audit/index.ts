@@ -27,16 +27,16 @@
  */
 
 // Models (Layer 0)
-export * from './models';
+export * as AuditModels from './models';
 
 // Collectors (Layer 3)
-export * from './collectors';
+export * as AuditCollectors from './collectors';
 
 // Services (Layer 4)
-export * from './services';
+export * as AuditServices from './services';
 
 // Repositories (Layer 5)
-export * from './repositories';
+export * as AuditRepositories from './repositories';
 
 // Query Services (Layer 6)
-export * from './query';
+export * as AuditQuery from './query';

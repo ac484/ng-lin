@@ -1,4 +1,4 @@
-export * from './auth.port';
-export * from './auth.facade';
-export * from './auth.state';
-export * from './firebase-auth.service';
+export { AuthPort } from './auth.port';
+export { AuthFacade } from './auth.facade';
+export { AuthState } from './auth.state';
+export { FirebaseAuthService } from './firebase-auth.service';
