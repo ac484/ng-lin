@@ -44,6 +44,7 @@ export const routes: Routes = [
         pathMatch: 'prefix'
       },
       // Blueprint module - lazy loaded feature module
+      /*
       {
         path: 'blueprints/user',
         loadChildren: () => import('./blueprint/routes/routes').then(m => m.routes),
@@ -54,6 +55,7 @@ export const routes: Routes = [
         loadChildren: () => import('./blueprint/routes/routes').then(m => m.routes),
         data: { title: '組織藍圖' }
       },
+      */
       // Admin - redirect to account/admin
       {
         path: 'admin',

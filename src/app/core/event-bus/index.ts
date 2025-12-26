@@ -11,37 +11,37 @@
  */
 
 // Core models
-export * from './models';
+export * as EventBusModels from './models';
 
 // Interfaces
-export * from './interfaces';
+export * as EventBusInterfaces from './interfaces';
 
 // Implementations
-export * from './implementations';
+export * as EventBusImplementations from './implementations';
 
 // Services (includes base consumer and re-exports of implementations)
-export * from './services';
+export * as EventBusServices from './services';
 
 // Decorators
-export * from './decorators';
+export * as EventBusDecorators from './decorators';
 
 // Constants
-export * from './constants';
+export * as EventBusConstants from './constants';
 
 // Errors
-export * from './errors';
+export * as EventBusErrors from './errors';
 
 // Domain Events (Phase 5)
-export * from './domain-events';
+export * as EventBusDomainEvents from './domain-events';
 
 // Consumers (Phase 5)
-export * from './consumers';
+export * as EventBusConsumers from './consumers';
 
 // Utils
-export * from './utils';
+export * as EventBusUtils from './utils';
 
 // Testing
-export * from './testing';
+export * as EventBusTesting from './testing';
 
 // Examples (for reference and testing)
-export * from './examples';
+export * as EventBusExamples from './examples';

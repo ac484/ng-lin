@@ -2,7 +2,6 @@ import { inject, Injectable } from '@angular/core';
 import { Firestore, addDoc, collection, collectionData, doc, docData, query, updateDoc, where } from '@angular/fire/firestore';
 import { Observable, catchError, combineLatest, map, of } from 'rxjs';
 
-import { LoggerService } from '@core/services';
 import { Organization } from '../models';
 
 @Injectable({
@@ -10,7 +9,6 @@ import { Organization } from '../models';
 })
 export class OrganizationRepository {
   private readonly firestore = inject(Firestore);
-  private readonly logger = inject(LoggerService);
   private readonly collectionRef = collection(this.firestore, 'organizations');
 
   findById(id: string): Observable<Organization | null> {
@@ -19,7 +17,6 @@ export class OrganizationRepository {
     return docData(doc(this.collectionRef, id)).pipe(
       map(data => (data ? ({ ...(data as Organization), id } as Organization) : null)),
       catchError((error: unknown) => {
-        this.logger.error('[OrganizationRepository] findById failed', error);
         return of(null);
       })
     );
@@ -44,7 +41,6 @@ export class OrganizationRepository {
         return Array.from(unique.values());
       }),
       catchError((error: unknown) => {
-        this.logger.error('[OrganizationRepository] findByCreator failed', error);
         return of<Organization[]>([]);
       })
     );

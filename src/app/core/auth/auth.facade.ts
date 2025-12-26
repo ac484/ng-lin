@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { AuthPort } from './auth.port';
-import { FirebaseAuthService } from '../../../firebase/infra/firebase-auth.service';
+import { FirebaseAuthService } from './firebase-auth.service';
 
 /**
  * Application-layer authentication facade.
@@ -13,6 +13,7 @@ export class AuthFacade implements AuthPort {
   readonly user$ = this.impl.user$;
   readonly loading = this.impl.loading;
   readonly isAuthenticated = this.impl.isAuthenticated;
+  readonly currentUserSignal = this.impl.currentUserSignal;
   get currentUser() {
     return this.impl.currentUser;
   }

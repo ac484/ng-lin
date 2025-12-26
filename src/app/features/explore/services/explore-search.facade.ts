@@ -1,6 +1,5 @@
 import { Injectable, signal, computed, inject, Injector, runInInjectionContext } from '@angular/core';
 import { Firestore, collection, query, where, orderBy, limit, getDocs, Timestamp, QueryConstraint } from '@angular/fire/firestore';
-import { LoggerService } from '@core';
 
 import {
   SearchResult,
@@ -79,7 +78,6 @@ interface BlueprintFirestoreDoc {
 export class ExploreSearchFacade {
   // Dependencies
   private readonly firestore = inject(Firestore);
-  private readonly logger = inject(LoggerService);
   private readonly cache = inject(SearchCacheService);
   private readonly injector = inject(Injector);
 
@@ -169,7 +167,6 @@ export class ExploreSearchFacade {
       const cached = this.cache.get(cacheKey);
 
       if (cached) {
-        this.logger.debug('[ExploreSearch] Cache hit:', cacheKey);
         this._allResults.set(cached.results);
         this.applyPagination(cached.results);
         this._loading.set(false);
@@ -212,10 +209,7 @@ export class ExploreSearchFacade {
       // Update state
       this._allResults.set(allResults);
       this.applyPagination(allResults);
-
-      this.logger.info('[ExploreSearch]', `Found ${allResults.length} results for "${sanitizedQuery}"`);
     } catch (error) {
-      this.logger.error('[ExploreSearch]', 'Search failed', error instanceof Error ? error : new Error(String(error)));
       this._error.set('搜尋失敗，請稍後再試。');
     } finally {
       this._loading.set(false);
@@ -340,7 +334,6 @@ export class ExploreSearchFacade {
           return this.transformAccountToResult(doc.id, data, searchQuery);
         });
     } catch (error) {
-      this.logger.error('[ExploreSearch]', 'Account search failed', error instanceof Error ? error : new Error(String(error)));
       return [];
     }
   }
@@ -374,7 +367,6 @@ export class ExploreSearchFacade {
           return this.transformOrganizationToResult(doc.id, data, searchQuery);
         });
     } catch (error) {
-      this.logger.error('[ExploreSearch]', 'Organization search failed', error instanceof Error ? error : new Error(String(error)));
       return [];
     }
   }
@@ -417,7 +409,6 @@ export class ExploreSearchFacade {
           return result.title.toLowerCase().includes(normalizedQuery);
         });
     } catch (error) {
-      this.logger.error('[ExploreSearch]', 'Blueprint search failed', error instanceof Error ? error : new Error(String(error)));
       return [];
     }
   }

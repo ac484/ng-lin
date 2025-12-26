@@ -10,7 +10,7 @@ import {
 } from '@angular/fire/auth';
 import { DA_SERVICE_TOKEN } from '@delon/auth';
 import { Observable } from 'rxjs';
-import { AuthState } from '../../core/data-access/auth/auth.state';
+import { AuthState } from './auth.state';
 
 @Injectable({
   providedIn: 'root'
@@ -23,6 +23,7 @@ export class FirebaseAuthService {
   readonly user$: Observable<User | null> = authState(this.auth);
   readonly loading = this.state.loading.asReadonly();
   readonly isAuthenticated = this.state.isAuthenticated;
+  readonly currentUserSignal = this.state.currentUser.asReadonly();
 
   constructor() {
     this.user$.subscribe(user => {

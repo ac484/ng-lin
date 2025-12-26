@@ -1,35 +1,67 @@
 # Core – AGENTS
 
-# Core – AGENTS
-
-> **📍 Location**: `src/app/core/` - Infrastructure layer  
-> **👆 Parent**: [`../AGENTS.md`](../AGENTS.md) - App root  
+> **📍 Location**: `src/app/core/` – Infrastructure Layer
+> **👆 Parent**: [`../AGENTS.md`](../AGENTS.md) – App root
 > **🔍 Quick Tip**: Working in `core/blueprint/` or `core/net/`? Read their AGENTS.md first.
 
-## Scope
-Platform infrastructure layer (`src/app/core/`). Auth, authorization, data access, interceptors, guards, startup, shared constants, and cross-domain types. No feature UI.
+---
 
-## Purpose
-Provide platform-level capabilities (auth, guards, repositories, logging, validation) that features consume via facades/ports. Keep infrastructure separate from business features.
+## 1️⃣ Scope
 
-## Constraints (Must NOT)
-- ❌ Include feature-specific UI/flows or state
-- ❌ Import from `features/*` (one-way dependency)
-- ❌ Access DA_SERVICE_TOKEN outside auth chain
-- ❌ Put feature Firestore repositories here (belongs in features)
-- ❌ Use constructor injection (use `inject()`)
+Platform infrastructure layer (`src/app/core/`).
+**Contents**:
 
-## Allowed Content
-- ✅ Auth chain (auth.facade.ts, auth.port.ts, infra/firebase-auth.service.ts)
-- ✅ Guards (authGuard, permissionGuard, moduleEnabledGuard)
-- ✅ Interceptors (HTTP, error handling)
-- ✅ Shared repositories (only if truly cross-domain)
-- ✅ Startup services
-- ✅ Logging, validation, permission services
-- ✅ Cross-domain errors, constants, models
-- ✅ Domain-only logic (context, events, validators, errors)
+* Authentication & authorization
+* Data access (cross-domain only)
+* Interceptors, guards
+* Startup & initialization
+* Shared constants, models, types
+* Logging, validation, permission services
 
-## Structure
+> **Note**: No feature-specific UI or business flows should reside here.
+
+---
+
+## 2️⃣ Purpose
+
+Provide **platform-level capabilities** that features consume via facades or ports.
+Keep **infrastructure** separate from **business features**.
+
+**Examples**:
+
+* Auth chain (`auth.facade.ts`, `auth.port.ts`, `infra/firebase-auth.service.ts`)
+* Global guards (`authGuard`, `permissionGuard`)
+* Network interceptors and utilities
+* Shared logging, validation, and permission services
+* Cross-domain models, constants, and error types
+
+---
+
+## 3️⃣ Constraints (Must NOT)
+
+* ❌ Include feature-specific UI, flows, or state
+* ❌ Import anything from `features/*` (one-way dependency only)
+* ❌ Access `DA_SERVICE_TOKEN` outside the auth chain (only inside `auth.facade.ts` / `auth.port.ts`)
+* ❌ Put feature Firestore repositories here (belongs in `features/`)
+* ❌ Use constructor injection (use `inject()` instead)
+
+---
+
+## 4️⃣ Allowed Content
+
+* ✅ Auth chain (`auth.facade.ts`, `auth.port.ts`, `infra/firebase-auth.service.ts`)
+* ✅ Guards (route guards like `authGuard`, `permissionGuard`, `moduleEnabledGuard`)
+* ✅ Interceptors (HTTP, error handling)
+* ✅ Startup services / initialization logic
+* ✅ Logging, validation, permission services
+* ✅ Shared repositories (**only if truly cross-domain**, usable by multiple features)
+* ✅ Cross-domain errors, constants, and models
+* ✅ Domain-only logic (context, events, validators, error types)
+
+---
+
+## 5️⃣ Structure
+
 ```
 core/
 ├── auth/                     # Auth chain (Firebase → @delon/auth)
@@ -37,31 +69,51 @@ core/
 ├── interceptors/             # HTTP interceptors
 ├── net/                      # Network utilities
 ├── startup/                  # App initialization
-├── services/                 # Platform services (logging, etc.)
+├── services/                 # Platform services (logging, validation, permission)
 ├── blueprint/                # Blueprint domain only (no data layer)
 ├── models/                   # Shared domain models
 └── errors/                   # Shared error types
 ```
 
-## Dependencies
-**Depends on**: @angular/fire, @delon/auth, Angular DI  
-**Used by**: `features/*`, `routes/*`, `layout/*`
+---
 
-## Key Rules
-1. **Core vs Features**:
-   - **Core**: Cross-domain reusable, global singletons, auth/authorization, network, logging, configuration, pure domain rules
-   - **Features**: Business flows + UI (routes/components/stores/services), feature-specific Firestore via @angular/fire
-2. **Three layers**: UI → Service/Facade → Repository (Firestore only in repos)
-3. **Auth chain**: @angular/fire/auth → @delon/auth → DA_SERVICE_TOKEN
-4. **No feature data**: Blueprint/Account Firestore repos belong in `features/`
-5. **Async**: Use Result pattern, explicit error types
-6. **DI**: Use `inject()` exclusively
+## 6️⃣ Dependencies
 
-## Related
-- `../features/AGENTS.md` - When to use features
-- `../routes/AGENTS.md` - Route guards integration
-- `blueprint/AGENTS.md` - Blueprint domain vs data layer
-- `net/AGENTS.md` - Network utilities
+* **Depends on**: `@angular/fire`, `@delon/auth`, Angular DI (for platform services)
+* **Used by**: `features/*`, `routes/*`, `layout/*`
+
+> **Tip**: Pure domain modules (models, errors) do **not** require Angular.
 
 ---
-Version: 1.2.0 | Updated: 2025-12-25 | Status: Active
+
+## 7️⃣ Key Rules
+
+1. **Core vs Features**
+
+   * **Core**: Cross-domain reusable modules, global singletons, auth/authorization, network, logging, configuration, pure domain rules
+   * **Features**: Business flows + UI (routes/components/stores/services), feature-specific Firestore repositories
+2. **Layering**
+   UI → Service / Facade → Repository (Firestore only in features’ repositories)
+3. **Auth Chain Flow**
+   `@angular/fire/auth` → `@delon/auth` → `DA_SERVICE_TOKEN`
+4. **No feature data in core**
+   Blueprint / Account Firestore repositories belong in `features/`
+5. **Async & Error Handling**
+   Use Result pattern, explicit error types
+6. **Dependency Injection**
+   Use `inject()` exclusively, avoid constructor injection
+
+---
+
+## 8️⃣ Related
+
+* `../features/AGENTS.md` – When to use features
+* `../routes/AGENTS.md` – Route guards integration
+* `blueprint/AGENTS.md` – Blueprint domain vs data layer
+* `net/AGENTS.md` – Network utilities
+
+---
+
+**Version**: 1.2.1 | **Updated**: 2025-12-27 | **Status**: Active
+
+---

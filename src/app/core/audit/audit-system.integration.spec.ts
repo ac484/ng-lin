@@ -35,7 +35,6 @@ import { of, throwError } from 'rxjs';
 
 // Core Services
 import { BlueprintEventBus } from '@core/services/blueprint-event-bus.service';
-import { LoggerService } from '@core/services/logger';
 import { TenantContextService } from '@core/event-bus/services/tenant-context.service';
 
 // Audit Infrastructure
@@ -59,19 +58,25 @@ describe('Audit System Integration Tests', () => {
   let queryService: AuditQueryService;
   let eventBus: jasmine.SpyObj<BlueprintEventBus>;
   let firestoreMock: jasmine.SpyObj<Firestore>;
-  let loggerMock: jasmine.SpyObj<LoggerService>;
   let tenantContextMock: jasmine.SpyObj<TenantContextService>;
+  let infoSpy: jasmine.Spy<(...args: any[]) => any>;
+  let debugSpy: jasmine.Spy<(...args: any[]) => any>;
+  let warnSpy: jasmine.Spy<(...args: any[]) => any>;
+  let errorSpy: jasmine.Spy<(...args: any[]) => any>;
 
   beforeEach(() => {
     // Create mocks
     eventBus = jasmine.createSpyObj('BlueprintEventBus', ['subscribe', 'publish']);
     firestoreMock = jasmine.createSpyObj('Firestore', ['collection', 'doc']);
-    loggerMock = jasmine.createSpyObj('LoggerService', ['debug', 'info', 'warn', 'error']);
     tenantContextMock = jasmine.createSpyObj('TenantContextService', ['getCurrentTenantId']);
 
     // Default mock behaviors
     eventBus.subscribe.and.returnValue(of());
     tenantContextMock.getCurrentTenantId.and.returnValue('tenant-test-001');
+    infoSpy = spyOn(console, 'info');
+    debugSpy = spyOn(console, 'debug');
+    warnSpy = spyOn(console, 'warn');
+    errorSpy = spyOn(console, 'error');
 
     TestBed.configureTestingModule({
       providers: [
@@ -81,7 +86,6 @@ describe('Audit System Integration Tests', () => {
         AuditQueryService,
         { provide: BlueprintEventBus, useValue: eventBus },
         { provide: Firestore, useValue: firestoreMock },
-        { provide: LoggerService, useValue: loggerMock },
         { provide: TenantContextService, useValue: tenantContextMock }
       ]
     });
@@ -172,7 +176,7 @@ describe('Audit System Integration Tests', () => {
       tick(5000); // Trigger batch flush
 
       // All events should be collected and classified
-      expect(loggerMock.debug).toHaveBeenCalled();
+      expect(debugSpy).toHaveBeenCalled();
 
       flush();
     }));
@@ -199,7 +203,7 @@ describe('Audit System Integration Tests', () => {
       // Batch should auto-flush at 50 events
       tick(100); // Small delay for processing
 
-      expect(loggerMock.debug).toHaveBeenCalled();
+      expect(debugSpy).toHaveBeenCalled();
 
       flush();
     }));
@@ -220,7 +224,7 @@ describe('Audit System Integration Tests', () => {
       // Wait 5 seconds for time-based flush
       tick(5000);
 
-      expect(loggerMock.debug).toHaveBeenCalled();
+      expect(debugSpy).toHaveBeenCalled();
 
       flush();
     }));
@@ -268,7 +272,7 @@ describe('Audit System Integration Tests', () => {
       }
 
       // Circuit breaker should be open
-      expect(loggerMock.error).toHaveBeenCalledWith(jasmine.stringContaining('Circuit breaker'), jasmine.any(Object));
+      expect(errorSpy).toHaveBeenCalledWith(jasmine.stringContaining('Circuit breaker'), jasmine.any(Object));
 
       flush();
     }));
@@ -293,7 +297,7 @@ describe('Audit System Integration Tests', () => {
       tick(60000);
 
       // Circuit breaker should attempt recovery
-      expect(loggerMock.warn).toHaveBeenCalledWith(jasmine.stringContaining('Circuit breaker'), jasmine.any(Object));
+      expect(warnSpy).toHaveBeenCalledWith(jasmine.stringContaining('Circuit breaker'), jasmine.any(Object));
 
       flush();
     }));
@@ -671,7 +675,7 @@ describe('Audit System Integration Tests', () => {
       }
 
       // All events should be processed without memory leaks
-      expect(loggerMock.debug).toHaveBeenCalled();
+      expect(debugSpy).toHaveBeenCalled();
 
       flush();
     }));
@@ -707,7 +711,7 @@ describe('Audit System Integration Tests', () => {
       auditRepository.create(event as AuditEvent).catch(error => {
         expect(error.message).toBe('Storage failure');
         // DLQ should capture failed event
-        expect(loggerMock.error).toHaveBeenCalled();
+        expect(errorSpy).toHaveBeenCalled();
       });
 
       tick();
@@ -747,7 +751,7 @@ describe('Audit System Integration Tests', () => {
       // Trigger service destruction
       TestBed.resetTestingModule();
 
-      expect(loggerMock.info).toHaveBeenCalledWith(jasmine.stringContaining('statistics'), jasmine.any(Object));
+      expect(infoSpy).toHaveBeenCalledWith(jasmine.stringContaining('statistics'), jasmine.any(Object));
     });
   });
 });

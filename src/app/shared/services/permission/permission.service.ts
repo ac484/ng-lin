@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
-import { AuthFacade, LoggerService, BlueprintRole } from '@core';
-import { BlueprintMemberRepository } from '@core/blueprint/repositories';
+//import { AuthFacade, LoggerService, BlueprintRole } from '@core';
+//import { BlueprintMemberRepository } from '@core/blueprint/repositories';
 import { Observable, map, of } from 'rxjs';
 
 /**
@@ -16,19 +16,24 @@ import { Observable, map, of } from 'rxjs';
   providedIn: 'root'
 })
 export class PermissionService {
-  private readonly auth = inject(AuthFacade);
-  private readonly memberRepository = inject(BlueprintMemberRepository);
-  private readonly logger = inject(LoggerService);
+  // private readonly auth = inject(AuthFacade);
+  // private readonly memberRepository = inject(BlueprintMemberRepository);
+  // private readonly logger = inject(LoggerService);
 
   // Cache for blueprint permissions
   private permissionCache = new Map<string, { permissions: any; timestamp: number }>();
   private readonly CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+  // NOTE: The runtime implementations below are temporarily disabled
+  // by keeping the original code as comments and providing conservative
+  // stub implementations so the API surface remains unchanged.
+  // Restore the commented code to re-enable blueprint permissions.
 
   /**
    * Check if current user can read blueprint
    * 檢查當前使用者是否可讀取藍圖
    */
   canReadBlueprint(blueprintId: string): Observable<boolean> {
+    /*
     const user = this.auth.currentUser;
     if (!user) {
       return of(false);
@@ -52,6 +57,10 @@ export class PermissionService {
         return canRead;
       })
     );
+    */
+
+    // Stub: deny by default while blueprint features are disabled.
+    return of(false);
   }
 
   /**
@@ -59,6 +68,7 @@ export class PermissionService {
    * 檢查當前使用者是否可編輯藍圖
    */
   canEditBlueprint(blueprintId: string): Observable<boolean> {
+    /*
     const user = this.auth.currentUser;
     if (!user) {
       return of(false);
@@ -79,6 +89,10 @@ export class PermissionService {
         return !!canEdit;
       })
     );
+    */
+
+    // Stub: deny by default
+    return of(false);
   }
 
   /**
@@ -86,6 +100,7 @@ export class PermissionService {
    * 檢查當前使用者是否可刪除藍圖
    */
   canDeleteBlueprint(blueprintId: string): Observable<boolean> {
+    /*
     const user = this.auth.currentUser;
     if (!user) {
       return of(false);
@@ -106,6 +121,10 @@ export class PermissionService {
         return !!canDelete;
       })
     );
+    */
+
+    // Stub: deny by default
+    return of(false);
   }
 
   /**
@@ -113,6 +132,7 @@ export class PermissionService {
    * 檢查當前使用者是否可管理成員
    */
   canManageMembers(blueprintId: string): Observable<boolean> {
+    /*
     const user = this.auth.currentUser;
     if (!user) {
       return of(false);
@@ -133,6 +153,10 @@ export class PermissionService {
         return !!canManageMembers;
       })
     );
+    */
+
+    // Stub: deny by default
+    return of(false);
   }
 
   /**
@@ -140,7 +164,9 @@ export class PermissionService {
    * 檢查當前使用者是否可管理設定
    */
   canManageSettings(blueprintId: string): Observable<boolean> {
-    return this.canManageMembers(blueprintId); // Same permission level
+    // Original implementation delegated to canManageMembers; keep as stub.
+    // return this.canManageMembers(blueprintId);
+    return of(false);
   }
 
   /**
@@ -154,6 +180,7 @@ export class PermissionService {
     canManageMembers: boolean;
     canManageSettings: boolean;
   }> {
+    /*
     const user = this.auth.currentUser;
     if (!user) {
       return of({
@@ -202,6 +229,16 @@ export class PermissionService {
         return permissions;
       })
     );
+    */
+
+    // Stub: conservative deny-all permissions while disabled
+    return of({
+      canRead: false,
+      canEdit: false,
+      canDelete: false,
+      canManageMembers: false,
+      canManageSettings: false
+    });
   }
 
   /**
@@ -209,6 +246,7 @@ export class PermissionService {
    * 清除權限快取
    */
   clearCache(blueprintId?: string): void {
+    /*
     if (blueprintId) {
       this.permissionCache.delete(blueprintId);
       this.logger.debug('[PermissionService]', `Cleared cache for ${blueprintId}`);
@@ -216,6 +254,8 @@ export class PermissionService {
       this.permissionCache.clear();
       this.logger.debug('[PermissionService]', 'Cleared all permission cache');
     }
+    */
+    // No-op while permissions are disabled
   }
 
   /**
@@ -223,10 +263,14 @@ export class PermissionService {
    * 從快取取得
    */
   private getFromCache(blueprintId: string): { permissions: any; timestamp: number } | null {
+    /*
     const cached = this.permissionCache.get(blueprintId);
     if (cached && Date.now() - cached.timestamp < this.CACHE_TTL) {
       return cached;
     }
+    return null;
+    */
+
     return null;
   }
 
@@ -235,9 +279,12 @@ export class PermissionService {
    * 快取權限
    */
   private cachePermissions(blueprintId: string, permissions: any): void {
+    /*
     this.permissionCache.set(blueprintId, {
       permissions,
       timestamp: Date.now()
     });
+    */
+    // No-op while permissions are disabled
   }
 }

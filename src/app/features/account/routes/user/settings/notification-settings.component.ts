@@ -25,7 +25,6 @@
  */
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { NotificationStore } from '@core/account/stores/notification.store';
-import { LoggerService } from '@core/services/logger/logger.service';
 import { SHARED_IMPORTS } from '@shared';
 
 @Component({
@@ -130,7 +129,6 @@ import { SHARED_IMPORTS } from '@shared';
 export class NotificationSettingsComponent {
   // Properly inject services following separation of concerns
   private readonly notificationStore = inject(NotificationStore);
-  private readonly logger = inject(LoggerService);
 
   // UI state
   private readonly _userId = signal<string>('current-user'); // TODO: Get from auth service
@@ -151,10 +149,9 @@ export class NotificationSettingsComponent {
   async loadNotifications(): Promise<void> {
     try {
       const userId = this._userId();
-      this.logger.info('[NotificationSettingsComponent]', 'Loading notifications for user', userId);
       await this.notificationStore.loadNotifications(userId);
     } catch (error) {
-      this.logger.error('[NotificationSettingsComponent]', 'Failed to load notifications', error as Error);
+      // no-op logging placeholder
     }
   }
 
@@ -173,9 +170,8 @@ export class NotificationSettingsComponent {
       const userId = this._userId();
       // Clear all notification types - adjust based on your notification types
       await this.notificationStore.clearByType(userId, 'all');
-      this.logger.info('[NotificationSettingsComponent]', 'Cleared all notifications');
     } catch (error) {
-      this.logger.error('[NotificationSettingsComponent]', 'Failed to clear notifications', error as Error);
+      // no-op logging placeholder
     }
   }
 
