@@ -13,11 +13,13 @@
 - `docs/identity-tenancy/identity/` 下六份核心文檔：`API_REFERENCE.md`, `DEPLOYMENT_GUIDE.md`, `PRODUCTION_RUNBOOK.md`, `PRODUCTION_READINESS_CHECKLIST.md`, `MONITORING_COST_OPTIMIZATION.md`, `VALIDATION_REPORT.md`
 - `docs/identity-tenancy/README.md`（範圍總覽）
 
-## 待審／可能移除或合併
+## 已移除（減法落地）
 - `docs/identity-tenancy/ACCOUNT_CONTEXT_SWITCHER_ANALYSIS.md`
 - `docs/identity-tenancy/ACCOUNT_REORGANIZATION_SUMMARY.md`
 - `docs/identity-tenancy/saas-ddd-structure.md`
 - `docs/identity-tenancy/SaaS.md`
+
+## 待審／可能移除或合併
 - `docs/identity-tenancy/multi-tenancy/` 下文檔（需確認是否與母體多租戶敘事重複）
 - `docs/⭐️/Identity & Auth.md` 與本目錄內容的重複段落（需去重或引用）
 
