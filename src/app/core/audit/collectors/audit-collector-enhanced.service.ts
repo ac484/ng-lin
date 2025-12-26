@@ -31,18 +31,19 @@ import { interval, Subject } from 'rxjs';
 import { buffer, filter } from 'rxjs/operators';
 
 // Existing infrastructure
-import { BlueprintEventBus } from '@core/services/blueprint-event-bus.service';
+import { InMemoryEventBus } from '@core/event-bus/implementations/in-memory';
 import { TenantContextService } from '@core/event-bus/services/tenant-context.service';
 import { DomainEvent } from '@core/event-bus/models/base-event';
 
 // New audit infrastructure
 import { ClassificationEngineService } from '../services/classification-engine.service';
-import { PolicyEngineService } from '../services/policy-engine.service';
+import { PolicyDecision, PolicyEngineService } from '../services/policy-engine.service';
 import { AuditEventRepository } from '../repositories/audit-event.repository';
 import { AuditEvent } from '../models/audit-event.interface';
 import { EventCategory } from '../models/event-category.enum';
 import { EventSeverity } from '../models/event-severity.enum';
 import { StorageTier } from '../models/storage-tier.enum';
+import { AuditPolicyDecisionEvent } from '../events/audit-policy-decision.event';
 
 /**
  * Batch collection configuration
@@ -85,7 +86,7 @@ const AUDIT_TOPIC_PATTERNS = [
 @Injectable({ providedIn: 'root' })
 export class AuditCollectorEnhancedService implements OnDestroy {
   // Dependencies
-  private eventBus = inject(BlueprintEventBus);
+  private eventBus = inject(InMemoryEventBus);
   private classificationEngine = inject(ClassificationEngineService);
   private policyEngine = inject(PolicyEngineService);
   private auditRepository = inject(AuditEventRepository);
@@ -130,24 +131,23 @@ export class AuditCollectorEnhancedService implements OnDestroy {
    * Following existing patterns from audit-auto-subscription.service.ts
    */
   private initializeEventSubscriptions(): void {
-    this.logger.debug('[AuditCollectorEnhanced]', `Subscribing to ${AUDIT_TOPIC_PATTERNS.length} topic patterns`);
+    this.eventBus
+      .observeAll()
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        filter((event: DomainEvent) => this.matchesTopic(event.eventType))
+      )
+      .subscribe({
+        next: (event: DomainEvent) => {
+          this.stats.eventsCollected++;
+          this.eventBuffer$.next(event);
+        },
+        error: error => {
+          this.logger.error('[AuditCollectorEnhanced]', 'Subscription error', error);
+        }
+      });
 
-    AUDIT_TOPIC_PATTERNS.forEach(pattern => {
-      this.eventBus
-        .subscribe(pattern)
-        .pipe(takeUntilDestroyed(this.destroyRef))
-        .subscribe({
-          next: (event: DomainEvent) => {
-            this.stats.eventsCollected++;
-            this.eventBuffer$.next(event);
-          },
-          error: error => {
-            this.logger.error('[AuditCollectorEnhanced]', `Subscription error for ${pattern}`, error);
-          }
-        });
-    });
-
-    this.logger.info('[AuditCollectorEnhanced]', 'Event subscriptions initialized successfully');
+    this.logger.info('[AuditCollectorEnhanced]', `Event subscriptions initialized successfully (${AUDIT_TOPIC_PATTERNS.length} patterns)`);
   }
 
   /**
@@ -201,6 +201,7 @@ export class AuditCollectorEnhancedService implements OnDestroy {
       const auditEvents = domainEvents.map(event => this.convertDomainEventToAuditEvent(event));
 
       // Apply policy/rules before classification
+      const notifications: Array<{ event: AuditEvent; decision: PolicyDecision }> = [];
       const filteredEvents = auditEvents
         .map(event => {
           const decision = this.policyEngine.evaluate(event);
@@ -222,7 +223,10 @@ export class AuditCollectorEnhancedService implements OnDestroy {
             autoReviewRequired: decision.action === 'flag' || decision.action === 'escalate' || event.autoReviewRequired
           };
 
-          // Future: emit alert/notification via event-bus when decision.notify is true
+          if ((decision.action === 'flag' || decision.action === 'escalate') && decision.notify) {
+            notifications.push({ event: augmented, decision });
+          }
+
           return augmented;
         })
         .filter((event): event is AuditEvent => !!event);
@@ -245,6 +249,9 @@ export class AuditCollectorEnhancedService implements OnDestroy {
       // Persist batch to Firestore
       await this.auditRepository.createBatch(classifiedEvents);
 
+      // Emit notifications for flagged/escalated decisions
+      await this.emitPolicyNotifications(notifications);
+
       this.stats.eventsPersisted += classifiedEvents.length;
       this.stats.batchesFlushed++;
       this.resetCircuitBreaker(); // Success - reset failure counter
@@ -262,6 +269,8 @@ export class AuditCollectorEnhancedService implements OnDestroy {
   private convertDomainEventToAuditEvent(domainEvent: DomainEvent): AuditEvent {
     const tenantId = this.extractTenantId(domainEvent);
 
+    const eventType = (domainEvent as any).eventType || (domainEvent as any).type;
+
     return {
       id: '', // Will be set by repository
       blueprintId: tenantId || domainEvent.blueprintId || 'unknown',
@@ -277,7 +286,7 @@ export class AuditCollectorEnhancedService implements OnDestroy {
       },
 
       // Event details
-      eventType: domainEvent.type,
+      eventType: eventType,
       category: EventCategory.SYSTEM_EVENT, // Will be overridden by classification
       level: EventSeverity.LOW, // Will be overridden by classification
 
@@ -291,7 +300,7 @@ export class AuditCollectorEnhancedService implements OnDestroy {
         : undefined,
 
       // Operation tracking
-      operationType: this.inferOperationType(domainEvent.type),
+      operationType: eventType ? this.inferOperationType(eventType) : undefined,
 
       // Change tracking
       changes: domainEvent.changes || undefined,
@@ -300,7 +309,7 @@ export class AuditCollectorEnhancedService implements OnDestroy {
       riskScore: 0,
       complianceTags: [],
       autoReviewRequired: false,
-      aiGenerated: domainEvent.type.startsWith('ai.'),
+      aiGenerated: eventType ? eventType.startsWith('ai.') : false,
 
       // Storage management
       storageTier: StorageTier.HOT,
@@ -492,5 +501,39 @@ export class AuditCollectorEnhancedService implements OnDestroy {
   ngOnDestroy(): void {
     this.logger.info('[AuditCollectorEnhanced]', 'Shutting down', this.getStatistics());
     this.eventBuffer$.complete();
+  }
+
+  /**
+   * Check if the event type matches any configured topic pattern
+   */
+  private matchesTopic(eventType: string): boolean {
+    return AUDIT_TOPIC_PATTERNS.some(pattern => {
+      if (pattern.endsWith('.*')) {
+        const prefix = pattern.slice(0, -2);
+        return eventType.startsWith(prefix);
+      }
+      if (pattern.endsWith('*')) {
+        const prefix = pattern.slice(0, -1);
+        return eventType.startsWith(prefix);
+      }
+      return eventType === pattern;
+    });
+  }
+
+  /**
+   * Emit policy notifications for flagged/escalated events.
+   */
+  private async emitPolicyNotifications(notifications: Array<{ event: AuditEvent; decision: PolicyDecision }>): Promise<void> {
+    if (!notifications.length) return;
+
+    const domainEvents = notifications.map(
+      ({ event, decision }) =>
+        new AuditPolicyDecisionEvent({
+          auditEvent: event,
+          decision
+        })
+    );
+
+    await this.eventBus.publishBatch(domainEvents);
   }
 }

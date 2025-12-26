@@ -29,6 +29,9 @@
 // Models (Layer 0)
 export * as AuditModels from './models';
 
+// Events (Layer 1)
+export * as AuditEvents from './events';
+
 // Collectors (Layer 3)
 export * as AuditCollectors from './collectors';
 

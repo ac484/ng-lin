@@ -14,14 +14,15 @@
  * @date 2025-12-26
  */
 
-import { TestBed, fakeAsync, tick, flush } from '@angular/core/testing';
+import { TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { DestroyRef } from '@angular/core';
 import { Subject } from 'rxjs';
 
 import { AuditCollectorEnhancedService } from './audit-collector-enhanced.service';
-import { BlueprintEventBus } from '@core/services/blueprint-event-bus.service';
+import { InMemoryEventBus } from '@core/event-bus/implementations/in-memory';
 import { TenantContextService } from '@core/event-bus/services/tenant-context.service';
 import { ClassificationEngineService } from '../services/classification-engine.service';
+import { PolicyEngineService } from '../services/policy-engine.service';
 import { AuditEventRepository } from '../repositories/audit-event.repository';
 import { EventCategory } from '../models/event-category.enum';
 import { EventSeverity } from '../models/event-severity.enum';
@@ -29,14 +30,15 @@ import { StorageTier } from '../models/storage-tier.enum';
 
 describe('AuditCollectorEnhancedService', () => {
   let service: AuditCollectorEnhancedService;
-  let mockEventBus: jasmine.SpyObj<BlueprintEventBus>;
+  let mockEventBus: jasmine.SpyObj<InMemoryEventBus>;
   let mockClassificationEngine: jasmine.SpyObj<ClassificationEngineService>;
+  let mockPolicyEngine: jasmine.SpyObj<PolicyEngineService>;
   let mockAuditRepository: jasmine.SpyObj<AuditEventRepository>;
   let mockTenantContext: jasmine.SpyObj<TenantContextService>;
   let infoSpy: jasmine.Spy<(...args: any[]) => any>;
 
   const createMockDomainEvent = (overrides: any = {}) => ({
-    type: 'task.created',
+    eventType: 'task.created',
     blueprintId: 'blueprint-123',
     timestamp: new Date(),
     userId: 'user-123',
@@ -56,8 +58,10 @@ describe('AuditCollectorEnhancedService', () => {
   beforeEach(() => {
     // Create mock services
     const eventBusSubject = new Subject();
-    mockEventBus = jasmine.createSpyObj('BlueprintEventBus', ['subscribe']);
-    mockEventBus.subscribe.and.returnValue(eventBusSubject.asObservable());
+    mockEventBus = jasmine.createSpyObj('InMemoryEventBus', ['observeAll', 'publish', 'publishBatch']);
+    mockEventBus.observeAll.and.returnValue(eventBusSubject.asObservable());
+    mockEventBus.publish.and.returnValue(Promise.resolve());
+    mockEventBus.publishBatch.and.returnValue(Promise.resolve());
 
     mockClassificationEngine = jasmine.createSpyObj('ClassificationEngineService', ['classify']);
     mockClassificationEngine.classify.and.returnValue({
@@ -69,6 +73,13 @@ describe('AuditCollectorEnhancedService', () => {
       aiDecision: undefined,
       processingTimeMs: 5
     });
+
+    mockPolicyEngine = jasmine.createSpyObj('PolicyEngineService', ['evaluate']);
+    mockPolicyEngine.evaluate.and.callFake(() => ({
+      action: 'allow',
+      rule: 'default-allow',
+      reasons: ['test']
+    }));
 
     mockAuditRepository = jasmine.createSpyObj('AuditEventRepository', ['create', 'createBatch']);
     mockAuditRepository.create.and.returnValue(Promise.resolve({ id: 'audit-001' } as any));
@@ -85,8 +96,9 @@ describe('AuditCollectorEnhancedService', () => {
     TestBed.configureTestingModule({
       providers: [
         AuditCollectorEnhancedService,
-        { provide: BlueprintEventBus, useValue: mockEventBus },
+        { provide: InMemoryEventBus, useValue: mockEventBus },
         { provide: ClassificationEngineService, useValue: mockClassificationEngine },
+        { provide: PolicyEngineService, useValue: mockPolicyEngine },
         { provide: AuditEventRepository, useValue: mockAuditRepository },
         { provide: TenantContextService, useValue: mockTenantContext },
         DestroyRef
@@ -101,15 +113,8 @@ describe('AuditCollectorEnhancedService', () => {
       expect(service).toBeTruthy();
     });
 
-    it('should subscribe to 11 audit topic patterns', () => {
-      // Service subscribes in constructor
-      expect(mockEventBus.subscribe).toHaveBeenCalledTimes(11);
-      expect(mockEventBus.subscribe).toHaveBeenCalledWith('blueprint.*');
-      expect(mockEventBus.subscribe).toHaveBeenCalledWith('task.*');
-      expect(mockEventBus.subscribe).toHaveBeenCalledWith('user.*');
-      expect(mockEventBus.subscribe).toHaveBeenCalledWith('auth.*');
-      expect(mockEventBus.subscribe).toHaveBeenCalledWith('ai.*');
-      expect(mockEventBus.subscribe).toHaveBeenCalledWith('system.*');
+    it('should observe the event bus stream', () => {
+      expect(mockEventBus.observeAll).toHaveBeenCalledTimes(1);
     });
 
     it('should initialize batch processing', () => {
@@ -179,29 +184,20 @@ describe('AuditCollectorEnhancedService', () => {
   });
 
   describe('Batch Processing', () => {
-    it('should flush batch when size limit reached', fakeAsync(() => {
-      // Simulate 50 events (batch size limit)
-      for (let i = 0; i < 50; i++) {
-        service.recordAuditEvent(`blueprint-${i}`, 'test.event', 'user-123');
-      }
+    it('should collect and persist events from the bus', fakeAsync(() => {
+      const eventBusSubject = new Subject<any>();
+      mockEventBus.observeAll.and.returnValue(eventBusSubject.asObservable());
 
-      tick(6000); // Wait for batch timer
+      service = TestBed.inject(AuditCollectorEnhancedService);
 
-      // Should have flushed at least once
-      expect(mockAuditRepository.create).toHaveBeenCalled();
+      const domainEvent = createMockDomainEvent();
+      eventBusSubject.next(domainEvent as any);
 
-      const stats = service.getStatistics();
-      expect(stats.eventsCollected).toBeGreaterThan(0);
-    }));
-
-    it('should flush batch after time limit', fakeAsync(() => {
-      // Add single event
-      service.recordAuditEvent('blueprint-123', 'test.event', 'user-123');
-
-      // Don't reach size limit, but wait for time trigger
       tick(6000);
 
-      expect(mockAuditRepository.create).toHaveBeenCalled();
+      expect(mockAuditRepository.createBatch).toHaveBeenCalled();
+      const stats = service.getStatistics();
+      expect(stats.eventsCollected).toBeGreaterThan(0);
     }));
   });
 
@@ -238,6 +234,22 @@ describe('AuditCollectorEnhancedService', () => {
       expect(persistedEvent.riskScore).toBe(95);
       expect(persistedEvent.complianceTags).toContain('GDPR');
       expect(persistedEvent.complianceTags).toContain('HIPAA');
+    }));
+  });
+
+  describe('Policy notifications', () => {
+    it('should publish notification events for escalations', fakeAsync(() => {
+      mockPolicyEngine.evaluate.and.returnValue({
+        action: 'escalate',
+        rule: 'escalate-test',
+        reasons: ['escalate'],
+        notify: true
+      });
+
+      service.recordAuditEvent('blueprint-123', 'security.alert', 'user-123');
+      tick(6000);
+
+      expect(mockEventBus.publishBatch).toHaveBeenCalled();
     }));
   });
 
