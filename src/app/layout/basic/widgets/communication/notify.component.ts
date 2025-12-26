@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, effect, inject } from '@angular/core';
 import { NotificationStore } from '@core/account/stores/notification.store';
-import { AuthFacade } from '@core/data-access/auth/auth.facade';
+import { AuthFacade } from '@core/auth';
 import { NoticeIconModule, NoticeIconSelect } from '@delon/abc/notice-icon';
 import { NzMessageService } from 'ng-zorro-antd/message';
 

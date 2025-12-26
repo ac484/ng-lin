@@ -2,7 +2,7 @@ export * from './i18n/i18n.service';
 export * from './net/index';
 export * from './startup/startup.service';
 export * from './start-page.guard';
-export * from './data-access/auth';
+export * from './auth';
 export * from '../features/account/core';
 // 暫時註解：暫時停用 Blueprint domain 的 re-exports
 // export { ModuleType, ModuleState } from '../features/blueprint/core/domain/types';
