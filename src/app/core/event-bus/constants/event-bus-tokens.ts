@@ -5,9 +5,11 @@
  * Allows switching between in-memory, Firebase, Supabase implementations.
  */
 
-import { InjectionToken } from '@angular/core';
+import { InjectionToken, inject } from '@angular/core';
 import { IEventBus } from '../interfaces/event-bus.interface';
 import { IEventStore } from '../interfaces/event-store.interface';
+import { InMemoryEventBus } from '../implementations/in-memory/in-memory-event-bus';
+import { HybridEventStore } from '../implementations/hybrid/hybrid-event-store';
 
 /**
  * Injection token for Event Bus implementation
@@ -25,11 +27,9 @@ import { IEventStore } from '../interfaces/event-store.interface';
 export const EVENT_BUS = new InjectionToken<IEventBus>('EVENT_BUS', {
   providedIn: 'root',
   factory: () => {
-    // Default to in-memory implementation
-    // Override in providers to use Firebase/Supabase
-    throw new Error(
-      'EVENT_BUS not provided. Configure event bus in app providers.'
-    );
+    // Default to in-memory implementation for safety.
+    // Override in app.providers to swap backend (Firebase/Supabase).
+    return inject(InMemoryEventBus);
   },
 });
 
@@ -48,9 +48,8 @@ export const EVENT_BUS = new InjectionToken<IEventBus>('EVENT_BUS', {
 export const EVENT_STORE = new InjectionToken<IEventStore>('EVENT_STORE', {
   providedIn: 'root',
   factory: () => {
-    throw new Error(
-      'EVENT_STORE not provided. Configure event store in app providers.'
-    );
+    // Default to hybrid store (in-memory + Firestore).
+    return inject(HybridEventStore);
   },
 });
 
