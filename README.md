@@ -99,10 +99,17 @@ ng-gighub/
 │   ├── functions-event/         # 事件處理功能
 │   ├── functions-integration/   # 第三方整合功能
 │   └── functions-scheduler/     # 定時任務功能
-├── docs/                        # 專案文檔
-│   ├── architecture/            # 架構設計文檔
-│   ├── analysis/                # 分析報告文檔
-│   └── discussions/             # 開發規劃文檔
+├── docs/                        # 平台文檔（詳見 docs/README.md 與 docs/INDEX.md）
+│   ├── strategy-governance/     # 架構視圖、原則、總覽
+│   ├── automation-delivery/     # CI/CD、Event Bus、部署手冊
+│   ├── identity-tenancy/        # 身份驗證與多租戶作業套件
+│   ├── change-control/          # API 合約與資料模型
+│   ├── enablement-experience/   # 設計系統、UI 主題、入門指南
+│   ├── security-compliance/     # 安全基線與審計文件
+│   ├── observability-operations/# 監控摘要與 Runbook
+│   ├── ai-governance/           # AI 治理指引
+│   ├── reference/               # 跨域參考文件
+│   └── legacy-archive/          # 歷史/待整合文件
 ├── .github/                     # GitHub 設定
 │   ├── copilot-instructions.md  # GitHub Copilot 指引
 │   ├── instructions/            # 詳細開發指引
@@ -144,30 +151,28 @@ ng-gighub/
 
 ### 開發者必讀
 
-- **[docs/README.md](docs/README.md)** - 文檔總覽與導航
-- **[原則.md](原則.md)** - GigHub 系統設計原則
-- **[Task.md](Task.md)** - 需求提交模板
+- **[docs/README.md](docs/README.md)** - 文檔總覽與治理規則
+- **[docs/INDEX.md](docs/INDEX.md)** - 完整文件索引與路線圖
 - **[AGENTS.md](AGENTS.md)** - AI Agent 使用指南
 
 ### 架構與設計
 
-- **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)** - 系統架構總覽
-- **[docs/architecture/](docs/architecture/)** - 詳細架構文檔
-- **[docs/blueprint-ownership-membership.md](docs/blueprint-ownership-membership.md)** - Blueprint 權限模型
+- **[strategy-governance/architecture/01-architecture-overview.md](docs/strategy-governance/architecture/01-architecture-overview.md)** - 系統架構總覽
+- **[strategy-governance/principles/01-principles-core-principles.md](docs/strategy-governance/principles/01-principles-core-principles.md)** - 核心原則
+- **[enablement-experience/design/06-blueprint-ownership-membership.md](docs/enablement-experience/design/06-blueprint-ownership-membership.md)** - Blueprint 權限模型
 
 ### 實作指引
 
-- **[docs/IMPLEMENTATION_PROGRESS.md](docs/IMPLEMENTATION_PROGRESS.md)** - 實作進度追蹤
-- **[docs/PHASE2_IMPLEMENTATION_PLAN.md](docs/PHASE2_IMPLEMENTATION_PLAN.md)** - 第二階段計畫
-- **[docs/discussions/](docs/discussions/)** - 詳細任務規劃與討論
+- **[strategy-governance/overview/07-implementation-progress.md](docs/strategy-governance/overview/07-implementation-progress.md)** - 實作進度追蹤
+- **[automation-delivery/event-bus/](docs/automation-delivery/event-bus/)** - Event Bus 作業文件
+- **[security-compliance/audit/](docs/security-compliance/audit/)** - Audit Suite 生產文件
 
 ### 分析報告
 
-- **[docs/analysis/](docs/analysis/)** - 技術分析與評估報告
-- **[docs/CODE_OPTIMIZATION_ANALYSIS.md](docs/CODE_OPTIMIZATION_ANALYSIS.md)** - 程式碼優化分析
+- **[strategy-governance/overview/02-project-analysis-summary.md](docs/strategy-governance/overview/02-project-analysis-summary.md)** - 專案分析摘要
+- **[strategy-governance/overview/08-analysis-index.md](docs/strategy-governance/overview/08-analysis-index.md)** - 分析索引
 
 ---
-
 ## 🤖 GitHub Copilot 整合
 
 本專案完整整合 GitHub Copilot，提供智能程式碼生成與開發協助。

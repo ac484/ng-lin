@@ -13,31 +13,32 @@ Complete documentation index for the GigHub Construction Site Progress Tracking 
 ```
 docs/
 ├── ⭐️/                          # Strategic Architecture (Protected)
-├── account/                      # SaaS Account Management
-├── collaboration/                # Issues, Discussions, Notifications
-├── strategy-governance/          # Ownership, branching, compliance invariants
-│   ├── architecture/             # System architecture views
-│   ├── overview/                 # Project overview & status
-│   └── principles/               # Core principles and rules
-├── identity-tenancy/             # AuthN/Z, roles, context switch, suites (identity/, multi-tenancy/)
-├── change-control/               # API/data contracts and versioning
-│   ├── api/                      # API/interface specs
-│   └── data-model/               # Data models & schemas
-├── automation-delivery/          # Actions/CI-CD, workflows, functions
-│   ├── event-bus/                # Global Event Bus operational docs
-│   ├── deployment/               # Deployment guides and playbooks
-│   └── functions/                # Cloud Functions docs
-├── observability-operations/     # Monitoring, runbooks, topology
-│   └── operations/               # Ops runbooks and checklists
-├── enablement-experience/        # Onboarding, design system, UI themes
-│   ├── design/                   # UX/design guidelines
-│   ├── getting-started/          # Quick start guides
-│   └── ui-theme/                 # UI theme system
-├── security-compliance/          # Security baselines, audits, validation
-│   └── audit/                    # Global Audit Logging System ✅ COMPLETE
-│   └── security/                 # Security guidelines
-├── legacy-archive/               # Historical/duplicate docs pending rewrite
-└── reference/                    # Technical Reference (cross-cutting)
+├── ai-governance/               # AI roles, authority, safety guardrails
+├── automation-delivery/         # Actions/CI-CD, workflows, functions
+│   ├── event-bus/               # Global Event Bus operational docs
+│   ├── deployment/              # Deployment guides and playbooks
+│   └── functions/               # Cloud Functions docs
+├── change-control/              # API/data contracts and versioning
+│   ├── api/                     # API/interface specs
+│   └── data-model/              # Data models & schemas
+├── collaboration/               # Issues, discussions, notifications (planned)
+├── enablement-experience/       # Onboarding, design system, UI themes
+│   ├── design/                  # UX/design guidelines
+│   ├── getting-started/         # Quick start guides
+│   └── ui-theme/                # UI theme system
+├── identity-tenancy/            # AuthN/Z, roles, context switch (identity/, multi-tenancy/)
+├── observability-operations/    # Monitoring, runbooks, topology
+│   └── operations/              # Ops runbooks and checklists
+├── security-compliance/         # Security baselines, audits, validation
+│   ├── audit/                   # Global Audit Logging System ✅ COMPLETE
+│   └── security/                # Security guidelines
+├── strategy-governance/         # Ownership, branching, compliance invariants
+│   ├── architecture/            # System architecture views
+│   ├── overview/                # Project overview & status
+│   └── principles/              # Core principles and rules
+├── reference/                   # Technical Reference (cross-cutting)
+├── legacy-archive/              # Historical/duplicate docs pending rewrite
+└── firebase.md                  # Firebase integration map
 ```
 
 ---
@@ -262,120 +263,45 @@ Strategic architecture and planning documents:
 
 ## 🗂️ Supporting Documentation
 
-### API Specifications (`docs/api/`)
-API interface specifications and contracts.
+### AI Governance (`docs/ai-governance/`)
+- Governance notes and pointers to protected AI role definitions in `docs/⭐️/`.
+- Use for checklists and process guidance without duplicating protected sources.
 
-- `interface-spec/` - JSON schemas, Firestore structures, contracts
-- Various API specification documents
+### Strategy & Architecture (`docs/strategy-governance/`)
+- Architecture views ([architecture/](./strategy-governance/architecture/)), program status ([overview/](./strategy-governance/overview/)), and principles ([principles/](./strategy-governance/principles/)).
+- Protected strategy artifacts remain in [⭐️/](./⭐️/) and should be referenced, not copied.
 
-### Architecture (`docs/architecture/`)
-System architecture and design patterns.
+### Identity, Access & Tenancy (`docs/identity-tenancy/`)
+- Operational suite under [identity/](./identity-tenancy/identity/) (API_REFERENCE, DEPLOYMENT_GUIDE, RUNBOOK, CHECKLIST, MONITORING_COST_OPTIMIZATION, VALIDATION_REPORT).
+- Tenancy analyses and SaaS notes at the root plus [multi-tenancy/](./identity-tenancy/multi-tenancy/) for membership and blueprint context.
 
-- `01-architecture-overview.md` - Architecture overview
-- `02-three-layer-architecture.md` - Three-layer architecture (UI → Service → Repository)
-- `03-monitoring-module-manager.md` - Monitoring module manager
-- `04-angular-fire-integration.md` - Angular/Fire integration
-- `05-contract-ai-integration.md` - Contract AI integration
-- `06-angular-fire-analysis.md` - Angular/Fire analysis
-- `07-monitoring-module-manager-index.md` - Module manager index
+### Change Control (`docs/change-control/`)
+- API contracts in [api/](./change-control/api/) (module docs index, quickstart, architecture, upload/parsing guides).
+- Data schemas in [data-model/](./change-control/data-model/06-contract-data-model.md).
 
-### Data Models (`docs/data-model/`)
-Firestore collection structures, indexes, and data relationships.
+### Automation & Delivery (`docs/automation-delivery/`)
+- Event Bus operational suite in [event-bus/](./automation-delivery/event-bus/) (API_REFERENCE, deployment, runbook, checklist, monitoring, validation).
+- Deployment playbooks in [deployment/](./automation-delivery/deployment/), Cloud Functions notes in [functions/](./automation-delivery/functions/), and CI/CD guidance in [dev.md](./automation-delivery/dev.md).
 
-- `06-contract-data-model.md` - Contract data model
-- Schema documentation
+### Security & Compliance (`docs/security-compliance/`)
+- Audit system suite in [audit/](./security-compliance/audit/) (complete 6-document set, production-ready).
+- Security baselines in [security/01-security-baseline.md](./security-compliance/security/01-security-baseline.md) and folder README for scope.
 
-### Deployment (`docs/deployment/`)
-Firebase deployment processes and CI/CD.
+### Observability & Operations (`docs/observability-operations/`)
+- Ops summaries and runbooks in [operations/](./observability-operations/operations/) (monitoring executive summary, fixes summary, contract verification checklist).
 
-- Deployment guides and procedures
+### Enablement & Experience (`docs/enablement-experience/`)
+- UX/design guidelines in [design/](./enablement-experience/design/), onboarding in [getting-started/](./enablement-experience/getting-started/), and UI themes in [ui-theme/](./enablement-experience/ui-theme/).
 
-### Design (`docs/design/`)
-UI/UX design patterns and component specifications.
+### Reference (`docs/reference/`)
+- Cross-cutting technical reference guides (frontend/backend/core/shared/blueprint/SaaS design and skeletons).
 
-- `01-design-overview.md` - Design overview
-- `02-ui-flow.md` - UI flow diagrams
-- `03-component-design.md` - Component design
-- `04-accessibility.md` - Accessibility guidelines
-- `05-responsive-design.md` - Responsive design
-- `06-blueprint-ownership-membership.md` - Blueprint ownership design
+### Firebase Map (`docs/firebase.md`)
+- Single-page map of Firebase configuration, security rules, and app integration locations.
 
-### Cloud Functions (`docs/functions/`)
-Firebase Functions usage, permissions, and testing.
+### Legacy Archive (`docs/legacy-archive/`)
+- Historical event-bus notes (`event-bus(Global Event Bus)-0..9.md`), `0.md`, and other snapshots awaiting consolidation.
 
-- `01-functions-architecture.md` - Functions architecture
-- `02-firebase-adapter-roadmap.md` - Firebase adapter roadmap
-
-### Getting Started (`docs/getting-started/`)
-Developer quick start guides.
-
-- `01-dev-quickstart.md` - Development quick start
-- Environment setup and local testing
-
-### Operations (`docs/operations/`)
-Monitoring, logging, error handling, and runbooks.
-
-- `06-monitoring-executive-summary.md` - Monitoring summary
-- `07-contract-module-fixes-summary.md` - Contract module fixes
-- `runbooks/contract-verification-checklist.md` - Verification checklist
-
-### Overview (`docs/overview/`)
-Project summaries and progress tracking.
-
-- `02-project-analysis-summary.md` - Project analysis
-- `07-implementation-progress.md` - Implementation progress
-- `08-analysis-index.md` - Analysis index
-- `09-archived-modules-index.md` - Archived modules
-
-### Principles (`docs/principles/`)
-Core coding, architecture, and security principles.
-
-- `01-principles-core-principles.md` - Core principles
-- `02-principles-rules.md` - Development rules
-- `03-principles-technical-debt.md` - Technical debt management
-
-**Key Principles**:
-- Three-Layer Architecture (UI → Service → Repository)
-- Repository Pattern with FirestoreBaseRepository
-- Angular Signals for state management
-- inject() for dependency injection (never constructor)
-- Standalone Components (no NgModules)
-- Direct @angular/fire injection (no Firebase wrapper)
-
-### Technical Reference (`docs/reference/`)
-Technical reference guides.
-
-- `AI_GUIDELINES.md` - AI development guidelines
-- `BACKEND.md` - Backend reference
-- `BLUEPRINT_LAYER.md` - Blueprint layer
-- `CORE_LAYER.md` - Core layer
-- `FRONTEND.md` - Frontend reference
-- `MODULE_LAYER.md` - Module layer
-- `SAAS_DESIGN.md` - SaaS design patterns
-- `SHARED_LAYER.md` - Shared layer
-- `SKELETON.md` - Project skeleton
-
-### Security (`docs/security/`)
-Security guidelines and Firestore Security Rules.
-
-- `01-security-baseline.md` - Security baseline
-- Firestore Security Rules documentation
-- Firebase Auth verification flows
-- Secret management guidelines
-
-### UI Theme (`docs/ui-theme/`)
-Theme system and design tokens.
-
-- `01-ui-theme-best-practices.md` - Best practices
-- `02-ui-theme-color-system.md` - Color system
-- `03-ui-theme-components.md` - Theme components
-- `04-ui-theme-design-system.md` - Design system
-- `05-ui-theme-implementation-guide.md` - Implementation guide
-- `06-ui-theme-migration.md` - Theme migration
-- `07-ui-theme-testing.md` - Theme testing
-- `08-ui-theme-xuanwu-theme.md` - Xuanwu theme
-
----
 
 ## 📊 Documentation Quality Standards
 
@@ -539,8 +465,8 @@ Before merging documentation changes:
 
 ### For Architects
 - [Strategic Architecture](./⭐️/) - Strategic documents
-- [System Design](./architecture/) - Architecture patterns
-- [Data Models](./data-model/) - Data structures
+- [System Design](./strategy-governance/architecture/) - Architecture patterns
+- [Data Models](./change-control/data-model/06-contract-data-model.md) - Data structures
 
 ---
 

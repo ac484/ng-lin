@@ -8,92 +8,36 @@ It ensures clarity for contributors, AI agents, and auditors, while maintaining 
 ## Docs Structure Overview
 
 ```
-
 docs/
 ├─ ai-governance/
-│  ├─ role-definition/
-│  ├─ behavior-guidelines/
-│  ├─ decision-protocols/
-│  ├─ safety-invariants/
-│  └─ review-checklists/
-│
-├─ strategy-governance/
-│  ├─ principles/
-│  ├─ ownership/
-│  ├─ decision-framework/
-│  ├─ risk-gates/
-│  ├─ compliance-invariants/
-│  └─ overview/
-│
-├─ identity-tenancy/
-│  ├─ authentication/
-│  ├─ authorization/
-│  ├─ roles-permissions/
-│  ├─ org-tenancy/
-│  ├─ account-context-switch/
-│  └─ identity-overview/
-│
-├─ change-control/
-│  ├─ architecture/
-│  ├─ feature-design/
-│  ├─ api-contracts/
-│  ├─ data-contracts/
-│  ├─ event-contracts/
-│  ├─ versioning-migrations/
-│  ├─ compatibility/
-│  └─ adr/
-│
-├─ collaboration/
-│  ├─ contribution-model/
-│  ├─ issue-management/
-│  ├─ pr-workflows/
-│  ├─ discussion-guidelines/
-│  ├─ templates/
-│  └─ notification-rules/
-│
 ├─ automation-delivery/
-│  ├─ ci/
-│  ├─ cd/
-│  ├─ workflows/
-│  ├─ runners/
-│  ├─ oidc/
-│  ├─ deployment-playbooks/
-│  └─ environment-strategy/
-│
-├─ security-compliance/
-│  ├─ security-baselines/
-│  ├─ secrets-management/
-│  ├─ access-policies/
-│  ├─ threat-modeling/
-│  ├─ audits/
-│  ├─ validation-reports/
-│  └─ compliance-overview/
-│
-├─ observability-operations/
-│  ├─ monitoring/
-│  ├─ metrics-slis-slos/
-│  ├─ logging-tracing/
-│  ├─ runbooks/
-│  ├─ incident-response/
-│  ├─ disaster-recovery/
-│  ├─ cost-usage/
-│  └─ ops-overview/
-│
+│  ├─ deployment/
+│  ├─ event-bus/
+│  └─ functions/
+├─ change-control/
+│  ├─ api/
+│  └─ data-model/
+├─ collaboration/
 ├─ enablement-experience/
+│  ├─ design/
 │  ├─ getting-started/
-│  ├─ onboarding/
-│  ├─ ux-design/
-│  ├─ design-system/
-│  ├─ ui-themes/
-│  ├─ reference-guides/
-│  └─ tutorials/
-│
-└─ legacy-archive/
-├─ deprecated/
-├─ migrated/
-├─ pending-review/
-└─ historical-snapshots/
-
+│  └─ ui-theme/
+├─ identity-tenancy/
+│  ├─ identity/
+│  └─ multi-tenancy/
+├─ observability-operations/
+│  └─ operations/
+├─ security-compliance/
+│  ├─ audit/
+│  └─ security/
+├─ strategy-governance/
+│  ├─ architecture/
+│  ├─ overview/
+│  └─ principles/
+├─ reference/
+├─ legacy-archive/
+├─ firebase.md
+└─ ⭐️/                       # Protected strategic docs
 ````
 
 ---
@@ -102,53 +46,51 @@ docs/
 
 ### ai-governance
 **Purpose:** AI roles, authority boundaries, decision protocols, safety rules, and review checklists.  
-**Must have:** `README.md`  
-**Subfolders:** role-definition, behavior-guidelines, decision-protocols, safety-invariants, review-checklists
+**Scope today:** README plus pointers to protected AI role definitions in `docs/⭐️/`.
 
 ### strategy-governance
-**Purpose:** Platform principles, ownership, decision framework, risk gates, compliance invariants, overview.  
-**Must have:** `README.md`  
-**Subfolders:** principles, ownership, decision-framework, risk-gates, compliance-invariants, overview
+**Purpose:** Platform principles, ownership, decision framework, risk gates, and compliance invariants.  
+**Subfolders:** `architecture/`, `overview/`, `principles/`.
 
 ### identity-tenancy
 **Purpose:** AuthN/Z, roles & permissions, org tenancy, account context switching.  
-**Must have:** `README.md`  
-**Subfolders:** authentication, authorization, roles-permissions, org-tenancy, account-context-switch, identity-overview
+**Subfolders:** `identity/`, `multi-tenancy/`; root files include SaaS/account analyses.
 
 ### change-control
-**Purpose:** Repos as contracts, system/module architecture, feature design, API/data/event contracts, versioning/migrations, ADRs.  
-**Must have:** `README.md`  
-**Subfolders:** architecture, feature-design, api-contracts, data-contracts, event-contracts, versioning-migrations, compatibility, adr
+**Purpose:** Repos as contracts, API/data contracts, versioning, and migrations.  
+**Subfolders:** `api/`, `data-model/`.
 
 ### collaboration
-**Purpose:** Contribution models, issue management, PR workflows, discussion guidelines, templates, notification rules.  
-**Must have:** `README.md`  
-**Subfolders:** contribution-model, issue-management, pr-workflows, discussion-guidelines, templates, notification-rules
+**Purpose:** Contribution models and social workflows (issues/discussions/notifications).  
+**Subfolders:** none yet; staged for future additions.
 
 ### automation-delivery
-**Purpose:** CI/CD pipelines, workflows, runners, OIDC, deployment playbooks, environment strategy.  
-**Must have:** `README.md`  
-**Subfolders:** ci, cd, workflows, runners, oidc, deployment-playbooks, environment-strategy
+**Purpose:** CI/CD, workflows, and deployment playbooks.  
+**Subfolders:** `deployment/`, `event-bus/`, `functions/`; root files capture Dev/runner guidance.
 
 ### security-compliance
-**Purpose:** Security baselines, secrets management, access policies, threat modeling, audits, validation reports, compliance overview.  
-**Must have:** `README.md`  
-**Subfolders:** security-baselines, secrets-management, access-policies, threat-modeling, audits, validation-reports, compliance-overview
+**Purpose:** Security baselines, audits, validation reports, and operational security.  
+**Subfolders:** `audit/`, `security/`.
 
 ### observability-operations
-**Purpose:** Monitoring, metrics/SLIs/SLOs, logging/tracing, runbooks, incident response, disaster recovery, cost/usage dashboards.  
-**Must have:** `README.md`  
-**Subfolders:** monitoring, metrics-slis-slos, logging-tracing, runbooks, incident-response, disaster-recovery, cost-usage, ops-overview
+**Purpose:** Monitoring, runbooks, and operational summaries.  
+**Subfolders:** `operations/`.
 
 ### enablement-experience
-**Purpose:** Onboarding, getting started, UX guidelines, design system, UI themes, reference guides, tutorials.  
-**Must have:** `README.md`  
-**Subfolders:** getting-started, onboarding, ux-design, design-system, ui-themes, reference-guides, tutorials
+**Purpose:** Onboarding, UX/design system, UI themes, and reference guides.  
+**Subfolders:** `design/`, `getting-started/`, `ui-theme/`.
+
+### reference
+**Purpose:** Cross-cutting technical references (frontend/backend/core/shared/blueprint/SaaS).  
+**Subfolders:** none; files are reference guides.
 
 ### legacy-archive
 **Purpose:** Historical or duplicate docs pending rewrite; track migrations.  
-**Must have:** `README.md`  
-**Subfolders:** deprecated, migrated, pending-review, historical-snapshots
+**Subfolders:** existing event-bus notes and historical snapshots.
+
+### ⭐️ (protected)
+**Purpose:** Strategic architecture, role definitions, and long-term plans.  
+**Rule:** Do not modify without explicit authorization.
 
 ---
 
@@ -199,5 +141,3 @@ docs/
 ```
 
 > This README serves as a **single reference point** for all governance, structure, and documentation rules within the `docs/` folder.
-
-```
