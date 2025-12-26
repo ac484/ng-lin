@@ -20,7 +20,6 @@ import { Subject } from 'rxjs';
 
 import { AuditCollectorEnhancedService } from './audit-collector-enhanced.service';
 import { BlueprintEventBus } from '@core/services/blueprint-event-bus.service';
-import { LoggerService } from '@core/services/logger';
 import { TenantContextService } from '@core/event-bus/services/tenant-context.service';
 import { ClassificationEngineService } from '../services/classification-engine.service';
 import { AuditEventRepository } from '../repositories/audit-event.repository';
@@ -33,8 +32,8 @@ describe('AuditCollectorEnhancedService', () => {
   let mockEventBus: jasmine.SpyObj<BlueprintEventBus>;
   let mockClassificationEngine: jasmine.SpyObj<ClassificationEngineService>;
   let mockAuditRepository: jasmine.SpyObj<AuditEventRepository>;
-  let mockLogger: jasmine.SpyObj<LoggerService>;
   let mockTenantContext: jasmine.SpyObj<TenantContextService>;
+  let infoSpy: jasmine.Spy<(...args: any[]) => any>;
 
   const createMockDomainEvent = (overrides: any = {}) => ({
     type: 'task.created',
@@ -75,9 +74,12 @@ describe('AuditCollectorEnhancedService', () => {
     mockAuditRepository.create.and.returnValue(Promise.resolve({ id: 'audit-001' } as any));
     mockAuditRepository.createBatch.and.returnValue(Promise.resolve([{ id: 'audit-001' }] as any));
 
-    mockLogger = jasmine.createSpyObj('LoggerService', ['info', 'debug', 'warn', 'error']);
     mockTenantContext = jasmine.createSpyObj('TenantContextService', ['getCurrentTenantId']);
     mockTenantContext.getCurrentTenantId.and.returnValue('blueprint-123');
+    infoSpy = spyOn(console, 'info');
+    spyOn(console, 'debug');
+    spyOn(console, 'warn');
+    spyOn(console, 'error');
 
     // Configure TestBed
     TestBed.configureTestingModule({
@@ -86,7 +88,6 @@ describe('AuditCollectorEnhancedService', () => {
         { provide: BlueprintEventBus, useValue: mockEventBus },
         { provide: ClassificationEngineService, useValue: mockClassificationEngine },
         { provide: AuditEventRepository, useValue: mockAuditRepository },
-        { provide: LoggerService, useValue: mockLogger },
         { provide: TenantContextService, useValue: mockTenantContext },
         DestroyRef
       ]
@@ -112,7 +113,7 @@ describe('AuditCollectorEnhancedService', () => {
     });
 
     it('should initialize batch processing', () => {
-      expect(mockLogger.info).toHaveBeenCalledWith('[AuditCollectorEnhanced]', 'Batch processing initialized (max: 50 events, 5000ms)');
+      expect(infoSpy).toHaveBeenCalledWith('[AuditCollectorEnhanced]', 'Batch processing initialized (max: 50 events, 5000ms)');
     });
   });
 

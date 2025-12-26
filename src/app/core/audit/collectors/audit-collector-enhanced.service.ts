@@ -32,7 +32,6 @@ import { buffer, filter } from 'rxjs/operators';
 
 // Existing infrastructure
 import { BlueprintEventBus } from '@core/services/blueprint-event-bus.service';
-import { LoggerService } from '@core/services/logger';
 import { TenantContextService } from '@core/event-bus/services/tenant-context.service';
 import { DomainEvent } from '@core/event-bus/models/base-event';
 
@@ -88,7 +87,7 @@ export class AuditCollectorEnhancedService implements OnDestroy {
   private eventBus = inject(BlueprintEventBus);
   private classificationEngine = inject(ClassificationEngineService);
   private auditRepository = inject(AuditEventRepository);
-  private logger = inject(LoggerService);
+  private logger = console;
   private tenantContext = inject(TenantContextService);
   private destroyRef = inject(DestroyRef);
 

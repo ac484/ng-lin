@@ -1,6 +1,5 @@
 import { Injectable, signal, computed, inject, Injector, runInInjectionContext } from '@angular/core';
 import { Firestore, collection, query, where, orderBy, limit, getDocs, Timestamp, QueryConstraint } from '@angular/fire/firestore';
-import { LoggerService } from '@core';
 
 import {
   SearchResult,
@@ -79,7 +78,6 @@ interface BlueprintFirestoreDoc {
 export class ExploreSearchFacade {
   // Dependencies
   private readonly firestore = inject(Firestore);
-  private readonly logger = inject(LoggerService);
   private readonly cache = inject(SearchCacheService);
   private readonly injector = inject(Injector);
 
@@ -169,7 +167,6 @@ export class ExploreSearchFacade {
       const cached = this.cache.get(cacheKey);
 
       if (cached) {
-        this.logger.debug('[ExploreSearch] Cache hit:', cacheKey);
         this._allResults.set(cached.results);
         this.applyPagination(cached.results);
         this._loading.set(false);

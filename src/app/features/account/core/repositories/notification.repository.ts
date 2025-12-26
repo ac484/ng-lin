@@ -2,7 +2,6 @@ import { inject, Injectable } from '@angular/core';
 import { Firestore, collection, collectionData, query, where, doc, addDoc } from '@angular/fire/firestore';
 import { Observable, catchError, map, of } from 'rxjs';
 
-import { LoggerService } from '@core/services';
 import { NotificationPayload } from '../models';
 
 @Injectable({
@@ -10,7 +9,6 @@ import { NotificationPayload } from '../models';
 })
 export class NotificationRepository {
   private readonly firestore = inject(Firestore);
-  private readonly logger = inject(LoggerService);
   private readonly collectionRef = collection(this.firestore, 'notifications');
 
   watchByUser(userId: string): Observable<NotificationPayload[]> {
@@ -19,7 +17,6 @@ export class NotificationRepository {
     return collectionData(q, { idField: 'id' }).pipe(
       map(items => items as NotificationPayload[]),
       catchError((error: unknown) => {
-        this.logger.error('[NotificationRepository] watchByUser failed', error);
         return of<NotificationPayload[]>([]);
       })
     );
