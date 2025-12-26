@@ -22,7 +22,7 @@ Complete API documentation for the GigHub Global Event Bus System.
 
 The central event bus contract for all implementations.
 
-**Location**: `src/app/core/global-event-bus/interfaces/event-bus.interface.ts`
+**Location**: `src/app/core/event-bus/interfaces/event-bus.interface.ts`
 
 ```typescript
 interface IEventBus {
@@ -87,7 +87,7 @@ export class TaskService {
 
 Event persistence interface for event sourcing patterns.
 
-**Location**: `src/app/core/global-event-bus/interfaces/event-store.interface.ts`
+**Location**: `src/app/core/event-bus/interfaces/event-store.interface.ts`
 
 ```typescript
 interface IEventStore {
@@ -145,7 +145,7 @@ const handler: EventHandler<TaskCreatedEvent> = async (event) => {
 
 In-process event bus using RxJS Subjects (default implementation).
 
-**Location**: `src/app/core/global-event-bus/implementations/in-memory/in-memory-event-bus.ts`
+**Location**: `src/app/core/event-bus/implementations/in-memory/in-memory-event-bus.ts`
 
 **Provider Token**: `EVENT_BUS`
 
@@ -162,8 +162,8 @@ In-process event bus using RxJS Subjects (default implementation).
 
 ```typescript
 // app.config.ts
-import { InMemoryEventBus } from '@core/global-event-bus';
-import { EVENT_BUS } from '@core/global-event-bus/constants';
+import { InMemoryEventBus } from '@core/event-bus';
+import { EVENT_BUS } from '@core/event-bus/constants';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -232,7 +232,7 @@ export class NotificationService {
 
 Firebase Realtime Database implementation for cross-tab/device synchronization.
 
-**Location**: `src/app/core/global-event-bus/implementations/firebase/firebase-event-bus.ts`
+**Location**: `src/app/core/event-bus/implementations/firebase/firebase-event-bus.ts`
 
 **Features**:
 - ✅ Real-time synchronization across tabs/devices
@@ -246,8 +246,8 @@ Firebase Realtime Database implementation for cross-tab/device synchronization.
 
 ```typescript
 // app.config.ts
-import { FirebaseEventBus } from '@core/global-event-bus/implementations/firebase';
-import { EVENT_BUS } from '@core/global-event-bus/constants';
+import { FirebaseEventBus } from '@core/event-bus/implementations/firebase';
+import { EVENT_BUS } from '@core/event-bus/constants';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -305,7 +305,7 @@ export const appConfig: ApplicationConfig = {
 
 Abstract base class for all domain events.
 
-**Location**: `src/app/core/global-event-bus/models/base-event.ts`
+**Location**: `src/app/core/event-bus/models/base-event.ts`
 
 ```typescript
 abstract class DomainEvent {
@@ -359,7 +359,7 @@ abstract class DomainEvent {
 
 ### Task Events
 
-**Location**: `src/app/core/global-event-bus/domain-events/task-events.ts`
+**Location**: `src/app/core/event-bus/domain-events/task-events.ts`
 
 #### TaskCreatedEvent
 
@@ -468,7 +468,7 @@ class TaskDeletedEvent extends DomainEvent {
 
 ### Blueprint Events
 
-**Location**: `src/app/core/global-event-bus/domain-events/blueprint-events.ts`
+**Location**: `src/app/core/event-bus/domain-events/blueprint-events.ts`
 
 #### BlueprintCreatedEvent
 #### BlueprintUpdatedEvent
@@ -481,7 +481,7 @@ class TaskDeletedEvent extends DomainEvent {
 
 ### Authentication Events
 
-**Location**: `src/app/core/global-event-bus/domain-events/auth-events.ts`
+**Location**: `src/app/core/event-bus/domain-events/auth-events.ts`
 
 #### UserLoggedInEvent
 #### UserLoggedOutEvent
@@ -495,7 +495,7 @@ class TaskDeletedEvent extends DomainEvent {
 
 ### Permission Events
 
-**Location**: `src/app/core/global-event-bus/domain-events/permission-events.ts`
+**Location**: `src/app/core/event-bus/domain-events/permission-events.ts`
 
 #### PermissionGrantedEvent
 #### PermissionRevokedEvent
@@ -512,7 +512,7 @@ class TaskDeletedEvent extends DomainEvent {
 
 Abstract base class for event consumers with built-in lifecycle management.
 
-**Location**: `src/app/core/global-event-bus/services/event-consumer.base.ts`
+**Location**: `src/app/core/event-bus/services/event-consumer.base.ts`
 
 ```typescript
 abstract class EventConsumer implements OnInit, OnDestroy {
@@ -590,7 +590,7 @@ export class AuditLogConsumer extends EventConsumer {
 
 Automatically logs all domain events to the audit system.
 
-**Location**: `src/app/core/global-event-bus/services/audit-log.service.ts`
+**Location**: `src/app/core/event-bus/services/audit-log.service.ts`
 
 ```typescript
 @Injectable({ providedIn: 'root' })
@@ -648,7 +648,7 @@ export class AuditLogService extends EventConsumer {
 
 Specialized audit service for authentication events.
 
-**Location**: `src/app/core/global-event-bus/services/auth-audit.service.ts`
+**Location**: `src/app/core/event-bus/services/auth-audit.service.ts`
 
 ```typescript
 @Injectable({ providedIn: 'root' })
@@ -674,7 +674,7 @@ export class AuthAuditService extends EventConsumer {
 
 Specialized audit service for permission changes.
 
-**Location**: `src/app/core/global-event-bus/services/permission-audit.service.ts`
+**Location**: `src/app/core/event-bus/services/permission-audit.service.ts`
 
 ```typescript
 @Injectable({ providedIn: 'root' })
@@ -699,7 +699,7 @@ export class PermissionAuditService extends EventConsumer {
 
 Middleware service that validates tenant context on all events.
 
-**Location**: `src/app/core/global-event-bus/services/tenant-validation-middleware.service.ts`
+**Location**: `src/app/core/event-bus/services/tenant-validation-middleware.service.ts`
 
 ```typescript
 @Injectable({ providedIn: 'root' })
@@ -737,7 +737,7 @@ export class TenantValidationMiddleware extends EventConsumer {
 
 Manages current tenant context across the application.
 
-**Location**: `src/app/core/global-event-bus/services/tenant-context.service.ts`
+**Location**: `src/app/core/event-bus/services/tenant-context.service.ts`
 
 ```typescript
 @Injectable({ providedIn: 'root' })
@@ -811,7 +811,7 @@ export class TenantContextService {
 
 Decorator for declarative event subscription on class methods.
 
-**Location**: `src/app/core/global-event-bus/decorators/subscribe.decorator.ts`
+**Location**: `src/app/core/event-bus/decorators/subscribe.decorator.ts`
 
 ```typescript
 function Subscribe(
@@ -896,7 +896,7 @@ export class NotificationConsumer extends EventConsumer {
 
 Alternative decorator syntax for event handlers.
 
-**Location**: `src/app/core/global-event-bus/decorators/event-handler.decorator.ts`
+**Location**: `src/app/core/event-bus/decorators/event-handler.decorator.ts`
 
 ```typescript
 function EventHandler(options: EventHandlerOptions): MethodDecorator;
@@ -923,7 +923,7 @@ export class TaskConsumer {
 
 Decorator for automatic retry logic on methods.
 
-**Location**: `src/app/core/global-event-bus/decorators/retry.decorator.ts`
+**Location**: `src/app/core/event-bus/decorators/retry.decorator.ts`
 
 ```typescript
 function Retry(options: RetryOptions): MethodDecorator;
@@ -1079,7 +1079,7 @@ const events = await eventStore.getEvents(criteria);
 
 Generate unique event identifiers (UUID v4).
 
-**Location**: `src/app/core/global-event-bus/utils/event-id-generator.util.ts`
+**Location**: `src/app/core/event-bus/utils/event-id-generator.util.ts`
 
 ```typescript
 function generateEventId(): string;
@@ -1098,7 +1098,7 @@ const eventId = generateEventId();
 
 Track related events across services using correlation IDs.
 
-**Location**: `src/app/core/global-event-bus/utils/correlation-tracker.util.ts`
+**Location**: `src/app/core/event-bus/utils/correlation-tracker.util.ts`
 
 ```typescript
 class CorrelationTracker {
@@ -1162,7 +1162,7 @@ async handleTaskCreated(event: TaskCreatedEvent): Promise<void> {
 
 Pattern matching for event types.
 
-**Location**: `src/app/core/global-event-bus/utils/event-matcher.util.ts`
+**Location**: `src/app/core/event-bus/utils/event-matcher.util.ts`
 
 ```typescript
 class EventMatcher {
@@ -1195,7 +1195,7 @@ EventMatcher.getMatchingPatterns('task.created', patterns);
 
 Mock event bus for unit testing.
 
-**Location**: `src/app/core/global-event-bus/testing/mock-event-bus.ts`
+**Location**: `src/app/core/event-bus/testing/mock-event-bus.ts`
 
 ```typescript
 class MockEventBus implements IEventBus {
@@ -1305,7 +1305,7 @@ describe('TaskService', () => {
 
 Helper class for creating test events.
 
-**Location**: `src/app/core/global-event-bus/testing/test-event.ts`
+**Location**: `src/app/core/event-bus/testing/test-event.ts`
 
 ```typescript
 class TestEvent extends DomainEvent {
@@ -1333,7 +1333,7 @@ class TestEvent extends DomainEvent {
 
 Testing utilities for event bus testing.
 
-**Location**: `src/app/core/global-event-bus/testing/event-bus-test.utils.ts`
+**Location**: `src/app/core/event-bus/testing/event-bus-test.utils.ts`
 
 ```typescript
 class EventBusTestUtils {

@@ -25,7 +25,7 @@
 
 **狀態**: ✅ **已完成** (2025-12-25)
 
-**實作位置**: `src/app/core/global-event-bus/`
+**實作位置**: `src/app/core/event-bus/`
 
 **完成項目**:
 - ✅ DomainEvent 基礎類別（不可變事件記錄）
@@ -561,9 +561,9 @@
 
 ### Event Bus 實作文檔
 
-- 📄 `src/app/core/global-event-bus/README.md` - 核心概念與 API 參考
-- 📄 `src/app/core/global-event-bus/USAGE.md` - 完整使用指南與最佳實踐
-- 📄 `src/app/core/global-event-bus/IMPLEMENTATION.md` - 實作總結與架構說明
+- 📄 `src/app/core/event-bus/README.md` - 核心概念與 API 參考
+- 📄 `src/app/core/event-bus/USAGE.md` - 完整使用指南與最佳實踐
+- 📄 `src/app/core/event-bus/IMPLEMENTATION.md` - 實作總結與架構說明
 
 ### 架構指引
 

@@ -27,7 +27,7 @@ import { ICONS } from '../style-icons';
 import { ICONS_AUTO } from '../style-icons-auto';
 import { firebaseProviders } from './firebase/config/firebase.providers';
 import { routes } from './features/routes';
-import { provideAuditAutoSubscription } from './core/global-event-bus/initializers';
+import { provideAuditAutoSubscription } from './core/event-bus/initializers';
 
 const defaultLang: AlainProvideLang = {
   abbr: 'zh-CN',

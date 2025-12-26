@@ -23,7 +23,7 @@
 ### 2. 定義你的第一個事件
 
 ```typescript
-import { DomainEvent } from '@core/global-event-bus';
+import { DomainEvent } from '@core/event-bus';
 
 export class UserRegisteredEvent extends DomainEvent {
   readonly eventType = 'user.registered' as const;
@@ -56,7 +56,7 @@ export class UserRegisteredEvent extends DomainEvent {
 
 ```typescript
 import { inject, Injectable } from '@angular/core';
-import { InMemoryEventBus } from '@core/global-event-bus';
+import { InMemoryEventBus } from '@core/event-bus';
 import { UserRegisteredEvent } from './user-events';
 
 @Injectable({ providedIn: 'root' })
@@ -79,7 +79,7 @@ export class AuthService {
 
 ```typescript
 import { Injectable, OnInit } from '@angular/core';
-import { EventConsumer, Subscribe } from '@core/global-event-bus';
+import { EventConsumer, Subscribe } from '@core/event-bus';
 import { UserRegisteredEvent } from './user-events';
 
 @Injectable({ providedIn: 'root' })

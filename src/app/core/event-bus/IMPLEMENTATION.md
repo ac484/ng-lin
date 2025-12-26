@@ -14,7 +14,7 @@
 ## 專案結構
 
 ```
-src/app/core/global-event-bus/
+src/app/core/event-bus/
 ├── models/                          # 核心模型
 │   ├── base-event.ts               # DomainEvent 基礎類別
 │   ├── event-metadata.ts           # 事件元數據定義

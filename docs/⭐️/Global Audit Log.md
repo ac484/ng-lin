@@ -20,7 +20,7 @@ src/app/
 │   │       ├── tenant.model.ts
 │   │       └── permission.model.ts
 │   │
-│   ├── global-event-bus/                  # 全域事件總線
+│   ├── event-bus/                  # 全域事件總線
 │   │   ├── services/
 │   │   │   ├── event-bus.service.ts         # 事件分發核心
 │   │   │   └── event-logger.service.ts      # 事件記錄
