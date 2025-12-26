@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, effect, inject } from '@angular/core';
 import { NotificationStore } from '@core/account/stores/notification.store';
-import { FirebaseService } from '@core/services/firebase.service';
+import { AuthFacade } from '@core/data-access/auth/auth.facade';
 import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 import { NzBadgeModule } from 'ng-zorro-antd/badge';
 import { NzCardModule } from 'ng-zorro-antd/card';
@@ -86,16 +86,17 @@ import { NzSpinModule } from 'ng-zorro-antd/spin';
   imports: [NzDropDownModule, NzBadgeModule, NzIconModule, NzSpinModule, NzGridModule, NzAvatarModule, NzCardModule, NzEmptyModule]
 })
 export class HeaderTaskComponent implements OnInit {
-  private readonly firebase = inject(FirebaseService);
+  private readonly auth = inject(AuthFacade);
   private readonly destroyRef = inject(DestroyRef);
   protected readonly notificationStore = inject(NotificationStore);
+  private readonly currentUser = this.auth.currentUserSignal;
   private currentUserId?: string;
   private unsubscribeRealtime?: () => void;
 
   constructor() {
     // Move effect() to constructor to ensure it's within injection context
     effect(() => {
-      const user = this.firebase.currentUser();
+      const user = this.currentUser();
       if (!user) {
         this.currentUserId = undefined;
         this.unsubscribeRealtime?.();
@@ -120,7 +121,7 @@ export class HeaderTaskComponent implements OnInit {
   }
 
   async loadData(): Promise<void> {
-    const userId = this.currentUserId ?? this.firebase.currentUser()?.uid;
+    const userId = this.currentUserId ?? this.currentUser()?.uid;
     if (userId) {
       await this.notificationStore.loadNotifications(userId);
     }

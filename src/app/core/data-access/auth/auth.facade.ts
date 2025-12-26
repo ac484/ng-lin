@@ -13,6 +13,7 @@ export class AuthFacade implements AuthPort {
   readonly user$ = this.impl.user$;
   readonly loading = this.impl.loading;
   readonly isAuthenticated = this.impl.isAuthenticated;
+  readonly currentUserSignal = this.impl.currentUserSignal;
   get currentUser() {
     return this.impl.currentUser;
   }

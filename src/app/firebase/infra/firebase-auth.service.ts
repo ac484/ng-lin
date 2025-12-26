@@ -23,6 +23,7 @@ export class FirebaseAuthService {
   readonly user$: Observable<User | null> = authState(this.auth);
   readonly loading = this.state.loading.asReadonly();
   readonly isAuthenticated = this.state.isAuthenticated;
+  readonly currentUserSignal = this.state.currentUser.asReadonly();
 
   constructor() {
     this.user$.subscribe(user => {
