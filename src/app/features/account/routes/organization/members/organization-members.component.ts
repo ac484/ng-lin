@@ -183,7 +183,7 @@ export class OrganizationMembersComponent implements OnInit {
   async sendInvitation(): Promise<void> {
     const email = this.inviteEmail().trim().toLowerCase();
     const organizationId = this.currentOrgId();
-    const invitedBy = this.auth.currentUser?.uid ?? null;
+    const invitedBy = this.auth.getCurrentUserId();
 
     if (!organizationId) {
       this.inviteError.set('請先切換到組織上下文');
