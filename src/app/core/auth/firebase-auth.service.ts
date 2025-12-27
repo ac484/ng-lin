@@ -40,6 +40,10 @@ export class FirebaseAuthService {
     return this.auth.currentUser;
   }
 
+  getCurrentUserId(): string | null {
+    return this.state.currentUser()?.uid ?? null;
+  }
+
   async signIn(email: string, password: string): Promise<User> {
     return this.runInCtx(async () => {
       this.state.loading.set(true);

@@ -41,7 +41,7 @@ export class FriendsPageComponent implements OnInit {
   }
 
   async handleAccept(id: string): Promise<void> {
-    const uid = this.auth.currentUser?.uid;
+    const uid = this.auth.getCurrentUserId();
     if (!uid) return;
     await this.service.acceptRequest(id, uid);
     // optimistic update: mark as accepted in store
@@ -51,7 +51,7 @@ export class FriendsPageComponent implements OnInit {
   }
 
   async handleRemove(id: string): Promise<void> {
-    const uid = this.auth.currentUser?.uid;
+    const uid = this.auth.getCurrentUserId();
     if (!uid) return;
     await this.service.removeFriend(id, uid);
     this.store.setRelations(this.store.relations().filter(r => r.id !== id));
