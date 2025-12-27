@@ -278,8 +278,9 @@ export class AuditCollectorEnhancedService implements OnDestroy {
 
       // Event details
       eventType: domainEvent.type,
-      category: EventCategory.SYSTEM_EVENT, // Will be overridden by classification
+      category: EventCategory.SYSTEM, // Will be overridden by classification
       level: EventSeverity.LOW, // Will be overridden by classification
+      severity: EventSeverity.LOW,
 
       // Entity tracking
       entity: domainEvent.entityId
@@ -434,8 +435,9 @@ export class AuditCollectorEnhancedService implements OnDestroy {
         metadata: {}
       },
       eventType,
-      category: EventCategory.SYSTEM_EVENT, // Will be classified
-      level: EventSeverity.LOW, // Will be classified
+       category: EventCategory.SYSTEM, // Will be classified
+       level: EventSeverity.LOW, // Will be classified
+       severity: EventSeverity.LOW,
       entity: options.entityId
         ? {
             id: options.entityId,
