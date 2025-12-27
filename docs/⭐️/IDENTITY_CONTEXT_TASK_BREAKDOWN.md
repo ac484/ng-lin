@@ -9,16 +9,16 @@
 - [x] IDCTX-P0-002: 建立 ContextProvider（注入式，支援 request-scoped/async storage）與 ContextGuard 接口
 
 ## Phase 1: 認證（Auth）— 基於 @angular/fire/auth → @delon/auth (DA_SERVICE_TOKEN)
-- [ ] IDCTX-P1-001: Email/Password 登入（@angular/fire/auth）+ 會話續期（token refresh）
-- [ ] IDCTX-P1-002: OAuth（Google）與匿名登入策略（透過 DA_SERVICE_TOKEN）
-- [ ] IDCTX-P1-003: Session 固化與再生（refresh token + anti-fixation）；暫不實作多設備/二階段驗證
-- [ ] IDCTX-P1-004: 租戶/裝置上下文附帶（user, tenantId, correlationId）於 session payload
+- [x] IDCTX-P1-001: Email/Password 登入（@angular/fire/auth）+ 會話續期（token refresh）
+- [x] IDCTX-P1-002: OAuth（Google）與匿名登入策略（透過 DA_SERVICE_TOKEN）
+- [x] IDCTX-P1-003: Session 固化與再生（refresh token + anti-fixation）；暫不實作多設備/二階段驗證
+- [x] IDCTX-P1-004: 租戶/裝置上下文附帶（user, tenantId, correlationId）於 session payload
 
 ## Phase 2: 授權（RBAC / ABAC）— 支援 SaaS 角色：用戶/組織/團隊/夥伴/協作者
-- [ ] IDCTX-P2-001: RBAC 角色模型（org / blueprint / project 階層）
-- [ ] IDCTX-P2-002: ABAC 規則引擎（屬性：tenant, role, clearance, resource tags）
-- [ ] IDCTX-P2-003: PermissionGuard / TenantGuard 對齊新模型（替換舊別名）
-- [ ] IDCTX-P2-004: Policy Decision Point + Policy Enforcement Point（PDP/PEP）鏈路
+- [x] IDCTX-P2-001: RBAC 角色模型（org / blueprint / project 階層）
+- [x] IDCTX-P2-002: ABAC 規則引擎（屬性：tenant, role, clearance, resource tags）
+- [x] IDCTX-P2-003: PermissionGuard / TenantGuard 對齊新模型（替換舊別名）
+- [x] IDCTX-P2-004: Policy Decision Point + Policy Enforcement Point（PDP/PEP）鏈路
 
 ## Phase 3: Session / Context Propagation
 - [x] IDCTX-P3-001: HttpClient 拦截器注入 Context（tenantId, userId, correlationId）
@@ -45,3 +45,39 @@
 - Guards：`src/app/core/guards/auth.guard.ts`, `permission.guard.ts`, `tenant.guard.ts`
 - Auth Facade：`src/app/core` 下現有 AuthFacade / PermissionService / TenantContextService
 - Audit 對接：`src/app/core/audit` 事件模型
+
+## 實作狀態（2025-12-27 更新）
+
+### Phase 1 完成項目
+- **Email/Password 登入**: `FirebaseAuthService.signIn()` 實作，強制 token refresh 防止 session fixation
+- **OAuth Google 登入**: `FirebaseAuthService.signInWithGoogle()` 使用 GoogleAuthProvider + signInWithPopup
+- **匿名登入**: `FirebaseAuthService.signInAnonymous()` 實作
+- **自動 Token 續期**: 45 分鐘自動刷新機制，防止 session 過期
+- **裝置上下文**: `SessionContext` 擴充 `deviceId`, `deviceInfo` (userAgent, platform, language)
+- **GitHub 對齊欄位**: `IdentityContext` 新增 `organization`, `team`, `repository`, `role` 欄位
+
+### Phase 2 完成項目
+- **RBAC 模型**: `src/app/core/models/rbac.model.ts`
+  - `RoleLevel` 枚舉（organization/team/blueprint/project）
+  - `RoleType` 枚舉對齊 GitHub（admin/maintain/write/triage/read）
+  - `GitHubOrganizationRole` 組織層級角色
+  - `Role` 介面支援權限繼承
+- **ABAC 模型**: `src/app/core/models/abac.model.ts`
+  - `AttributeType`, `AttributeOperator` 定義屬性條件
+  - `PolicyRule` 支援 AND/OR/NOT 邏輯組合
+  - `PolicyContext` 多維度上下文（user/resource/environment/tenant/action）
+  - 評估函數 `evaluateCondition`, `evaluatePolicyRule`
+- **Policy Engine**: `src/app/core/services/policy-engine.service.ts`
+  - PDP 實作（Policy Decision Point）
+  - RBAC + ABAC 混合評估
+  - 拒絕優先策略（deny-overrides-allow）
+  - 預設策略（限制資源存取、租戶隔離）
+- **Guard 增強**: `src/app/core/guards/permission.guard.ts`
+  - PEP 實作（Policy Enforcement Point）
+  - 向後相容 RBAC 檢查
+  - 可選 ABAC 評估（route data `useAbac: true`）
+
+### 後續任務
+- Phase 3: EventBus 自動附帶 Context
+- Phase 4: 租戶生命週期管理
+- Phase 5-6: 測試與文件
