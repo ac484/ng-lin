@@ -23,6 +23,10 @@ export interface AuditEvent {
    * Format: UUID v4
    */
   id: string;
+  /**
+   * Optional sequence number for ordering
+   */
+  sequenceNumber?: number;
   
   /**
    * Blueprint ID (tenant isolation)
@@ -48,6 +52,10 @@ export interface AuditEvent {
    * Examples: user.action.login, ai.decision.architectural, data.modification.delete
    */
   eventType: string;
+  /**
+   * Optional operation type name
+   */
+  operationType?: 'CREATE' | 'READ' | 'UPDATE' | 'DELETE' | 'EXECUTE';
   
   /**
    * Event category (11 categories)
@@ -111,24 +119,35 @@ export interface AuditEvent {
    * Additional contextual information about the request
    */
   context?: AuditContext;
+  requestId?: string;
+  sessionId?: string;
+  ipAddress?: string;
+  userAgent?: string;
   
   /**
    * Event metadata (extensible)
    * Additional event-specific data
    */
   metadata?: Record<string, any>;
+  tags?: string[];
   
   /**
    * Classification result (Layer 4)
    * Automatically assigned by ClassificationEngineService
    */
-  classification: AuditClassification;
+  classification?: AuditClassification;
+  riskScore?: number;
+  complianceTags?: string[];
+  autoReviewRequired?: boolean;
+  aiGenerated?: boolean;
   
   /**
    * Storage tier (Layer 5)
    * Current storage tier (HOT, WARM, COLD)
    */
   tier?: StorageTier;
+  storageTier?: StorageTier;
+  retentionDays?: number;
   
   /**
    * Audit metadata
@@ -168,6 +187,10 @@ export interface AuditActor {
    * Actor display name
    */
   name: string;
+  /**
+   * Optional enriched metadata
+   */
+  metadata?: Record<string, unknown>;
   
   /**
    * Actor email (for users only)

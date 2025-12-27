@@ -41,7 +41,7 @@ import { PolicyEngineService } from '../services/policy-engine.service';
 import { AuditEventRepository } from '../repositories/audit-event.repository';
 import { AuditEvent } from '../models/audit-event.interface';
 import { EventCategory } from '../models/event-category.enum';
-import { EventSeverity } from '../models/event-severity.enum';
+import { EventSeverity, normalizeSeverity } from '../models/event-severity.enum';
 import { StorageTier } from '../models/storage-tier.enum';
 
 /**
@@ -232,10 +232,13 @@ export class AuditCollectorEnhancedService implements OnDestroy {
         const classification = this.classificationEngine.classify(event);
         this.stats.eventsClassified++;
 
+        const severity = normalizeSeverity(classification.level as EventSeverity | 'INFO' | 'WARNING' | 'ERROR' | 'CRITICAL');
+
         return {
           ...event,
-          category: classification.category,
-          level: classification.level,
+          category: classification.category as EventCategory,
+          level: severity,
+          severity,
           riskScore: classification.riskScore,
           complianceTags: classification.complianceTags,
           storageTier: StorageTier.HOT // New events always go to HOT tier
@@ -460,15 +463,17 @@ export class AuditCollectorEnhancedService implements OnDestroy {
     };
 
     // Classify event
-    const classification = this.classificationEngine.classify(auditEvent);
-    auditEvent.category = classification.category;
-    auditEvent.level = classification.level;
+    const classification = this.classificationEngine.classify(auditEvent as any) as any;
+    const severity = normalizeSeverity(classification.level as EventSeverity | 'INFO' | 'WARNING' | 'ERROR' | 'CRITICAL');
+    auditEvent.category = (classification.category as unknown as EventCategory) || EventCategory.SYSTEM;
+    auditEvent.level = severity;
+    auditEvent.severity = severity;
     auditEvent.riskScore = classification.riskScore;
     auditEvent.complianceTags = classification.complianceTags;
 
     // Persist immediately (bypass batch)
     try {
-      await this.auditRepository.create(auditEvent);
+      await this.auditRepository.create(auditEvent as any);
       this.stats.eventsPersisted++;
       this.resetCircuitBreaker();
     } catch (error) {

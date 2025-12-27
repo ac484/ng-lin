@@ -49,3 +49,26 @@ export function getSeverityFromRiskScore(riskScore: number): EventSeverity {
     return EventSeverity.CRITICAL;
   }
 }
+
+/**
+ * Normalize legacy AuditLevel values (INFO/WARNING/ERROR/CRITICAL) to EventSeverity.
+ */
+export function normalizeSeverity(
+  level: EventSeverity | 'INFO' | 'WARNING' | 'ERROR' | 'CRITICAL'
+): EventSeverity {
+  switch (level) {
+    case EventSeverity.LOW:
+    case 'INFO':
+      return EventSeverity.LOW;
+    case EventSeverity.MEDIUM:
+    case 'WARNING':
+      return EventSeverity.MEDIUM;
+    case EventSeverity.HIGH:
+    case 'ERROR':
+      return EventSeverity.HIGH;
+    case EventSeverity.CRITICAL:
+    case 'CRITICAL':
+    default:
+      return EventSeverity.CRITICAL;
+  }
+}
