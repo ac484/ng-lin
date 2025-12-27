@@ -18,8 +18,8 @@ describe('AuditPolicyAlertSinkService', () => {
     eventBus = jasmine.createSpyObj<IEventBus>('EventBus', ['subscribe', 'unsubscribe']);
     notificationRepository = jasmine.createSpyObj<NotificationRepository>('NotificationRepository', ['create']);
 
-    eventBus.subscribe.and.callFake(async (eventType: string, handler: (event: DomainEvent) => Promise<void> | void) => {
-      subscriptions[eventType] = handler;
+    eventBus.subscribe.and.callFake(async (eventType: string, handler: any) => {
+      subscriptions[eventType] = handler as (event: DomainEvent) => void;
       const subscription: Subscription = {
         eventType,
         handler,

@@ -226,7 +226,7 @@ export class AuditCollectorEnhancedService implements OnDestroy {
 
           return augmented;
         })
-        .filter((event): event is AuditEvent => !!event);
+        .filter(event => !!event) as unknown as AuditEvent[];
 
       // Classify events (bulk operation)
       const classifiedEvents = filteredEvents.map(event => {

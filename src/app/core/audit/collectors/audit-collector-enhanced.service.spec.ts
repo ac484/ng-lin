@@ -318,7 +318,7 @@ describe('AuditCollectorEnhancedService', () => {
       tick();
 
       expect(mockAuditRepository.create).toHaveBeenCalledTimes(1);
-      const auditEvent = mockAuditRepository.create.calls.mostRecent().args[0];
+      const auditEvent = mockAuditRepository.create.calls.mostRecent().args[0] as any;
 
       expect(auditEvent.blueprintId).toBe('blueprint-123');
       expect(auditEvent.eventType).toBe('manual.event');
@@ -340,7 +340,7 @@ describe('AuditCollectorEnhancedService', () => {
 
       tick();
 
-      const auditEvent = mockAuditRepository.create.calls.mostRecent().args[0];
+      const auditEvent = mockAuditRepository.create.calls.mostRecent().args[0] as any;
       expect(auditEvent.changes).toBeDefined();
       expect(auditEvent.changes ? auditEvent.changes.length : 0).toBe(2);
       expect(auditEvent.changes?.[0].field).toBe('status');

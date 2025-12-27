@@ -29,10 +29,9 @@ import { AuditEventRepository } from './repositories/audit-event.repository';
 import { AuditQueryService } from './query/audit-query.service';
 
 // Models
-import { AuditEvent } from './models/audit-event.interface';
-import { EventCategory } from './models/event-category.enum';
-import { EventSeverity } from './models/event-severity.enum';
-import { StorageTier } from './models/storage-tier.enum';
+import { AuditEvent, AuditLevel, AuditCategory } from '../event-bus/models/audit-event.model';
+
+declare const global: any;
 
 describe('Audit System Performance Tests', () => {
   let classificationEngine: ClassificationEngineService;
@@ -437,19 +436,22 @@ function generateMockEvents(count: number): AuditEvent[] {
 }
 
 function generateMockEvent(eventType: string): AuditEvent {
+  const id = Math.random().toString(36).slice(2, 9);
   return {
-    eventId: `perf-test-${Math.random().toString(36).substr(2, 9)}`,
+    id: `id-${id}`,
+    eventId: `perf-test-${id}`,
     eventType,
-    tenantId: 'tenant-perf-001',
-    blueprintId: 'blueprint-perf-001',
     timestamp: new Date(),
-    actorType: 'user',
-    actorId: 'user-perf-001',
-    actorName: 'Performance Test User',
-    category: EventCategory.USER_ACTION,
-    level: EventSeverity.LOW,
-    tier: StorageTier.HOT,
-    description: `Performance test event: ${eventType}`,
+    level: AuditLevel.INFO,
+    category: AuditCategory.AUTHENTICATION,
+    actor: 'user-perf-001',
+    tenantId: 'tenant-perf-001',
+    action: 'performance-test',
+    resourceType: 'perf-resource',
+    resourceId: `res-${id}`,
+    result: 'success',
+    requiresReview: false,
+    reviewed: false,
     metadata: {
       testRun: 'performance-suite',
       generated: true
