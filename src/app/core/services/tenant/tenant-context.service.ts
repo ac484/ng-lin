@@ -14,6 +14,10 @@ export class TenantContextService {
   readonly currentTenantType = this.tenantType.asReadonly();
   readonly hasTenant = computed(() => !!this.tenantId());
 
+  getTenantId(): string | null {
+    return this.tenantId();
+  }
+
   setTenant(id: string, type: TenantType): void {
     this.tenantId.set(id);
     this.tenantType.set(type);

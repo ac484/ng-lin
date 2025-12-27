@@ -60,12 +60,16 @@
 - 訂閱事件（Service）：
   ```typescript
   import { inject } from '@angular/core';
-  import { IEventBus } from '@core/event-bus';
+  import { IEventBus, EVENT_PATTERNS, matchesPattern } from '@core/event-bus';
+  import { filter } from 'rxjs/operators';
 
   const eventBus = inject(IEventBus);
-  eventBus.observeAll('notification.*').subscribe(event => {
-    // bridge to NotificationService or domain-specific handler
-  });
+  eventBus
+    .observeAll()
+    .pipe(filter(event => matchesPattern(event.eventType, EVENT_PATTERNS.NAMESPACE_ALL('notification'))))
+    .subscribe(event => {
+      // bridge to NotificationService or domain-specific handler
+    });
   ```
 - 使用 NotificationService：
   ```typescript
@@ -76,6 +80,25 @@
   notifications.success('已完成');
   notifications.warn('權限不足，請聯繫管理員');
   notifications.error('系統錯誤，請稍後再試');
+  ```
+- Observability 三件組：
+  ```typescript
+  import { inject } from '@angular/core';
+  import { LoggerService, ErrorTrackingService, PerformanceMonitoringService } from '@core';
+
+  const logger = inject(LoggerService);
+  const errors = inject(ErrorTrackingService);
+  const perf = inject(PerformanceMonitoringService);
+
+  logger.info('task loaded', { blueprintId, tags: ['feature:task'] });
+  perf.start('load-tasks');
+  // ...do work...
+  perf.end('load-tasks', { count: tasks.length });
+  try {
+    // risky operation
+  } catch (err) {
+    errors.captureError(err, { scope: 'service', blueprintId });
+  }
   ```
 
 ## 對齊後目錄建議（目標狀態）
@@ -119,6 +142,6 @@ src/app/core/
 - [x] 權限與租戶服務以 Signals 封裝，提供給守衛與 Feature。
 - [x] 核心模型與守衛可被所有 Feature 直接匯入，無重複型別。
 - [x] 通知服務可由 Event Bus 觸發，UI 介面一致（成功/錯誤/警告）。
-- [ ] Event Bus 對外 Facade 已重匯出並文件化（P2）。
-- [ ] Observability 三件組可用並文件化（P2）。
-- [ ] 通知 / 事件使用手冊已納入 docs/⭐️（P2）。
+- [x] Event Bus 對外 Facade 已重匯出並文件化（P2）。
+- [x] Observability 三件組可用並文件化（P2）。
+- [x] 通知 / 事件使用手冊已納入 docs/⭐️（P2）。
