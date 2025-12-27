@@ -8,9 +8,9 @@
 - `data-access/auth`：有 `auth.facade.ts` / `auth.port.ts` / `auth.state.ts`，Firebase 實作位於 `src/app/firebase/infra`；已暴露 `currentUserSignal` 與 `getCurrentUserId`，供 UI/Feature 直接注入。
 - `net/`：已拆為 `interceptors/`（base-url、auth-token、refresh-token、error-handler），並在 `app.config.ts` 註冊；`helper.ts`/`refresh-token.ts` 作為共用工具保留。
 - `services/`：已移除違規的 `firebase.service.ts`，新增 `permission.service.ts`、`tenant-context.service.ts`（Signals）。
-- `guards/`：僅文檔與 `start-page.guard.ts`，缺少權限/租戶/模組啟用的實作（未完成）。
-- `notification/`：僅 README，缺少可重用的跨域通知服務（未完成）。
-- `models/`：未集中定義 `user/organization/repository/permission` 等核心模型（未完成）。
+- `guards/`：已補齊 `auth/permission/tenant` 守衛並套用至 routes 主幹。
+- `notification/`：已提供 Event Bus 驅動的跨域通知服務，統一 toast/message 顯示。
+- `models/`：已集中定義 `user/organization/repository/permission` 等核心模型並匯出。
 
 ## 缺口與優先級
 ### P0（立即補齊）— 已完成 ✅
@@ -31,9 +31,48 @@
 
 ### P2（中期強化）
 7) **Event Bus 對齊介面**  
-   - 釐清 `event-bus` 既有實作的對外 Facade（例如 `IEventBus` + `BlueprintDomainEvent`）與核心 Provider 列表，於 Core 層建立最小重匯出。
+   - 釐清 `core/event-bus` 對外 Facade（IEventBus、BlueprintDomainEvent 等）與核心 Provider 列表，於 Core 層建立最小重匯出並補充使用說明。
 8) **匯出入口**  
    - 確保上述新目錄均在 `core/index.ts` 暴露，提供 features 一致的注入點。
+9) **Observability 三件組**  
+   - 補齊 `logger.service.ts`、`error-tracking.service.ts`、`performance-monitoring.service.ts`（含最小 API、context enrich、上報鉤子），並視需要在 `app.config.ts`/providers 註冊。
+10) **通知 / 事件使用說明**  
+    - 在本文件與任務序列文件增加「使用說明」：如何發佈/訂閱事件、如何呼叫 `NotificationService`，並給出最小範例。
+
+## 使用說明（事件發布 / 訂閱 & 通知）
+- 發佈事件（Feature）：
+  ```typescript
+  import { inject } from '@angular/core';
+  import { IEventBus } from '@core/event-bus';
+
+  const eventBus = inject(IEventBus);
+  eventBus.publish({
+    type: 'audit.policy.flagged',
+    blueprintId,
+    reason,
+    severity: 'warning'
+  });
+  ```
+- 訂閱事件（Service）：
+  ```typescript
+  import { inject } from '@angular/core';
+  import { IEventBus } from '@core/event-bus';
+
+  const eventBus = inject(IEventBus);
+  eventBus.observeAll('notification.*').subscribe(event => {
+    // bridge to NotificationService or domain-specific handler
+  });
+  ```
+- 使用 NotificationService：
+  ```typescript
+  import { inject } from '@angular/core';
+  import { NotificationService } from '@core/services/notification/notification.service';
+
+  const notifications = inject(NotificationService);
+  notifications.success('已完成');
+  notifications.warn('權限不足，請聯繫管理員');
+  notifications.error('系統錯誤，請稍後再試');
+  ```
 
 ## 對齊後目錄建議（目標狀態）
 ```
@@ -67,8 +106,8 @@ src/app/core/
 
 ## 行動路線圖
 1) **Phase 1 – 基線清理（P0）** ✅ 已完成：移除 `firebase.service.ts`、建立 `interceptors/` 並註冊、落地權限/租戶服務。
-2) **Phase 2 – 基礎模型（P1）**：建立核心模型與路由守衛，並在 `core/index.ts` 匯出。
-3) **Phase 3 – 通知與事件整合（P1-P2）**：完成跨域通知服務，校準 Event Bus 匯出，補齊使用手冊。
+2) **Phase 2 – 基礎模型（P1）** ✅ 已完成：核心模型、守衛與匯出。
+3) **Phase 3 – 通知與事件整合（P2）**：完成 Event Bus 匯出校準、Observability 三件組、通知/事件使用手冊更新。
 
 ## 驗收檢查表
 - [x] Core 中無 Firebase 包裝層，全部直接注入 @angular/fire。
@@ -76,3 +115,6 @@ src/app/core/
 - [x] 權限與租戶服務以 Signals 封裝，提供給守衛與 Feature。
 - [x] 核心模型與守衛可被所有 Feature 直接匯入，無重複型別。
 - [x] 通知服務可由 Event Bus 觸發，UI 介面一致（成功/錯誤/警告）。
+- [ ] Event Bus 對外 Facade 已重匯出並文件化（P2）。
+- [ ] Observability 三件組可用並文件化（P2）。
+- [ ] 通知 / 事件使用手冊已納入 docs/⭐️（P2）。
