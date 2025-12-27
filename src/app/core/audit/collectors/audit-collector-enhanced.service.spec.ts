@@ -19,18 +19,20 @@ import { DestroyRef } from '@angular/core';
 import { Subject } from 'rxjs';
 
 import { AuditCollectorEnhancedService } from './audit-collector-enhanced.service';
-import { BlueprintEventBus } from '@core/services/blueprint-event-bus.service';
+import { EVENT_BUS } from '@core/event-bus/constants/event-bus-tokens';
+import { IEventBus } from '@core/event-bus/interfaces';
 import { TenantContextService } from '@core/event-bus/services/tenant-context.service';
 import { ClassificationEngineService } from '../services/classification-engine.service';
 import { AuditEventRepository } from '../repositories/audit-event.repository';
 import { EventCategory } from '../models/event-category.enum';
 import { EventSeverity } from '../models/event-severity.enum';
+import { AuditLevel } from '@core/event-bus/models/audit-event.model';
 import { StorageTier } from '../models/storage-tier.enum';
 
 describe('AuditCollectorEnhancedService', () => {
   let service: AuditCollectorEnhancedService;
-  let mockEventBus: jasmine.SpyObj<BlueprintEventBus>;
-  let mockClassificationEngine: jasmine.SpyObj<ClassificationEngineService>;
+  let mockEventBus: jasmine.SpyObj<IEventBus>;
+  let mockClassificationEngine: jasmine.SpyObj<any>;
   let mockAuditRepository: jasmine.SpyObj<AuditEventRepository>;
   let mockTenantContext: jasmine.SpyObj<TenantContextService>;
   let infoSpy: jasmine.Spy<(...args: any[]) => any>;
@@ -55,9 +57,9 @@ describe('AuditCollectorEnhancedService', () => {
 
   beforeEach(() => {
     // Create mock services
-    const eventBusSubject = new Subject();
-    mockEventBus = jasmine.createSpyObj('BlueprintEventBus', ['subscribe']);
-    mockEventBus.subscribe.and.returnValue(eventBusSubject.asObservable());
+    const eventBusSubject = new Subject<any>();
+    mockEventBus = jasmine.createSpyObj<IEventBus>('EventBus', ['observeAll']);
+    mockEventBus.observeAll.and.returnValue(eventBusSubject.asObservable());
 
     mockClassificationEngine = jasmine.createSpyObj('ClassificationEngineService', ['classify']);
     mockClassificationEngine.classify.and.returnValue({
@@ -85,7 +87,7 @@ describe('AuditCollectorEnhancedService', () => {
     TestBed.configureTestingModule({
       providers: [
         AuditCollectorEnhancedService,
-        { provide: BlueprintEventBus, useValue: mockEventBus },
+        { provide: EVENT_BUS, useValue: mockEventBus },
         { provide: ClassificationEngineService, useValue: mockClassificationEngine },
         { provide: AuditEventRepository, useValue: mockAuditRepository },
         { provide: TenantContextService, useValue: mockTenantContext },
@@ -101,15 +103,8 @@ describe('AuditCollectorEnhancedService', () => {
       expect(service).toBeTruthy();
     });
 
-    it('should subscribe to 11 audit topic patterns', () => {
-      // Service subscribes in constructor
-      expect(mockEventBus.subscribe).toHaveBeenCalledTimes(11);
-      expect(mockEventBus.subscribe).toHaveBeenCalledWith('blueprint.*');
-      expect(mockEventBus.subscribe).toHaveBeenCalledWith('task.*');
-      expect(mockEventBus.subscribe).toHaveBeenCalledWith('user.*');
-      expect(mockEventBus.subscribe).toHaveBeenCalledWith('auth.*');
-      expect(mockEventBus.subscribe).toHaveBeenCalledWith('ai.*');
-      expect(mockEventBus.subscribe).toHaveBeenCalledWith('system.*');
+    it('should observe event bus stream once', () => {
+      expect(mockEventBus.observeAll).toHaveBeenCalledTimes(1);
     });
 
     it('should initialize batch processing', () => {
@@ -133,7 +128,7 @@ describe('AuditCollectorEnhancedService', () => {
       expect(mockClassificationEngine.classify).toHaveBeenCalled();
       expect(mockAuditRepository.create).toHaveBeenCalled();
 
-      const auditEvent = mockClassificationEngine.classify.calls.mostRecent().args[0];
+      const auditEvent = mockClassificationEngine.classify.calls.mostRecent().args[0] as any;
       expect(auditEvent.blueprintId).toBe('blueprint-123');
       expect(auditEvent.actor.id).toBe('user-123');
       expect(auditEvent.eventType).toBe('task.created');
@@ -147,7 +142,7 @@ describe('AuditCollectorEnhancedService', () => {
 
       tick();
 
-      const auditEvent = mockClassificationEngine.classify.calls.mostRecent().args[0];
+      const auditEvent = mockClassificationEngine.classify.calls.mostRecent().args[0] as any;
       expect(auditEvent.actor.type).toBe('ai');
       expect(auditEvent.aiGenerated).toBe(true);
     }));
@@ -218,8 +213,8 @@ describe('AuditCollectorEnhancedService', () => {
 
     it('should apply classification results to audit event', fakeAsync(() => {
       mockClassificationEngine.classify.and.returnValue({
-        category: EventCategory.SECURITY_INCIDENT,
-        level: EventSeverity.CRITICAL,
+        category: EventCategory.SECURITY,
+        level: AuditLevel.CRITICAL,
         riskScore: 95,
         complianceTags: ['GDPR', 'HIPAA'],
         operationType: 'DELETE',
@@ -231,13 +226,13 @@ describe('AuditCollectorEnhancedService', () => {
       tick();
 
       expect(mockAuditRepository.create).toHaveBeenCalled();
-      const persistedEvent = mockAuditRepository.create.calls.mostRecent().args[0];
+      const persistedEvent = mockAuditRepository.create.calls.mostRecent().args[0] as any;
 
-      expect(persistedEvent.category).toBe(EventCategory.SECURITY_INCIDENT);
-      expect(persistedEvent.level).toBe(EventSeverity.CRITICAL);
-      expect(persistedEvent.riskScore).toBe(95);
-      expect(persistedEvent.complianceTags).toContain('GDPR');
-      expect(persistedEvent.complianceTags).toContain('HIPAA');
+      expect(persistedEvent.category).toBe(EventCategory.SECURITY);
+      expect(persistedEvent.level).toBe(AuditLevel.CRITICAL);
+      expect((persistedEvent as any).riskScore).toBe(95);
+      expect((persistedEvent as any).complianceTags).toContain('GDPR');
+      expect((persistedEvent as any).complianceTags).toContain('HIPAA');
     }));
   });
 
@@ -347,7 +342,7 @@ describe('AuditCollectorEnhancedService', () => {
 
       const auditEvent = mockAuditRepository.create.calls.mostRecent().args[0];
       expect(auditEvent.changes).toBeDefined();
-      expect(auditEvent.changes?.length).toBe(2);
+      expect(auditEvent.changes ? auditEvent.changes.length : 0).toBe(2);
       expect(auditEvent.changes?.[0].field).toBe('status');
       expect(auditEvent.changes?.[1].field).toBe('assignee');
     }));
@@ -389,7 +384,7 @@ describe('AuditCollectorEnhancedService', () => {
     it('should log statistics on destroy', () => {
       service.ngOnDestroy();
 
-      expect(mockLogger.info).toHaveBeenCalledWith('[AuditCollectorEnhanced]', 'Shutting down', jasmine.any(Object));
+      expect(infoSpy).toHaveBeenCalledWith('[AuditCollectorEnhanced]', 'Shutting down', jasmine.any(Object));
     });
   });
 });

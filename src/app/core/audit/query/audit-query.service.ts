@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { AuditEventRepository, StorageTier } from '../repositories';
+import { AuditEventRepository, StorageTier, AuditEventQueryOptions } from '../repositories';
 import { ClassifiedAuditEvent } from '../services';
 import { AuditLevel, AuditCategory } from '@core/event-bus/models';
 
@@ -118,7 +118,7 @@ export class AuditQueryService {
    * @returns Chronologically ordered events with sequence numbers
    */
   async queryTimeline(options: TimelineQueryOptions): Promise<TimelineEvent[]> {
-    const queryOpts = {
+    const queryOpts: AuditEventQueryOptions = {
       tenantId: options.tenantId,
       startTime: options.startTime,
       endTime: options.endTime,
@@ -164,7 +164,7 @@ export class AuditQueryService {
    * @returns All events performed by the actor
    */
   async queryByActor(options: ActorQueryOptions): Promise<ClassifiedAuditEvent[]> {
-    const queryOpts = {
+    const queryOpts: AuditEventQueryOptions = {
       tenantId: options.tenantId,
       actor: options.actorId,
       startTime: options.startTime,
@@ -197,7 +197,7 @@ export class AuditQueryService {
    * @returns All events related to the entity
    */
   async queryByEntity(options: EntityQueryOptions): Promise<ClassifiedAuditEvent[]> {
-    const queryOpts = {
+    const queryOpts: AuditEventQueryOptions = {
       tenantId: options.tenantId,
       resourceType: options.resourceType,
       resourceId: options.resourceId,
@@ -227,7 +227,7 @@ export class AuditQueryService {
    * @returns Events relevant to the compliance framework
    */
   async queryCompliance(options: ComplianceQueryOptions): Promise<ClassifiedAuditEvent[]> {
-    const queryOpts = {
+    const queryOpts: AuditEventQueryOptions = {
       tenantId: options.tenantId,
       startTime: options.startTime,
       endTime: options.endTime,
