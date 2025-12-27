@@ -74,6 +74,9 @@ The GitHub Platform Architect view treats GitHub as a governable platform. The s
 
 Use the table as the canonical mapping when adding or relocating documents; new docs should declare which pillar they belong to in the opening section.
 
+### ⚠ 未對齊母體清單
+- [未對齊母體清單](./⭐️/未對齊母體清單.md) — 聚合母體（GitHub 平台）尚未對齊的重點項目，涵蓋審計、合規、啟動驗證與文件落地狀態。
+
 ---
 
 ### Ideal Target Directory Layout (GitHub Platform Canonical)
