@@ -433,6 +433,17 @@ export class TenantContextService {
   });
 
   /**
+   * Compatibility helpers for consumers expecting imperative getters.
+   */
+  getCurrentTenantId(): string | null {
+    return this.currentTenantId();
+  }
+
+  getTenantId(): string | null {
+    return this.currentTenantId();
+  }
+
+  /**
    * Current Workspace
    * Complete workspace data (for backward compatibility)
    */

@@ -1,11 +1,11 @@
 import { TestBed } from '@angular/core/testing';
-import { DomainEvent } from '../models';
-import { InMemoryEventStore } from './in-memory-event-store.service';
+import { DomainEvent } from '../../models';
+import { InMemoryEventStore } from './in-memory-event-store';
 
 // Test event class
 class TestEvent extends DomainEvent {
   readonly eventType = 'test.event' as const;
-  readonly payload: { message: string };
+  override readonly payload: { message: string };
   
   constructor(message: string, aggregateId: string = 'test-1') {
     super({
@@ -94,7 +94,7 @@ describe('InMemoryEventStore', () => {
       });
       
       expect(events.length).toBe(2);
-      expect(events.every(e => e.aggregateId === 'agg-1')).toBe(true);
+      expect(events.every((e: DomainEvent) => e.aggregateId === 'agg-1')).toBe(true);
     });
     
     it('should filter by aggregate type', async () => {
@@ -160,7 +160,7 @@ describe('InMemoryEventStore', () => {
       const events = await store.getEventsByAggregate('agg-1', 'test');
       
       expect(events.length).toBe(2);
-      expect(events.every(e => e.aggregateId === 'agg-1')).toBe(true);
+      expect(events.every((e: DomainEvent) => e.aggregateId === 'agg-1')).toBe(true);
     });
     
     it('should return empty array for non-existent aggregate', async () => {
@@ -189,7 +189,7 @@ describe('InMemoryEventStore', () => {
       const events = await store.getEventsSince(cutoff);
       
       expect(events.length).toBe(2);
-      expect(events.every(e => e.timestamp >= cutoff)).toBe(true);
+      expect(events.every((e: DomainEvent) => e.timestamp >= cutoff)).toBe(true);
     });
   });
   

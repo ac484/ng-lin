@@ -20,13 +20,16 @@
  */
 
 import { Injectable, inject } from '@angular/core';
-import { AuditLevel, AuditCategory, AuditEvent } from '../../event-bus/models/audit-event.model';
+import { AuditLevel, AuditCategory, AuditEvent as BusAuditEvent } from '../../event-bus/models/audit-event.model';
+import { AuditEvent as CoreAuditEvent } from '../models/audit-event.interface';
+
+type AnyAuditEvent = BusAuditEvent & Partial<CoreAuditEvent>;
 
 /**
  * Classification Result
  * 增強的審計事件，包含分類後的元數據
  */
-export interface ClassifiedAuditEvent extends AuditEvent {
+export interface ClassifiedAuditEvent extends BusAuditEvent {
   /** 風險評分 (0-100, 越高越危險) */
   riskScore: number;
   /** 是否需要自動審查 */
@@ -370,7 +373,7 @@ export class ClassificationEngineService {
    * @param event - 原始審計事件
    * @returns 分類後的審計事件
    */
-  classify(event: AuditEvent): ClassifiedAuditEvent {
+  classify(event: AnyAuditEvent): ClassifiedAuditEvent {
     // Find matching rule
     const rule = this.findMatchingRule(event.eventType);
 
@@ -397,7 +400,7 @@ export class ClassificationEngineService {
   /**
    * 批次分類
    */
-  classifyBatch(events: AuditEvent[]): ClassifiedAuditEvent[] {
+  classifyBatch(events: AnyAuditEvent[]): ClassifiedAuditEvent[] {
     return events.map(event => this.classify(event));
   }
 
@@ -448,7 +451,7 @@ export class ClassificationEngineService {
   /**
    * 私有方法: 應用預設分類
    */
-  private applyDefaultClassification(event: AuditEvent): ClassifiedAuditEvent {
+  private applyDefaultClassification(event: AnyAuditEvent): ClassifiedAuditEvent {
     return {
       ...event,
       riskScore: 20,
@@ -462,7 +465,7 @@ export class ClassificationEngineService {
   /**
    * 私有方法: 計算風險評分 (可根據上下文調整)
    */
-  private calculateRiskScore(rule: ClassificationRule, event: AuditEvent): number {
+  private calculateRiskScore(rule: ClassificationRule, event: AnyAuditEvent): number {
     let baseScore = rule.riskScore;
 
     // Adjust based on result

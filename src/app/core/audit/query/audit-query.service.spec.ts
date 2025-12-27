@@ -262,11 +262,15 @@ describe('AuditQueryService', () => {
         createMockEvent({ category: AuditCategory.AUTHENTICATION, level: AuditLevel.INFO, riskScore: 20, result: 'success' }),
         createMockEvent({ category: AuditCategory.AUTHENTICATION, level: AuditLevel.WARNING, riskScore: 60, result: 'failure' }),
         createMockEvent({ category: AuditCategory.DATA_ACCESS, level: AuditLevel.CRITICAL, riskScore: 90, result: 'success' }),
-        createMockEvent({ category: AuditCategory.SECURITY_EVENT, level: AuditLevel.ERROR, riskScore: 75, result: 'failure' })
+        createMockEvent({ category: AuditCategory.SECURITY, level: AuditLevel.ERROR, riskScore: 75, result: 'failure' })
       ];
       mockRepository.query.and.returnValue(Promise.resolve(events));
 
-      const stats = await service.aggregate('tenant-1', new Date('2025-01-01'), new Date('2025-01-31'));
+      const stats = await service.aggregate({
+        tenantId: 'tenant-1',
+        startTime: new Date('2025-01-01'),
+        endTime: new Date('2025-01-31')
+      });
 
       expect(stats.totalEvents).toBe(4);
       expect(stats.byCategory[AuditCategory.AUTHENTICATION]).toBe(2);
