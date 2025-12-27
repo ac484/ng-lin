@@ -59,7 +59,7 @@ export class PolicyEngineService {
       description: 'Escalate authentication failures for login/mfa/password',
       match: (event) =>
         /^auth\.(login|signin|mfa|password)/i.test(event.eventType) &&
-        event.metadata?.result === 'failure',
+        (event.metadata as Record<string, any> | undefined)?.['result'] === 'failure',
       action: 'escalate',
       notify: true,
       tags: ['auth', 'failure']
@@ -82,7 +82,7 @@ export class PolicyEngineService {
     {
       name: 'AI Generated Actions',
       description: 'Flag AI generated events for later review',
-       match: (event) => event.aiGenerated === true || event.actor?.type === 'ai',
+      match: (event) => event.aiGenerated === true || event.actor?.type === 'ai',
       action: 'flag',
       notify: false,
       tags: ['ai', 'review']

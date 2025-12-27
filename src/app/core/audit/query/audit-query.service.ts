@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
-import { AuditEventRepository, StorageTier, QueryOptions } from '../repositories';
+import { AuditEventRepository, StorageTier } from '../repositories';
 import { ClassifiedAuditEvent } from '../services';
-import { AuditEvent, AuditLevel, AuditCategory } from '@core/event-bus/models';
+import { AuditLevel, AuditCategory } from '@core/event-bus/models';
 
 /**
  * Timeline Query Options
@@ -118,7 +118,7 @@ export class AuditQueryService {
    * @returns Chronologically ordered events with sequence numbers
    */
   async queryTimeline(options: TimelineQueryOptions): Promise<TimelineEvent[]> {
-    const queryOpts: QueryOptions = {
+    const queryOpts = {
       tenantId: options.tenantId,
       startTime: options.startTime,
       endTime: options.endTime,
@@ -164,7 +164,7 @@ export class AuditQueryService {
    * @returns All events performed by the actor
    */
   async queryByActor(options: ActorQueryOptions): Promise<ClassifiedAuditEvent[]> {
-    const queryOpts: QueryOptions = {
+    const queryOpts = {
       tenantId: options.tenantId,
       actor: options.actorId,
       startTime: options.startTime,
@@ -197,7 +197,7 @@ export class AuditQueryService {
    * @returns All events related to the entity
    */
   async queryByEntity(options: EntityQueryOptions): Promise<ClassifiedAuditEvent[]> {
-    const queryOpts: QueryOptions = {
+    const queryOpts = {
       tenantId: options.tenantId,
       resourceType: options.resourceType,
       resourceId: options.resourceId,
@@ -227,7 +227,7 @@ export class AuditQueryService {
    * @returns Events relevant to the compliance framework
    */
   async queryCompliance(options: ComplianceQueryOptions): Promise<ClassifiedAuditEvent[]> {
-    const queryOpts: QueryOptions = {
+    const queryOpts = {
       tenantId: options.tenantId,
       startTime: options.startTime,
       endTime: options.endTime,
@@ -264,65 +264,6 @@ export class AuditQueryService {
    * @param tier - Storage tier to query
    * @returns Aggregated statistics
    */
-  async aggregate(tenantId: string, startTime: Date, endTime: Date, tier: StorageTier = StorageTier.HOT): Promise<AggregationResult> {
-    const events = await this.repository.query({
-      tenantId,
-      startTime,
-      endTime,
-      tier,
-      limit: 10000
-    });
-
-    const byCategory: Record<string, number> = {};
-    const byLevel: Record<string, number> = {};
-    const byActor: Record<string, number> = {};
-    let successCount = 0;
-    let failureCount = 0;
-    let totalRisk = 0;
-    let highRiskCount = 0;
-    let criticalCount = 0;
-
-    events.forEach(event => {
-      // Category aggregation
-      byCategory[event.category] = (byCategory[event.category] || 0) + 1;
-
-      // Level aggregation
-      byLevel[event.level] = (byLevel[event.level] || 0) + 1;
-
-      // Actor aggregation
-      if (event.actor) {
-        byActor[event.actor] = (byActor[event.actor] || 0) + 1;
-      }
-
-      // Result aggregation
-      if (event.result === 'success') {
-        successCount++;
-      } else if (event.result === 'failure') {
-        failureCount++;
-      }
-
-      // Risk aggregation
-      totalRisk += event.riskScore;
-      if (event.riskScore >= 70) {
-        highRiskCount++;
-      }
-      if (event.level === AuditLevel.CRITICAL) {
-        criticalCount++;
-      }
-    });
-
-    return {
-      totalEvents: events.length,
-      byCategory: byCategory as Record<AuditCategory, number>,
-      byLevel: byLevel as Record<AuditLevel, number>,
-      byActor,
-      byResult: { success: successCount, failure: failureCount },
-      averageRiskScore: events.length > 0 ? Math.round(totalRisk / events.length) : 0,
-      highRiskCount,
-      criticalCount
-    };
-  }
-
   /**
    * Pattern 6: Search
    *
@@ -392,8 +333,8 @@ export class AuditQueryService {
     };
   }> {
     const [period1Stats, period2Stats] = await Promise.all([
-      this.aggregate(tenantId, period1Start, period1End),
-      this.aggregate(tenantId, period2Start, period2End)
+      this.aggregate({ tenantId, startTime: period1Start, endTime: period1End }),
+      this.aggregate({ tenantId, startTime: period2Start, endTime: period2End })
     ]);
 
     return {
@@ -529,7 +470,7 @@ export class AuditQueryService {
       // Level
       result.byLevel[event.level] = (result.byLevel[event.level] || 0) + 1;
       // Actor
-      const actorId = event.actor?.id || 'unknown';
+      const actorId = event.actor || 'unknown';
       result.byActor[actorId] = (result.byActor[actorId] || 0) + 1;
       // Result
       if ((event as any).result === 'failure') {
@@ -573,7 +514,7 @@ export class AuditQueryService {
       timeWindow: { start: options.startTime, end: options.endTime },
       highRisk: filtered.filter(e => ((e as any).riskScore || 0) >= 60).length,
       requiresReview: filtered.filter(e => (e as any).autoReviewRequired === true).length,
-      actors: [...new Set(filtered.map(e => e.actor?.id).filter(Boolean))],
+      actors: [...new Set(filtered.map(e => e.actor).filter(Boolean))],
       topCategories: filtered.reduce<Record<AuditCategory, number>>((acc, e) => {
         acc[e.category] = (acc[e.category] || 0) + 1;
         return acc;

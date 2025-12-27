@@ -263,62 +263,65 @@ export class AuditCollectorEnhancedService implements OnDestroy {
    * Maps existing event structure to new audit schema
    */
   private convertDomainEventToAuditEvent(domainEvent: DomainEvent): AuditEvent {
-    const tenantId = this.extractTenantId(domainEvent);
+    const raw = domainEvent as any;
+    const tenantId = this.extractTenantId(raw);
 
     return {
       id: '', // Will be set by repository
-      blueprintId: tenantId || domainEvent.blueprintId || 'unknown',
-      timestamp: domainEvent.timestamp || new Date(),
+      blueprintId: tenantId || raw.blueprintId || 'unknown',
+      timestamp: raw.timestamp || new Date(),
       sequenceNumber: 0, // Will be set by repository
 
       // Actor mapping
       actor: {
-        id: domainEvent.userId || domainEvent.actorId || 'system',
-        type: this.inferActorType(domainEvent),
-        name: domainEvent.actorName || domainEvent.userName || 'System',
-        metadata: domainEvent.actorMetadata || {}
+        id: raw.userId || raw.actorId || 'system',
+        type: this.inferActorType(raw),
+        name: raw.actorName || raw.userName || 'System',
+        metadata: raw.actorMetadata || {}
       },
 
       // Event details
-      eventType: domainEvent.type,
+      eventType: raw.type || raw.eventType || 'unknown',
       category: EventCategory.SYSTEM, // Will be overridden by classification
       level: EventSeverity.LOW, // Will be overridden by classification
       severity: EventSeverity.LOW,
+      result: raw.result || 'success',
+      description: raw.description || raw.type || raw.eventType || 'event',
 
       // Entity tracking
-      entity: domainEvent.entityId
+      entity: raw.entityId
         ? {
-            id: domainEvent.entityId,
-            type: domainEvent.entityType || 'unknown',
-            name: domainEvent.entityName || domainEvent.entityId
+            id: raw.entityId,
+            type: raw.entityType || 'unknown',
+            name: raw.entityName || raw.entityId
           }
         : undefined,
 
       // Operation tracking
-      operationType: this.inferOperationType(domainEvent.type),
+      operationType: this.inferOperationType(raw.type || raw.eventType || ''),
 
       // Change tracking
-      changes: domainEvent.changes || undefined,
+      changes: raw.changes || undefined,
 
       // Classification metadata (will be set by ClassificationEngineService)
       riskScore: 0,
       complianceTags: [],
       autoReviewRequired: false,
-      aiGenerated: domainEvent.type.startsWith('ai.'),
+      aiGenerated: (raw.type || '').startsWith('ai.'),
 
       // Storage management
       storageTier: StorageTier.HOT,
       retentionDays: 7, // HOT tier default
 
       // Request context
-      requestId: domainEvent.requestId,
-      sessionId: domainEvent.sessionId,
-      ipAddress: domainEvent.ipAddress,
-      userAgent: domainEvent.userAgent,
+      requestId: raw.requestId,
+      sessionId: raw.sessionId,
+      ipAddress: raw.ipAddress,
+      userAgent: raw.userAgent,
 
       // Additional metadata
-      metadata: domainEvent.payload || domainEvent.data || {},
-      tags: domainEvent.tags || [],
+      metadata: raw.payload || raw.data || {},
+      tags: raw.tags || [],
 
       // Lifecycle timestamps
       createdAt: new Date(),
@@ -330,19 +333,21 @@ export class AuditCollectorEnhancedService implements OnDestroy {
    * Extract tenant ID from domain event
    * Priority: blueprintId > tenantId > context service
    */
-  private extractTenantId(event: DomainEvent): string | undefined {
-    return event.blueprintId || (event as any).tenantId || this.tenantContext.getCurrentTenantId() || undefined;
+  private extractTenantId(event: any): string | undefined {
+    const contextTenant = this.tenantContext.currentTenantId();
+    return event.blueprintId || event.tenantId || contextTenant || undefined;
   }
 
   /**
    * Infer actor type from event metadata
    */
-  private inferActorType(event: DomainEvent): 'user' | 'team' | 'partner' | 'ai' | 'system' {
-    if (event.type.startsWith('ai.')) return 'ai';
-    if (event.type.startsWith('system.')) return 'system';
+  private inferActorType(event: any): 'user' | 'team' | 'partner' | 'ai' | 'system' {
+    const type = event.type || '';
+    if (type.startsWith('ai.')) return 'ai';
+    if (type.startsWith('system.')) return 'system';
     if (event.userId) return 'user';
-    if ((event as any).teamId) return 'team';
-    if ((event as any).partnerId) return 'partner';
+    if (event.teamId) return 'team';
+    if (event.partnerId) return 'partner';
     return 'system';
   }
 

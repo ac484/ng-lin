@@ -11,24 +11,22 @@ describe('AuditPolicyAlertSinkService', () => {
   let service: AuditPolicyAlertSinkService;
   let eventBus: jasmine.SpyObj<IEventBus>;
   let notificationRepository: jasmine.SpyObj<NotificationRepository>;
-  const subscriptions: Record<string, (event: DomainEvent<any>) => Promise<void> | void> = {};
+  const subscriptions: Record<string, (event: DomainEvent) => Promise<void> | void> = {};
 
   beforeEach(() => {
     Object.keys(subscriptions).forEach(key => delete subscriptions[key]);
     eventBus = jasmine.createSpyObj<IEventBus>('EventBus', ['subscribe', 'unsubscribe']);
     notificationRepository = jasmine.createSpyObj<NotificationRepository>('NotificationRepository', ['create']);
 
-    eventBus.subscribe.and.callFake(
-      async (eventType: string, handler: (event: DomainEvent<any>) => Promise<void> | void) => {
-        subscriptions[eventType] = handler;
-        const subscription: Subscription = {
-          eventType,
-          handler,
-          unsubscribe: () => undefined
-        };
-        return subscription;
-      }
-    );
+    eventBus.subscribe.and.callFake(async (eventType: string, handler: (event: DomainEvent) => Promise<void> | void) => {
+      subscriptions[eventType] = handler;
+      const subscription: Subscription = {
+        eventType,
+        handler,
+        unsubscribe: () => undefined
+      };
+      return subscription;
+    });
 
     eventBus.unsubscribe.and.callFake(async () => undefined);
     notificationRepository.create.and.returnValue(
