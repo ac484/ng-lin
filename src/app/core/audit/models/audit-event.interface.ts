@@ -1,5 +1,5 @@
-import { AuditCategory } from './event-category.enum';
-import { AuditLevel } from './event-severity.enum';
+import { EventCategory } from './event-category.enum';
+import { EventSeverity } from './event-severity.enum';
 import { StorageTier } from './storage-tier.enum';
 
 /**
@@ -23,6 +23,10 @@ export interface AuditEvent {
    * Format: UUID v4
    */
   id: string;
+  /**
+   * Optional sequence number for ordering
+   */
+  sequenceNumber?: number;
   
   /**
    * Blueprint ID (tenant isolation)
@@ -48,18 +52,32 @@ export interface AuditEvent {
    * Examples: user.action.login, ai.decision.architectural, data.modification.delete
    */
   eventType: string;
+  /**
+   * Optional operation type name
+   */
+  operationType?: 'CREATE' | 'READ' | 'UPDATE' | 'DELETE' | 'EXECUTE';
   
   /**
    * Event category (11 categories)
    * Automatically assigned by Classification Engine
    */
-  category: AuditCategory;
+  category: EventCategory;
   
   /**
    * Event severity level (4 levels: LOW, MEDIUM, HIGH, CRITICAL)
    * Automatically assigned by Classification Engine based on risk score
    */
-  level: AuditLevel;
+  /**
+   * Event severity level (LOW, MEDIUM, HIGH, CRITICAL)
+   * @deprecated use severity; maintained for backward compatibility
+   */
+  level?: EventSeverity;
+
+  /**
+   * Event severity level (LOW, MEDIUM, HIGH, CRITICAL)
+   * Canonical field aligned with docs/⭐️/AUDIT_SYSTEM_TASK_BREAKDOWN.md
+   */
+  severity?: EventSeverity;
   
   /**
    * Target entity information (optional)
@@ -101,24 +119,35 @@ export interface AuditEvent {
    * Additional contextual information about the request
    */
   context?: AuditContext;
+  requestId?: string;
+  sessionId?: string;
+  ipAddress?: string;
+  userAgent?: string;
   
   /**
    * Event metadata (extensible)
    * Additional event-specific data
    */
   metadata?: Record<string, any>;
+  tags?: string[];
   
   /**
    * Classification result (Layer 4)
    * Automatically assigned by ClassificationEngineService
    */
-  classification: AuditClassification;
+  classification?: AuditClassification;
+  riskScore?: number;
+  complianceTags?: string[];
+  autoReviewRequired?: boolean;
+  aiGenerated?: boolean;
   
   /**
    * Storage tier (Layer 5)
    * Current storage tier (HOT, WARM, COLD)
    */
   tier?: StorageTier;
+  storageTier?: StorageTier;
+  retentionDays?: number;
   
   /**
    * Audit metadata
@@ -158,6 +187,10 @@ export interface AuditActor {
    * Actor display name
    */
   name: string;
+  /**
+   * Optional enriched metadata
+   */
+  metadata?: Record<string, unknown>;
   
   /**
    * Actor email (for users only)
@@ -312,12 +345,12 @@ export interface AuditClassification {
   /**
    * Event category (11 categories)
    */
-  category: AuditCategory;
+  category: EventCategory;
   
   /**
    * Event severity level (4 levels)
    */
-  level: AuditLevel;
+  level: EventSeverity;
   
   /**
    * Risk score (0-100)

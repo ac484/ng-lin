@@ -13,7 +13,7 @@
 
 import { Injectable } from '@angular/core';
 import { AuditEvent } from '../models/audit-event.interface';
-import { AuditLevel } from '../models/event-severity.enum';
+import { EventSeverity } from '../models/event-severity.enum';
 import { EventCategory } from '../models/event-category.enum';
 
 export type PolicyAction = 'allow' | 'suppress' | 'flag' | 'escalate';
@@ -49,7 +49,7 @@ export class PolicyEngineService {
       description: 'Escalate security.* events with HIGH/CRITICAL severity',
       match: (event) =>
         event.eventType.startsWith('security.') &&
-        (event.level === AuditLevel.HIGH || event.level === AuditLevel.CRITICAL),
+        ((event.severity ?? event.level) === EventSeverity.HIGH || (event.severity ?? event.level) === EventSeverity.CRITICAL),
       action: 'escalate',
       notify: true,
       tags: ['security', 'escalate']
@@ -59,7 +59,7 @@ export class PolicyEngineService {
       description: 'Escalate authentication failures for login/mfa/password',
       match: (event) =>
         /^auth\.(login|signin|mfa|password)/i.test(event.eventType) &&
-        event.metadata?.result === 'failure',
+        (event.metadata as Record<string, any> | undefined)?.['result'] === 'failure',
       action: 'escalate',
       notify: true,
       tags: ['auth', 'failure']

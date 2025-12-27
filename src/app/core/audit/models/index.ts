@@ -7,7 +7,7 @@
  * 
  * Usage:
  * ```typescript
- * import { AuditEvent, AuditCategory, AuditLevel, StorageTier } from '@core/audit/models';
+ * import { AuditEvent, EventCategory, EventSeverity, StorageTier } from '@core/audit/models';
  * ```
  */
 

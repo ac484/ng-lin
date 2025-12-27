@@ -18,6 +18,10 @@ export class AuthFacade implements AuthPort {
     return this.impl.currentUser;
   }
 
+  getCurrentUserId(): string | null {
+    return this.impl.getCurrentUserId();
+  }
+
   signIn(email: string, password: string) {
     return this.impl.signIn(email, password);
   }

@@ -31,19 +31,19 @@ import { interval, Subject } from 'rxjs';
 import { buffer, filter } from 'rxjs/operators';
 
 // Existing infrastructure
-import { InMemoryEventBus } from '@core/event-bus/implementations/in-memory';
+import { EVENT_BUS } from '@core/event-bus/constants/event-bus-tokens';
+import { IEventBus } from '@core/event-bus/interfaces';
 import { TenantContextService } from '@core/event-bus/services/tenant-context.service';
 import { DomainEvent } from '@core/event-bus/models/base-event';
 
 // New audit infrastructure
 import { ClassificationEngineService } from '../services/classification-engine.service';
-import { PolicyDecision, PolicyEngineService } from '../services/policy-engine.service';
+import { PolicyEngineService } from '../services/policy-engine.service';
 import { AuditEventRepository } from '../repositories/audit-event.repository';
 import { AuditEvent } from '../models/audit-event.interface';
 import { EventCategory } from '../models/event-category.enum';
-import { EventSeverity } from '../models/event-severity.enum';
+import { EventSeverity, normalizeSeverity } from '../models/event-severity.enum';
 import { StorageTier } from '../models/storage-tier.enum';
-import { AuditPolicyDecisionEvent } from '../events/audit-policy-decision.event';
 
 /**
  * Batch collection configuration
@@ -86,7 +86,7 @@ const AUDIT_TOPIC_PATTERNS = [
 @Injectable({ providedIn: 'root' })
 export class AuditCollectorEnhancedService implements OnDestroy {
   // Dependencies
-  private eventBus = inject(InMemoryEventBus);
+  private eventBus = inject<IEventBus>(EVENT_BUS);
   private classificationEngine = inject(ClassificationEngineService);
   private policyEngine = inject(PolicyEngineService);
   private auditRepository = inject(AuditEventRepository);
@@ -131,23 +131,25 @@ export class AuditCollectorEnhancedService implements OnDestroy {
    * Following existing patterns from audit-auto-subscription.service.ts
    */
   private initializeEventSubscriptions(): void {
+    this.logger.debug('[AuditCollectorEnhanced]', `Observing all events and filtering by ${AUDIT_TOPIC_PATTERNS.length} patterns`);
+
     this.eventBus
       .observeAll()
       .pipe(
         takeUntilDestroyed(this.destroyRef),
-        filter((event: DomainEvent) => this.matchesTopic(event.eventType))
+        filter((event: any) => this.matchesAuditPattern(event as DomainEvent))
       )
       .subscribe({
-        next: (event: DomainEvent) => {
+        next: (event: any) => {
           this.stats.eventsCollected++;
-          this.eventBuffer$.next(event);
+          this.eventBuffer$.next(event as DomainEvent);
         },
         error: error => {
           this.logger.error('[AuditCollectorEnhanced]', 'Subscription error', error);
         }
       });
 
-    this.logger.info('[AuditCollectorEnhanced]', `Event subscriptions initialized successfully (${AUDIT_TOPIC_PATTERNS.length} patterns)`);
+    this.logger.info('[AuditCollectorEnhanced]', 'Event observation initialized successfully');
   }
 
   /**
@@ -201,56 +203,51 @@ export class AuditCollectorEnhancedService implements OnDestroy {
       const auditEvents = domainEvents.map(event => this.convertDomainEventToAuditEvent(event));
 
       // Apply policy/rules before classification
-      const notifications: Array<{ event: AuditEvent; decision: PolicyDecision }> = [];
       const filteredEvents = auditEvents
         .map(event => {
-          const decision = this.policyEngine.evaluate(event);
+          const decision = this.policyEngine.evaluate(event as any);
 
           if (decision.action === 'suppress') {
             return null; // drop noisy events
           }
 
-          const augmented = {
-            ...event,
+          const augmented: AuditEvent = {
+            ...(event as any),
             metadata: {
-              ...event.metadata,
+              ...(event as any).metadata,
               policy: {
                 rule: decision.rule,
                 reasons: decision.reasons,
                 action: decision.action
               }
             },
-            autoReviewRequired: decision.action === 'flag' || decision.action === 'escalate' || event.autoReviewRequired
-          };
-
-          if ((decision.action === 'flag' || decision.action === 'escalate') && decision.notify) {
-            notifications.push({ event: augmented, decision });
-          }
+            autoReviewRequired: decision.action === 'flag' || decision.action === 'escalate' || (event as any).autoReviewRequired
+          } as any;
 
           return augmented;
         })
-        .filter((event): event is AuditEvent => !!event);
+        .filter(event => !!event) as unknown as AuditEvent[];
 
       // Classify events (bulk operation)
       const classifiedEvents = filteredEvents.map(event => {
-        const classification = this.classificationEngine.classify(event);
+        const classification = this.classificationEngine.classify(event as any) as any;
         this.stats.eventsClassified++;
 
+        const severity = normalizeSeverity(classification.level as EventSeverity | 'INFO' | 'WARNING' | 'ERROR' | 'CRITICAL');
+
         return {
-          ...event,
-          category: classification.category,
-          level: classification.level,
+          ...(event as any),
+          category: (classification.category as unknown) as EventCategory,
+          level: severity,
+          severity,
           riskScore: classification.riskScore,
           complianceTags: classification.complianceTags,
           storageTier: StorageTier.HOT // New events always go to HOT tier
-        };
+        } as any;
       });
 
       // Persist batch to Firestore
-      await this.auditRepository.createBatch(classifiedEvents);
-
-      // Emit notifications for flagged/escalated decisions
-      await this.emitPolicyNotifications(notifications);
+      await this.auditRepository.createBatch(classifiedEvents as any);
 
       this.stats.eventsPersisted += classifiedEvents.length;
       this.stats.batchesFlushed++;
@@ -267,63 +264,65 @@ export class AuditCollectorEnhancedService implements OnDestroy {
    * Maps existing event structure to new audit schema
    */
   private convertDomainEventToAuditEvent(domainEvent: DomainEvent): AuditEvent {
-    const tenantId = this.extractTenantId(domainEvent);
-
-    const eventType = (domainEvent as any).eventType || (domainEvent as any).type;
+    const raw = domainEvent as any;
+    const tenantId = this.extractTenantId(raw);
 
     return {
       id: '', // Will be set by repository
-      blueprintId: tenantId || domainEvent.blueprintId || 'unknown',
-      timestamp: domainEvent.timestamp || new Date(),
+      blueprintId: tenantId || raw.blueprintId || 'unknown',
+      timestamp: raw.timestamp || new Date(),
       sequenceNumber: 0, // Will be set by repository
 
       // Actor mapping
       actor: {
-        id: domainEvent.userId || domainEvent.actorId || 'system',
-        type: this.inferActorType(domainEvent),
-        name: domainEvent.actorName || domainEvent.userName || 'System',
-        metadata: domainEvent.actorMetadata || {}
+        id: raw.userId || raw.actorId || 'system',
+        type: this.inferActorType(raw),
+        name: raw.actorName || raw.userName || 'System',
+        metadata: raw.actorMetadata || {}
       },
 
       // Event details
-      eventType: eventType,
-      category: EventCategory.SYSTEM_EVENT, // Will be overridden by classification
+      eventType: raw.type || raw.eventType || 'unknown',
+      category: EventCategory.SYSTEM, // Will be overridden by classification
       level: EventSeverity.LOW, // Will be overridden by classification
+      severity: EventSeverity.LOW,
+      result: raw.result || 'success',
+      description: raw.description || raw.type || raw.eventType || 'event',
 
       // Entity tracking
-      entity: domainEvent.entityId
+      entity: raw.entityId
         ? {
-            id: domainEvent.entityId,
-            type: domainEvent.entityType || 'unknown',
-            name: domainEvent.entityName || domainEvent.entityId
+            id: raw.entityId,
+            type: raw.entityType || 'unknown',
+            name: raw.entityName || raw.entityId
           }
         : undefined,
 
       // Operation tracking
-      operationType: eventType ? this.inferOperationType(eventType) : undefined,
+      operationType: this.inferOperationType(raw.type || raw.eventType || ''),
 
       // Change tracking
-      changes: domainEvent.changes || undefined,
+      changes: Array.isArray(raw.changes) ? raw.changes : raw.changes ? [raw.changes] : undefined,
 
       // Classification metadata (will be set by ClassificationEngineService)
       riskScore: 0,
       complianceTags: [],
       autoReviewRequired: false,
-      aiGenerated: eventType ? eventType.startsWith('ai.') : false,
+      aiGenerated: (raw.type || '').startsWith('ai.'),
 
       // Storage management
       storageTier: StorageTier.HOT,
       retentionDays: 7, // HOT tier default
 
       // Request context
-      requestId: domainEvent.requestId,
-      sessionId: domainEvent.sessionId,
-      ipAddress: domainEvent.ipAddress,
-      userAgent: domainEvent.userAgent,
+      requestId: raw.requestId,
+      sessionId: raw.sessionId,
+      ipAddress: raw.ipAddress,
+      userAgent: raw.userAgent,
 
       // Additional metadata
-      metadata: domainEvent.payload || domainEvent.data || {},
-      tags: domainEvent.tags || [],
+      metadata: raw.payload || raw.data || {},
+      tags: raw.tags || [],
 
       // Lifecycle timestamps
       createdAt: new Date(),
@@ -332,22 +331,38 @@ export class AuditCollectorEnhancedService implements OnDestroy {
   }
 
   /**
+   * Pattern matcher for audit topics
+   */
+  private matchesAuditPattern(event: DomainEvent): boolean {
+    const type = (event as any).type || (event as any).eventType || '';
+    return AUDIT_TOPIC_PATTERNS.some(pattern => {
+      if (pattern.endsWith('*')) {
+        const prefix = pattern.replace('*', '');
+        return type.startsWith(prefix);
+      }
+      return type === pattern;
+    });
+  }
+
+  /**
    * Extract tenant ID from domain event
    * Priority: blueprintId > tenantId > context service
    */
-  private extractTenantId(event: DomainEvent): string | undefined {
-    return event.blueprintId || (event as any).tenantId || this.tenantContext.getCurrentTenantId() || undefined;
+  private extractTenantId(event: any): string | undefined {
+    const contextTenant = this.tenantContext.currentTenantId();
+    return event.blueprintId || event.tenantId || contextTenant || undefined;
   }
 
   /**
    * Infer actor type from event metadata
    */
-  private inferActorType(event: DomainEvent): 'user' | 'team' | 'partner' | 'ai' | 'system' {
-    if (event.type.startsWith('ai.')) return 'ai';
-    if (event.type.startsWith('system.')) return 'system';
+  private inferActorType(event: any): 'user' | 'team' | 'partner' | 'ai' | 'system' {
+    const type = event.type || '';
+    if (type.startsWith('ai.')) return 'ai';
+    if (type.startsWith('system.')) return 'system';
     if (event.userId) return 'user';
-    if ((event as any).teamId) return 'team';
-    if ((event as any).partnerId) return 'partner';
+    if (event.teamId) return 'team';
+    if (event.partnerId) return 'partner';
     return 'system';
   }
 
@@ -443,8 +458,11 @@ export class AuditCollectorEnhancedService implements OnDestroy {
         metadata: {}
       },
       eventType,
-      category: EventCategory.SYSTEM_EVENT, // Will be classified
+      category: EventCategory.SYSTEM, // Will be classified
       level: EventSeverity.LOW, // Will be classified
+      severity: EventSeverity.LOW,
+      result: 'success',
+      description: eventType,
       entity: options.entityId
         ? {
             id: options.entityId,
@@ -467,15 +485,17 @@ export class AuditCollectorEnhancedService implements OnDestroy {
     };
 
     // Classify event
-    const classification = this.classificationEngine.classify(auditEvent);
-    auditEvent.category = classification.category;
-    auditEvent.level = classification.level;
+    const classification = this.classificationEngine.classify(auditEvent as any) as any;
+    const severity = normalizeSeverity(classification.level as EventSeverity | 'INFO' | 'WARNING' | 'ERROR' | 'CRITICAL');
+    auditEvent.category = (classification.category as unknown as EventCategory) || EventCategory.SYSTEM;
+    auditEvent.level = severity;
+    auditEvent.severity = severity;
     auditEvent.riskScore = classification.riskScore;
     auditEvent.complianceTags = classification.complianceTags;
 
     // Persist immediately (bypass batch)
     try {
-      await this.auditRepository.create(auditEvent);
+      await this.auditRepository.create(auditEvent as any);
       this.stats.eventsPersisted++;
       this.resetCircuitBreaker();
     } catch (error) {
@@ -501,39 +521,5 @@ export class AuditCollectorEnhancedService implements OnDestroy {
   ngOnDestroy(): void {
     this.logger.info('[AuditCollectorEnhanced]', 'Shutting down', this.getStatistics());
     this.eventBuffer$.complete();
-  }
-
-  /**
-   * Check if the event type matches any configured topic pattern
-   */
-  private matchesTopic(eventType: string): boolean {
-    return AUDIT_TOPIC_PATTERNS.some(pattern => {
-      if (pattern.endsWith('.*')) {
-        const prefix = pattern.slice(0, -2);
-        return eventType.startsWith(prefix);
-      }
-      if (pattern.endsWith('*')) {
-        const prefix = pattern.slice(0, -1);
-        return eventType.startsWith(prefix);
-      }
-      return eventType === pattern;
-    });
-  }
-
-  /**
-   * Emit policy notifications for flagged/escalated events.
-   */
-  private async emitPolicyNotifications(notifications: Array<{ event: AuditEvent; decision: PolicyDecision }>): Promise<void> {
-    if (!notifications.length) return;
-
-    const domainEvents = notifications.map(
-      ({ event, decision }) =>
-        new AuditPolicyDecisionEvent({
-          auditEvent: event,
-          decision
-        })
-    );
-
-    await this.eventBus.publishBatch(domainEvents);
   }
 }
