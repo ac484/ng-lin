@@ -213,7 +213,7 @@ describe('AuditCollectorEnhancedService', () => {
       expect(mockClassificationEngine.classify).toHaveBeenCalledTimes(1);
 
       const auditEvent = mockClassificationEngine.classify.calls.mostRecent().args[0];
-      expect(auditEvent.category).toBe(EventCategory.SYSTEM_EVENT); // Before classification
+      expect(auditEvent.category).toBe(EventCategory.SYSTEM); // Before classification
     }));
 
     it('should apply classification results to audit event', fakeAsync(() => {

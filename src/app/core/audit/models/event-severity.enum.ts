@@ -1,55 +1,18 @@
 /**
  * Event Severity Enum
- * 
- * Defines 4 severity levels for audit events based on impact and urgency.
- * Used by the Classification Engine (Layer 4) for risk scoring and alerting.
- * 
- * Severity Assignment Rules:
- * - LOW: Routine operations, informational events, no immediate action required
- * - MEDIUM: Notable events, potential issues, monitor for patterns
- * - HIGH: Security-relevant events, policy violations, requires attention
- * - CRITICAL: Security incidents, system failures, immediate action required
- * 
+ *
+ * Aligns with docs/⭐️/AUDIT_SYSTEM_TASK_BREAKDOWN.md (LOW/MEDIUM/HIGH/CRITICAL)
+ *
  * @see docs/⭐️/audit-layers/LAYER_4_CLASSIFICATION_ENGINE.md
  */
-export enum AuditLevel {
-  /**
-   * LOW severity (0-25 risk score)
-   * - Routine operations (read, list, query)
-   * - Informational events (session started, cache hit)
-   * - No immediate action required
-   * - Auto-archive after 7 days
-   */
+export enum EventSeverity {
+  /** Routine operations, informational signals */
   LOW = 'LOW',
-  
-  /**
-   * MEDIUM severity (26-50 risk score)
-   * - Notable events (blueprint updated, member added)
-   * - Potential issues (slow query, cache miss)
-   * - Monitor for patterns
-   * - Review weekly
-   */
+  /** Notable events needing monitoring */
   MEDIUM = 'MEDIUM',
-  
-  /**
-   * HIGH severity (51-75 risk score)
-   * - Security-relevant events (permission denied, role changed)
-   * - Policy violations (rate limit exceeded, quota exceeded)
-   * - AI architectural decisions (pattern selection, refactoring)
-   * - Requires attention within 24 hours
-   * - Auto-review flag enabled
-   */
+  /** High-risk actions requiring attention */
   HIGH = 'HIGH',
-  
-  /**
-   * CRITICAL severity (76-100 risk score)
-   * - Security incidents (intrusion detected, unauthorized access)
-   * - System failures (database connection lost, service crashed)
-   * - Data breaches (GDPR violation, PHI exposed)
-   * - Immediate action required (< 1 hour)
-   * - Auto-alert enabled
-   * - Mandatory review
-   */
+  /** Critical incidents requiring immediate action */
   CRITICAL = 'CRITICAL'
 }
 
@@ -67,14 +30,37 @@ export const RISK_SCORE_THRESHOLDS = {
 /**
  * Helper function to get severity from risk score
  */
-export function getSeverityFromRiskScore(riskScore: number): AuditLevel {
+export function getSeverityFromRiskScore(riskScore: number): EventSeverity {
   if (riskScore <= RISK_SCORE_THRESHOLDS.LOW.max) {
-    return AuditLevel.LOW;
+    return EventSeverity.LOW;
   } else if (riskScore <= RISK_SCORE_THRESHOLDS.MEDIUM.max) {
-    return AuditLevel.MEDIUM;
+    return EventSeverity.MEDIUM;
   } else if (riskScore <= RISK_SCORE_THRESHOLDS.HIGH.max) {
-    return AuditLevel.HIGH;
+    return EventSeverity.HIGH;
   } else {
-    return AuditLevel.CRITICAL;
+    return EventSeverity.CRITICAL;
+  }
+}
+
+/**
+ * Normalize legacy AuditLevel values (INFO/WARNING/ERROR/CRITICAL) to EventSeverity.
+ */
+export function normalizeSeverity(
+  level: EventSeverity | 'INFO' | 'WARNING' | 'ERROR' | 'CRITICAL'
+): EventSeverity {
+  switch (level) {
+    case EventSeverity.LOW:
+    case 'INFO':
+      return EventSeverity.LOW;
+    case EventSeverity.MEDIUM:
+    case 'WARNING':
+      return EventSeverity.MEDIUM;
+    case EventSeverity.HIGH:
+    case 'ERROR':
+      return EventSeverity.HIGH;
+    case EventSeverity.CRITICAL:
+    case 'CRITICAL':
+    default:
+      return EventSeverity.CRITICAL;
   }
 }

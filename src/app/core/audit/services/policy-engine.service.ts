@@ -13,7 +13,7 @@
 
 import { Injectable } from '@angular/core';
 import { AuditEvent } from '../models/audit-event.interface';
-import { AuditLevel } from '../models/event-severity.enum';
+import { EventSeverity } from '../models/event-severity.enum';
 import { EventCategory } from '../models/event-category.enum';
 
 export type PolicyAction = 'allow' | 'suppress' | 'flag' | 'escalate';
@@ -49,7 +49,7 @@ export class PolicyEngineService {
       description: 'Escalate security.* events with HIGH/CRITICAL severity',
       match: (event) =>
         event.eventType.startsWith('security.') &&
-        (event.level === AuditLevel.HIGH || event.level === AuditLevel.CRITICAL),
+        ((event.severity ?? event.level) === EventSeverity.HIGH || (event.severity ?? event.level) === EventSeverity.CRITICAL),
       action: 'escalate',
       notify: true,
       tags: ['security', 'escalate']
@@ -82,7 +82,7 @@ export class PolicyEngineService {
     {
       name: 'AI Generated Actions',
       description: 'Flag AI generated events for later review',
-      match: (event) => event.aiGenerated === true || event.actor?.type === 'ai',
+       match: (event) => event.aiGenerated === true || event.actor?.type === 'ai',
       action: 'flag',
       notify: false,
       tags: ['ai', 'review']
