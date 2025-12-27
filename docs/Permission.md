@@ -1,5 +1,7 @@
 # GitHub 的 RBAC/ABAC 設計原理
 
+> 母體對齊：GitHub 作為治理母體，權限模型需在本倉庫中保持「GitHub 控制平面 → Firebase/Angular runtime」的一致映射。以下原則沿用 GitHub 組織/團隊/儲存庫角色，並以 @angular/fire + Firestore/Functions 取代範例中的其他後端，確保所有授權決策可回溯至 GitHub 的治理結構。
+
 GitHub 採用混合式的權限控制架構，結合了 **RBAC (Role-Based Access Control)** 和 **ABAC (Attribute-Based Access Control)** 的優勢，以提供靈活且安全的存取控制機制。
 
 ## 一、RBAC 設計核心
@@ -176,45 +178,45 @@ const rules = {
 
 ## 五、實作建議
 
-在 Angular + Supabase 專案中實現類似機制：
+在 Angular + Firebase (@angular/fire + @delon/auth) 專案中實現類似機制，並保持 GitHub 控制平面的映射關係：
 
 ```typescript
 // 定義權限服務
 @Injectable({ providedIn: 'root' })
 export class PermissionService {
-  private currentUser$ = inject(AuthService).user$;
-  
-  // RBAC 檢查
+  private readonly auth = inject(AuthFacade); // 由 DA_SERVICE_TOKEN 驅動，與 GitHub 控制平面角色對齊
+  private readonly functions = inject(Functions); // @angular/fire/functions
+
+  // RBAC：以 GitHub 組織/儲存庫角色映射到本地角色集合
   hasRole(role: string): Observable<boolean> {
-    return this.currentUser$.pipe(
+    return this.auth.currentUser$().pipe(
       map(user => user?.roles?.includes(role) ?? false)
     );
   }
-  
-  // ABAC 檢查
-  canAccess(resource: string, action: string, context: Record<string, any>): Observable<boolean> {
-    return this.currentUser$.pipe(
+
+  // ABAC：委派至 Cloud Functions / Firestore Rules，評估租戶、團隊、路徑、標籤等屬性
+  canAccess(resource: string, action: string, context: Record<string, unknown>): Observable<boolean> {
+    return this.auth.currentUser$().pipe(
       switchMap(user => {
-        return this.supabase
-          .rpc('evaluate_access', {
-            user_id: user.id,
+        const evaluateAccess = httpsCallable(this.functions, 'evaluateAccess');
+        return from(
+          evaluateAccess({
+            userId: user?.uid,
             resource,
             action,
             context
-          });
+          })
+        ).pipe(map(result => Boolean((result.data as any)?.allowed)));
       })
     );
   }
-  
-  // 混合檢查
+
+  // 混合檢查：GitHub RBAC（角色） + ABAC（分支/檔案/租戶等屬性）
   canModifyFile(filePath: string): Observable<boolean> {
     return combineLatest([
       this.hasRole('developer'),
       this.canAccess('files', 'write', { path: filePath })
-    ]).pipe(
-      map(([hasRole, hasAccess]) => hasRole && hasAccess)
-    );
+    ]).pipe(map(([hasRole, hasAccess]) => hasRole && hasAccess));
   }
 }
 ```
-
