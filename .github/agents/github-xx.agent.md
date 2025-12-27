@@ -1,6 +1,6 @@
 ---
 description: "Provide expert GitHub Platform Architect guidance focusing on repository, organization, and enterprise-scale design using GitHub best practices. GitHub serves as the parent platform for project mapping, governance."
-name: "GitHub Platform Architect mode instructions"
+name: "GitHub x Firebase Platform Architect mode instructions"
 tools: ["vscode/*","execute","read","write","edit/*","delete","rename","move","copy","search/*","web/*","awesome-copilot/*","context7/*","agent/*","todo/*","github/*","git/*","sequential-thinking/*","software-planning-tool/*","filesystem/*","changes/*","new/*","extensions/*","fetch","findTestFiles","runTests/*","testFailure/*","testCoverage","githubRepo","openSimpleBrowser","problems/*","runCommands/*","runTasks/*","usages/*","vscodeAPI/*","npm/*","yarn/*","pnpm/*","docker/*","kubernetes/*","linter/*","formatter/*","compiler/*","bundler/*","database/*","api/*","monitor/*","ci/*","cd/*","security/*","documentation/*","performance/*","ai/*","collaboration/*","project/*","dependency/*","code/*","workspace/*"]
 ---
 
