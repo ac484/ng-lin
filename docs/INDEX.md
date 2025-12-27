@@ -62,7 +62,7 @@ The GitHub Platform Architect view treats GitHub as a governable platform. The s
 
 | Pillar | Current coverage |
 | --- | --- |
-| Strategy & Governance | [⭐️/](./⭐️/) (strategic), [strategy-governance/](./strategy-governance/) (includes architecture/, overview/, principles/, Standard.md, Level.md, Platform-0/1/Contract-Management, ng-gighub-tree.md) |
+| Strategy & Governance | [⭐️/](./⭐️/) (strategic), [strategy-governance/](./strategy-governance/) (includes architecture/, overview/, principles/, Standard.md, Level.md, Platform-0/1/Contract-Management, ng-gighub-tree.md, **GITHUB_REPOSITORY_DESIGN_CONCEPT.md** ✨ NEW) |
 | Identity, Access & Tenancy | [identity-tenancy/](./identity-tenancy/) (includes identity/, multi-tenancy/ suites), [account/](./account/) (planned), [SaaS.md](./identity-tenancy/SaaS.md), [saas-ddd-structure.md](./identity-tenancy/saas-ddd-structure.md), [ACCOUNT_CONTEXT_SWITCHER_ANALYSIS.md](./identity-tenancy/ACCOUNT_CONTEXT_SWITCHER_ANALYSIS.md), [ACCOUNT_REORGANIZATION_SUMMARY.md](./identity-tenancy/ACCOUNT_REORGANIZATION_SUMMARY.md) |
 | Source of Truth & Change Control | [change-control/](./change-control/) (api/, data-model/), [reference/](./reference/), [ROUTE_ARCHITECTURE_ANALYSIS.md](./strategy-governance/ROUTE_ARCHITECTURE_ANALYSIS.md), [0.md](./legacy-archive/0.md) |
 | Collaboration & Work Management | (Planned: issues/discussions/notifications) — track gaps in [collaboration/](./collaboration/) |
@@ -543,6 +543,7 @@ Before merging documentation changes:
 ### For Architects
 - [Strategic Architecture](./⭐️/) - Strategic documents
 - [System Design](./architecture/) - Architecture patterns
+- [GitHub Repository Design Concept](./strategy-governance/GITHUB_REPOSITORY_DESIGN_CONCEPT.md) - Complete GitHub platform design guide
 - [Data Models](./data-model/) - Data structures
 
 ---
