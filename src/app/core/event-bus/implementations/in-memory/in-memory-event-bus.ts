@@ -4,6 +4,7 @@ import { DomainEvent, EventHandler, SubscribeOptions, Subscription, RetryPolicy 
 import { IEventBus, IEventStore } from '../../interfaces';
 import { HybridEventStore } from '../hybrid/hybrid-event-store';
 import { TenantValidationMiddleware } from '../../services/tenant-validation-middleware.service';
+import { IdentityContextMiddleware } from '../../services/identity-context-middleware.service';
 
 /**
  * In-Memory Event Bus (with Firestore Persistence)
@@ -43,6 +44,7 @@ import { TenantValidationMiddleware } from '../../services/tenant-validation-mid
 export class InMemoryEventBus implements IEventBus {
   private readonly eventStore = inject(HybridEventStore);
   private readonly tenantMiddleware = inject(TenantValidationMiddleware);
+  private readonly identityMiddleware = inject(IdentityContextMiddleware);
   
   /** Main event stream */
   private readonly eventStream$ = new Subject<DomainEvent>();
@@ -65,15 +67,19 @@ export class InMemoryEventBus implements IEventBus {
   /**
    * Publish a single event to the bus
    * 
-   * Tenant Isolation:
-   * - Validates and enriches event with tenant_id before publishing
+   * Context Enrichment (IDCTX-P3-002):
+   * - Auto-attaches identity context (userId, tenantId, correlationId, roles)
+   * - Validates and enriches with tenant_id
    * - Auto-injects tenant_id from TenantContextService if missing
    * - Rejects events without tenant context
    */
   async publish(event: DomainEvent): Promise<void> {
     try {
-      // 0. Validate and enrich with tenant_id (MANDATORY)
-      const enrichedEvent = this.tenantMiddleware.validateAndEnrich(event);
+      // 0. Enrich with identity context (IDCTX-P3-002)
+      const contextEnrichedEvent = this.identityMiddleware.enrich(event);
+      
+      // 1. Validate and enrich with tenant_id (MANDATORY)
+      const enrichedEvent = this.tenantMiddleware.validateAndEnrich(contextEnrichedEvent);
       
       // 1. Persist event to store
       await this.eventStore.append(enrichedEvent);
@@ -95,14 +101,18 @@ export class InMemoryEventBus implements IEventBus {
   /**
    * Publish multiple events in a batch
    * 
-   * Tenant Isolation:
+   * Context Enrichment (IDCTX-P3-002):
+   * - Auto-attaches identity context to all events
    * - Validates and enriches all events with tenant_id before publishing
    * - Batch validation is atomic (all or nothing)
    */
   async publishBatch(events: DomainEvent[]): Promise<void> {
     try {
-      // 0. Validate and enrich ALL events with tenant_id (MANDATORY)
-      const enrichedEvents = this.tenantMiddleware.validateAndEnrichBatch(events);
+      // 0. Enrich all events with identity context (IDCTX-P3-002)
+      const contextEnrichedEvents = this.identityMiddleware.enrichBatch(events);
+      
+      // 1. Validate and enrich ALL events with tenant_id (MANDATORY)
+      const enrichedEvents = this.tenantMiddleware.validateAndEnrichBatch(contextEnrichedEvents);
       
       // 1. Persist all events
       await this.eventStore.appendBatch(enrichedEvents);

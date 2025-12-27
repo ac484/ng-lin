@@ -146,3 +146,5 @@ src/app/core/
 - [x] Event Bus 對外 Facade 已重匯出並文件化（P2）。
 - [x] Observability 三件組可用並文件化（P2）。
 - [x] 通知 / 事件使用手冊已納入 docs/⭐️（P2）。
+- [x] RBAC/ABAC 模型已實作並整合至 PermissionGuard（P2）。
+- [x] Policy Engine (PDP/PEP) 已實作並可供使用（P2）。

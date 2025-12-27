@@ -35,6 +35,11 @@ export abstract class DomainEvent<TPayload = unknown> {
     readonly correlationId?: string;
     /** ID of the event that caused this event */
     readonly causationId?: string;
+    /** IDCTX-P3-002: Identity context auto-attached */
+    readonly userId?: string;
+    readonly tenantId?: string;
+    readonly roles?: string[];
+    readonly deviceId?: string;
   }>;
   
   /**
@@ -42,6 +47,8 @@ export abstract class DomainEvent<TPayload = unknown> {
    * Supports two call patterns:
    * 1. constructor(payload, metadata) - For event classes
    * 2. constructor({ aggregateId, aggregateType, ...}) - For direct instantiation
+   * 
+   * IDCTX-P3-002: Auto-attaches identity context if available
    */
   constructor(
     payloadOrData: TPayload | {
@@ -54,6 +61,10 @@ export abstract class DomainEvent<TPayload = unknown> {
         source?: string;
         correlationId?: string;
         causationId?: string;
+        userId?: string;
+        tenantId?: string;
+        roles?: string[];
+        deviceId?: string;
       };
     },
     metadata?: {
@@ -64,6 +75,10 @@ export abstract class DomainEvent<TPayload = unknown> {
       source?: string;
       correlationId?: string;
       causationId?: string;
+      userId?: string;
+      tenantId?: string;
+      roles?: string[];
+      deviceId?: string;
     }
   ) {
     // Two-parameter pattern: constructor(payload, metadata)
@@ -77,7 +92,11 @@ export abstract class DomainEvent<TPayload = unknown> {
         version: metadata.version ?? (metadata.aggregateVersion ? `${metadata.aggregateVersion}.0` : '1.0'),
         source: metadata.source ?? 'unknown',
         correlationId: metadata.correlationId,
-        causationId: metadata.causationId
+        causationId: metadata.causationId,
+        userId: metadata.userId,
+        tenantId: metadata.tenantId,
+        roles: metadata.roles,
+        deviceId: metadata.deviceId
       };
     }
     // Single-parameter pattern: constructor(data)
@@ -92,7 +111,11 @@ export abstract class DomainEvent<TPayload = unknown> {
         version: data.metadata?.version ?? '1.0',
         source: data.metadata?.source ?? 'unknown',
         correlationId: data.metadata?.correlationId,
-        causationId: data.metadata?.causationId
+        causationId: data.metadata?.causationId,
+        userId: data.metadata?.userId,
+        tenantId: data.metadata?.tenantId,
+        roles: data.metadata?.roles,
+        deviceId: data.metadata?.deviceId
       };
     }
   }
