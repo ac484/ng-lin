@@ -6,13 +6,13 @@
 - [ ] IDCTX-P0-001: 定義 IdentityContext / SessionContext 資料結構（tenantId, userId, roles, permissions, scopes, correlationId）
 - [ ] IDCTX-P0-002: 建立 ContextProvider（注入式，支援 request-scoped/async storage）與 ContextGuard 接口
 
-## Phase 1: 認證（Auth）
-- [ ] IDCTX-P1-001: Email/Password 登入（Firebase Auth）+ 會話續期
-- [ ] IDCTX-P1-002: OAuth（Google）與匿名登入策略
-- [ ] IDCTX-P1-003: MFA / WebAuthn 流程與風險分級
-- [ ] IDCTX-P1-004: Session 固化與再生（refresh token + anti-fixation）
+## Phase 1: 認證（Auth）— 基於 @angular/fire/auth → @delon/auth (DA_SERVICE_TOKEN)
+- [ ] IDCTX-P1-001: Email/Password 登入（@angular/fire/auth）+ 會話續期（token refresh）
+- [ ] IDCTX-P1-002: OAuth（Google）與匿名登入策略（透過 DA_SERVICE_TOKEN）
+- [ ] IDCTX-P1-003: Session 固化與再生（refresh token + anti-fixation）；暫不實作多設備/二階段驗證
+- [ ] IDCTX-P1-004: 租戶/裝置上下文附帶（user, tenantId, correlationId）於 session payload
 
-## Phase 2: 授權（RBAC / ABAC）
+## Phase 2: 授權（RBAC / ABAC）— 支援 SaaS 角色：用戶/組織/團隊/夥伴/協作者
 - [ ] IDCTX-P2-001: RBAC 角色模型（org / blueprint / project 階層）
 - [ ] IDCTX-P2-002: ABAC 規則引擎（屬性：tenant, role, clearance, resource tags）
 - [ ] IDCTX-P2-003: PermissionGuard / TenantGuard 對齊新模型（替換舊別名）
