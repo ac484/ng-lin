@@ -31,13 +31,17 @@
 
 ### P2（中期強化）
 7) **Event Bus 對齊介面**  
-   - 釐清 `core/event-bus` 對外 Facade（IEventBus、BlueprintDomainEvent 等）與核心 Provider 列表，於 Core 層建立最小重匯出並補充使用說明。
+   - 釐清 `core/event-bus` 對外 Facade（IEventBus、BlueprintDomainEvent、EventTypes 常數）、核心 Provider 列表，於 Core 層建立最小重匯出並補充使用說明。  
+   - 驗收：Features 只需 `@core/event-bus` 匯入即可 publish/observe；範例覆蓋 audit / notification / system.failure。
 8) **匯出入口**  
-   - 確保上述新目錄均在 `core/index.ts` 暴露，提供 features 一致的注入點。
+   - 確保 P2 新增檔案（event-bus 重匯出、observability 三件組）均在 `core/index.ts` 暴露，提供一致注入點。  
+   - 驗收：`core/index.ts` 無遺漏，能在 Feature 端正常注入/型別推斷。
 9) **Observability 三件組**  
-   - 補齊 `logger.service.ts`、`error-tracking.service.ts`、`performance-monitoring.service.ts`（含最小 API、context enrich、上報鉤子），並視需要在 `app.config.ts`/providers 註冊。
+   - 補齊 `logger.service.ts`（結構化日誌 + context enrich）、`error-tracking.service.ts`（捕捉 handler/guard/interceptor 失敗並上報）、`performance-monitoring.service.ts`（計時 + 簡易 trace 標籤），並視需要在 `app.config.ts`/providers 註冊。  
+   - 驗收：三個服務有最小 API（info/warn/error、capture/record、timer/trace），可在 core/index 匯入且 yarn build 通過。
 10) **通知 / 事件使用說明**  
-    - 在本文件與任務序列文件增加「使用說明」：如何發佈/訂閱事件、如何呼叫 `NotificationService`，並給出最小範例。
+    - 在本文件與任務序列文件補足使用說明：發佈/訂閱事件、NotificationService 呼叫、最小防呆（無藍圖 ID、無使用者 ID 等），確保示例可直接貼上使用。  
+    - 驗收：文檔示例可直接複製運行；build/lint 無新增警告。
 
 ## 使用說明（事件發布 / 訂閱 & 通知）
 - 發佈事件（Feature）：
