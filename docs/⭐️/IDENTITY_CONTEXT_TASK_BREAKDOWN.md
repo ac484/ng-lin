@@ -22,7 +22,7 @@
 
 ## Phase 3: Session / Context Propagation
 - [x] IDCTX-P3-001: HttpClient 拦截器注入 Context（tenantId, userId, correlationId）
-- [ ] IDCTX-P3-002: EventBus Payload 自動附帶 Context（publisher/consumer）
+- [x] IDCTX-P3-002: EventBus Payload 自動附帶 Context（publisher/consumer）
 - [ ] IDCTX-P3-003: Firestore Security Rules context 對齊（tenant/role/permission 驗證）
 
 ## Phase 4: 多租戶治理與審計
@@ -77,7 +77,15 @@
   - 向後相容 RBAC 檢查
   - 可選 ABAC 評估（route data `useAbac: true`）
 
+### Phase 3 完成項目
+- **EventBus Identity Context 自動附帶**: `src/app/core/event-bus/services/identity-context-middleware.service.ts`
+  - 自動注入 userId, tenantId, correlationId, roles 至所有事件
+  - 與 TenantValidationMiddleware 協同運作
+  - 擴充 DomainEvent 基礎 metadata 包含身份欄位
+  - 支援單事件與批次事件發布
+  - 提供 context snapshot 方法供手動事件建立
+
 ### 後續任務
-- Phase 3: EventBus 自動附帶 Context
-- Phase 4: 租戶生命週期管理
+- Phase 3: Firestore Security Rules context 對齊
+- Phase 4: 租戶生命週期管理與跨租戶隔離測試
 - Phase 5-6: 測試與文件
