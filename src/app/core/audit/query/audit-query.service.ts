@@ -521,4 +521,27 @@ export class AuditQueryService {
       }, {} as Record<AuditCategory, number>)
     };
   }
+
+  /**
+   * Compatibility: compliance events by framework
+   */
+  async getComplianceEvents(tenantId: string, framework: string): Promise<ClassifiedAuditEvent[]> {
+    const events = await this.repository.query({
+      tenantId,
+      tier: StorageTier.HOT
+    });
+    return events.filter(e => (e.complianceTags || []).includes(framework));
+  }
+
+  /**
+   * Compatibility: aggregate statistics by tenant
+   */
+  async getEventStatistics(tenantId: string): Promise<AggregationResult> {
+    return this.aggregate({
+      tenantId,
+      startTime: new Date(0),
+      endTime: new Date(),
+      tier: StorageTier.HOT
+    });
+  }
 }
