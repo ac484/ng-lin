@@ -1,5 +1,7 @@
 # Identity & Context System - Implementation Task Breakdown
 
+> 母體對齊：GitHub 為控制平面，Identity/Context 的資料模型與治理流程需可回溯至 GitHub 的租戶/組織/團隊與權限模型。實作層以 Angular 20 + @angular/fire（含 DA_SERVICE_TOKEN）作為 runtime，透過 Firestore/Functions/Rules 落地，所有 Session/Context 傳遞均需保留 GitHub 對應欄位（organization/team/repo/role），並遵守「UI → Service/Facade → Repository」的分層。
+
 > 目標：對齊母體（Identity & Context）完整落地，涵蓋多租戶、認證、授權（RBAC/ABAC）、Session/Context 傳遞與驗證。
 
 ## Phase 0: 基礎模型與上下文

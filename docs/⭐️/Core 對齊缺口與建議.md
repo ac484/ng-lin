@@ -3,6 +3,7 @@
 ## 背景
 - 參考母體規範：`docs/⭐️/整體架構設計.md` 與 `src/app/core/AGENTS.md` 均要求 Core 承載認證、守衛、攔截器、租戶/權限、通知與跨域模型，並保持「UI → Service/Facade → Repository」三層分離。
 - 目前 Core 已有 Event Bus、部分網路攔截器與基礎服務，但尚未完整覆蓋母體預期的核心能力。
+- 母體對齊：以 **GitHub 控制平面**（組織/團隊/儲存庫/Ruleset）為權威語意來源，Core 僅作為執行層，透過 Angular 20 + @angular/fire（Firestore/Functions/Rules）實現，同步保留 GitHub 對應欄位（org/team/repo/role）於 Context/Guard/Interceptor。
 
 ## 現況快照（2025-12，已更新）
 - `data-access/auth`：有 `auth.facade.ts` / `auth.port.ts` / `auth.state.ts`，Firebase 實作位於 `src/app/firebase/infra`；已暴露 `currentUserSignal` 與 `getCurrentUserId`，供 UI/Feature 直接注入。

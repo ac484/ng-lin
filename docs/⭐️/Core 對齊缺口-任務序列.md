@@ -5,6 +5,8 @@ applyTo: '**'
 
 # Core 對齊缺口 → 可執行任務序列
 
+> 母體對齊：任務序列以 GitHub 為治理母體，所有 Core 能力（事件匯流排、守衛、觀測性、通知）須映射 GitHub 的角色/規則語意，再透過 Angular 20 + @angular/fire（Firestore/Functions/Rules）落地執行，保持「UI → Service/Facade → Repository」分層與 DA_SERVICE_TOKEN 身份鏈路。
+
 ## 完成狀態（P0/P1）
 - [x] 移除 Firebase 包裝層，統一直接注入 @angular/fire
 - [x] 拆分並註冊 Base URL / Auth Token / Refresh / Error Interceptors
