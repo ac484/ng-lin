@@ -43,6 +43,18 @@ export class AuthFacade implements AuthPort {
   signOut() {
     return this.impl.signOut();
   }
+  
+  signInWithGoogle() {
+    return this.impl.signInWithGoogle();
+  }
+  
+  signInAnonymous() {
+    return this.impl.signInAnonymous();
+  }
+  
+  refreshToken() {
+    return this.impl.refreshToken();
+  }
 
   sendPasswordReset(email: string) {
     return this.impl.sendPasswordReset(email);

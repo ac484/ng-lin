@@ -6,13 +6,24 @@ export interface IdentityContext {
   scopes?: string[];
   correlationId?: string;
   attributes?: Record<string, unknown>;
+  // GitHub alignment fields
+  organization?: string;
+  team?: string;
+  repository?: string;
+  role?: string;
 }
 
 export interface SessionContext extends IdentityContext {
   sessionId?: string;
   deviceId?: string;
+  deviceInfo?: {
+    userAgent?: string;
+    platform?: string;
+    language?: string;
+  };
   issuedAt?: string;
   expiresAt?: string;
+  refreshToken?: string;
 }
 
 export interface ContextProvider {

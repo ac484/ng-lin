@@ -11,12 +11,41 @@ function generateCorrelationId(): string {
   return `cid-${Math.random().toString(36).slice(2)}-${Date.now()}`;
 }
 
+function generateDeviceId(): string {
+  // Try to get from localStorage first for device consistency
+  const stored = typeof localStorage !== 'undefined' ? localStorage.getItem('device-id') : null;
+  if (stored) return stored;
+  
+  const deviceId = `dev-${Math.random().toString(36).slice(2)}-${Date.now()}`;
+  if (typeof localStorage !== 'undefined') {
+    localStorage.setItem('device-id', deviceId);
+  }
+  return deviceId;
+}
+
+function getDeviceInfo() {
+  if (typeof navigator === 'undefined') return undefined;
+  
+  return {
+    userAgent: navigator.userAgent,
+    platform: navigator.platform,
+    language: navigator.language
+  };
+}
+
+/**
+ * Identity Context Service
+ * IDCTX-P1-004: Attach tenant/device context to session payload
+ */
 @Injectable({ providedIn: 'root' })
 export class IdentityContextService implements ContextProvider {
   private readonly auth = inject(AuthFacade);
   private readonly tenantContext = inject(TenantContextService);
   private readonly session = signal<SessionContext>({
-    correlationId: generateCorrelationId()
+    correlationId: generateCorrelationId(),
+    deviceId: generateDeviceId(),
+    deviceInfo: getDeviceInfo(),
+    issuedAt: new Date().toISOString()
   });
 
   readonly identityContext = computed(() => this.getIdentityContext());
@@ -69,7 +98,12 @@ export class IdentityContextService implements ContextProvider {
   }
 
   clearContext(): void {
-    this.session.set({ correlationId: generateCorrelationId() });
+    this.session.set({ 
+      correlationId: generateCorrelationId(),
+      deviceId: generateDeviceId(),
+      deviceInfo: getDeviceInfo(),
+      issuedAt: new Date().toISOString()
+    });
   }
 
   buildPropagationHeaders(): Record<string, string> {
