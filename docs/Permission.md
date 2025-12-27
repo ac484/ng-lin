@@ -181,42 +181,26 @@ const rules = {
 在 Angular + Firebase (@angular/fire + @delon/auth) 專案中實現類似機制，並保持 GitHub 控制平面的映射關係：
 
 ```typescript
-// 定義權限服務
+// 定義權限服務（已落地，signals 版本）
 @Injectable({ providedIn: 'root' })
 export class PermissionService {
-  private readonly auth = inject(AuthFacade); // 由 DA_SERVICE_TOKEN 驅動，與 GitHub 控制平面角色對齊
-  private readonly functions = inject(Functions); // @angular/fire/functions
-
   // RBAC：以 GitHub 組織/儲存庫角色映射到本地角色集合
-  hasRole(role: string): Observable<boolean> {
-    return this.auth.currentUser$().pipe(
-      map(user => user?.roles?.includes(role) ?? false)
-    );
-  }
+  setRoles(next: string[]): void;
+  hasRole(role: string): boolean;
 
-  // ABAC：委派至 Cloud Functions / Firestore Rules，評估租戶、團隊、路徑、標籤等屬性
-  canAccess(resource: string, action: string, context: Record<string, unknown>): Observable<boolean> {
-    return this.auth.currentUser$().pipe(
-      switchMap(user => {
-        const evaluateAccess = httpsCallable(this.functions, 'evaluateAccess');
-        return from(
-          evaluateAccess({
-            userId: user?.uid,
-            resource,
-            action,
-            context
-          })
-        ).pipe(map(result => Boolean((result.data as any)?.allowed)));
-      })
-    );
-  }
+  // Permissions：signals 快取
+  setPermissions(perms: string[]): void;
+  has(permission: string): boolean;
 
-  // 混合檢查：GitHub RBAC（角色） + ABAC（分支/檔案/租戶等屬性）
-  canModifyFile(filePath: string): Observable<boolean> {
-    return combineLatest([
-      this.hasRole('developer'),
-      this.canAccess('files', 'write', { path: filePath })
-    ]).pipe(map(([hasRole, hasAccess]) => hasRole && hasAccess));
-  }
+  // 混合檢查：GitHub RBAC（角色） + PermissionRequirement
+  canAccess({
+    requiredRoles,
+    requiredPermissions
+  }: {
+    requiredRoles?: string[];
+    requiredPermissions?: PermissionRequirement;
+  }): boolean;
 }
 ```
+
+> 實作狀態：`src/app/core/services/permission/permission.service.ts` 已提供 Roles / Permissions signals 與 `canAccess` 混合檢查，供 Guards 或 Feature 重用。

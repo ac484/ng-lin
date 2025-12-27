@@ -31,6 +31,7 @@ export * from './tenant-context.service';
 
 // Tenant Validation Middleware (Phase 1 P0 - Task 1.2 Part 3)
 export * from './tenant-validation-middleware.service';
+export * from './identity-context-middleware.service';
 
 // Audit Auto-Subscription Service (Phase 1 P0 - Task 1.3)
 export * from './audit-auto-subscription.service';

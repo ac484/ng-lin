@@ -4,6 +4,7 @@ import { DomainEvent, EventHandler, SubscribeOptions, Subscription, RetryPolicy 
 import { IEventBus, IEventStore } from '../../interfaces';
 import { HybridEventStore } from '../hybrid/hybrid-event-store';
 import { TenantValidationMiddleware } from '../../services/tenant-validation-middleware.service';
+import { IdentityContextMiddleware } from '../../services/identity-context-middleware.service';
 
 /**
  * In-Memory Event Bus (with Firestore Persistence)
@@ -43,6 +44,7 @@ import { TenantValidationMiddleware } from '../../services/tenant-validation-mid
 export class InMemoryEventBus implements IEventBus {
   private readonly eventStore = inject(HybridEventStore);
   private readonly tenantMiddleware = inject(TenantValidationMiddleware);
+  private readonly identityMiddleware = inject(IdentityContextMiddleware);
   
   /** Main event stream */
   private readonly eventStream$ = new Subject<DomainEvent>();
@@ -72,19 +74,22 @@ export class InMemoryEventBus implements IEventBus {
    */
   async publish(event: DomainEvent): Promise<void> {
     try {
-      // 0. Validate and enrich with tenant_id (MANDATORY)
-      const enrichedEvent = this.tenantMiddleware.validateAndEnrich(event);
+      // 0. Enrich with identity / correlation context
+      const identityEnrichedEvent = this.identityMiddleware.enrich(event);
+
+      // 1. Validate and enrich with tenant_id (MANDATORY)
+      const enrichedEvent = this.tenantMiddleware.validateAndEnrich(identityEnrichedEvent);
       
-      // 1. Persist event to store
+      // 2. Persist event to store
       await this.eventStore.append(enrichedEvent);
       
-      // 2. Emit to stream
+      // 3. Emit to stream
       this.eventStream$.next(enrichedEvent);
       
-      // 3. Execute handlers
+      // 4. Execute handlers
       await this.executeHandlers(enrichedEvent);
       
-      // 4. Update metrics
+      // 5. Update metrics
       this.eventsPublished.update(count => count + 1);
     } catch (error) {
       console.error(`[EventBus] Error publishing event ${event.eventType}:`, error);
@@ -101,8 +106,9 @@ export class InMemoryEventBus implements IEventBus {
    */
   async publishBatch(events: DomainEvent[]): Promise<void> {
     try {
-      // 0. Validate and enrich ALL events with tenant_id (MANDATORY)
-      const enrichedEvents = this.tenantMiddleware.validateAndEnrichBatch(events);
+      // 0. Enrich with identity / correlation context then validate tenant (MANDATORY)
+      const identityEnriched = events.map(event => this.identityMiddleware.enrich(event));
+      const enrichedEvents = this.tenantMiddleware.validateAndEnrichBatch(identityEnriched);
       
       // 1. Persist all events
       await this.eventStore.appendBatch(enrichedEvents);
