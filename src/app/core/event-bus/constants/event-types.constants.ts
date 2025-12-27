@@ -54,6 +54,14 @@ export const DOMAIN_NAMESPACES = {
 } as const;
 
 /**
+ * Audit policy event types
+ */
+export const AUDIT_POLICY_EVENTS = {
+  FLAGGED: 'audit.policy.flagged' as const,
+  ESCALATED: 'audit.policy.escalated' as const
+} as const;
+
+/**
  * Common event suffixes
  */
 export const EVENT_SUFFIXES = {

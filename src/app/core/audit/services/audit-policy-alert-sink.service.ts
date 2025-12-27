@@ -2,6 +2,7 @@ import { DestroyRef, Injectable, inject } from '@angular/core';
 import { EVENT_BUS } from '../../event-bus/constants/event-bus-tokens';
 import { IEventBus } from '../../event-bus/interfaces/event-bus.interface';
 import { DomainEvent, Subscription } from '../../event-bus/models';
+import { AUDIT_POLICY_EVENTS } from '../../event-bus/constants/event-types.constants';
 import { NotificationRepository } from '@core/account/repositories/notification.repository';
 import { NotificationType } from '@core/types';
 
@@ -36,8 +37,8 @@ export class AuditPolicyAlertSinkService {
     if (this.initialized) return;
 
     await Promise.all([
-      this.subscribeToPolicyEvent('audit.policy.flagged', 'flagged'),
-      this.subscribeToPolicyEvent('audit.policy.escalated', 'escalated')
+      this.subscribeToPolicyEvent(AUDIT_POLICY_EVENTS.FLAGGED, 'flagged'),
+      this.subscribeToPolicyEvent(AUDIT_POLICY_EVENTS.ESCALATED, 'escalated')
     ]);
 
     this.destroyRef.onDestroy(() => {
