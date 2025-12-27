@@ -5,8 +5,8 @@
 > 目標：對齊母體（Identity & Context）完整落地，涵蓋多租戶、認證、授權（RBAC/ABAC）、Session/Context 傳遞與驗證。
 
 ## Phase 0: 基礎模型與上下文
-- [ ] IDCTX-P0-001: 定義 IdentityContext / SessionContext 資料結構（tenantId, userId, roles, permissions, scopes, correlationId）
-- [ ] IDCTX-P0-002: 建立 ContextProvider（注入式，支援 request-scoped/async storage）與 ContextGuard 接口
+- [x] IDCTX-P0-001: 定義 IdentityContext / SessionContext 資料結構（tenantId, userId, roles, permissions, scopes, correlationId）
+- [x] IDCTX-P0-002: 建立 ContextProvider（注入式，支援 request-scoped/async storage）與 ContextGuard 接口
 
 ## Phase 1: 認證（Auth）— 基於 @angular/fire/auth → @delon/auth (DA_SERVICE_TOKEN)
 - [ ] IDCTX-P1-001: Email/Password 登入（@angular/fire/auth）+ 會話續期（token refresh）
@@ -21,8 +21,8 @@
 - [ ] IDCTX-P2-004: Policy Decision Point + Policy Enforcement Point（PDP/PEP）鏈路
 
 ## Phase 3: Session / Context Propagation
-- [ ] IDCTX-P3-001: HttpClient 拦截器注入 Context（tenantId, userId, correlationId）
-- [ ] IDCTX-P3-002: EventBus Payload 自動附帶 Context（publisher/consumer）
+- [x] IDCTX-P3-001: HttpClient 拦截器注入 Context（tenantId, userId, correlationId）
+- [x] IDCTX-P3-002: EventBus Payload 自動附帶 Context（publisher/consumer）
 - [ ] IDCTX-P3-003: Firestore Security Rules context 對齊（tenant/role/permission 驗證）
 
 ## Phase 4: 多租戶治理與審計
