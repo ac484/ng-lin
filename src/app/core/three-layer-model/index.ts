@@ -12,3 +12,9 @@ export * from './services';
 
 // Repositories
 export * from './repositories';
+
+// Facade
+export * from './facade';
+
+// UI Components
+export * from './ui';
