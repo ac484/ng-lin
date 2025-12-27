@@ -21,13 +21,13 @@
 3) **權限 + 租戶上下文服務** ✅  
    - 已新增 `permission.service.ts`、`tenant-context.service.ts`（Signals），供守衛與 Feature 後續共用。
 
-### P1（短期完成）
-4) **核心模型集中**  
-   - 於 `core/models/` 建立 `user.model.ts`、`organization.model.ts`、`repository.model.ts`、`permission.model.ts`，並在 `core/index.ts` 匯出，避免各 Feature 重複定義。
-5) **路由守衛家族**  
-   - 補齊 `auth.guard.ts`、`permission.guard.ts`、`tenant.guard.ts`，讓 routes/ 與 features/ 不再各自實作。
-6) **跨域通知服務**  
-   - 實作 `core/notification/notification.service.ts`：監聽 Event Bus，橋接到 UI（Toast/Message/Badge），統一錯誤與成功訊息格式。
+### P1（短期完成）— 已完成 ✅
+4) **核心模型集中** ✅  
+   - 已建立 `core/models/`：`user.model.ts`、`organization.model.ts`、`repository.model.ts`、`permission.model.ts`，並由 `core/index.ts` 匯出，避免 Feature 重複定義。
+5) **路由守衛家族** ✅  
+   - 已補齊 `auth.guard.ts`、`permission.guard.ts`、`tenant.guard.ts`，且 routes/ 主幹已套用 `authGuard`。
+6) **跨域通知服務** ✅  
+   - 已實作 `core/services/notification/notification.service.ts`：監聽 Event Bus（audit policy、handler failure、notification namespace），橋接至 UI Toast/Message。
 
 ### P2（中期強化）
 7) **Event Bus 對齊介面**  
@@ -74,5 +74,5 @@ src/app/core/
 - [x] Core 中無 Firebase 包裝層，全部直接注入 @angular/fire。
 - [x] Interceptors 職責分拆並集中註冊，覆蓋 Base URL / Token / Error / Refresh。
 - [x] 權限與租戶服務以 Signals 封裝，提供給守衛與 Feature。
-- [ ] 核心模型與守衛可被所有 Feature 直接匯入，無重複型別。
-- [ ] 通知服務可由 Event Bus 觸發，UI 介面一致（成功/錯誤/警告）。
+- [x] 核心模型與守衛可被所有 Feature 直接匯入，無重複型別。
+- [x] 通知服務可由 Event Bus 觸發，UI 介面一致（成功/錯誤/警告）。
