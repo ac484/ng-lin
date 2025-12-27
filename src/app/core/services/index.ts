@@ -5,3 +5,4 @@ export * from './logger/logger.service';
 export * from './error-tracking.service';
 export * from './performance-monitoring.service';
 export * from './identity-context.service';
+export * from './policy-engine.service';
