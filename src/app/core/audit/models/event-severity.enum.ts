@@ -2,7 +2,6 @@
  * Event Severity Enum
  *
  * Aligns with docs/⭐️/AUDIT_SYSTEM_TASK_BREAKDOWN.md (LOW/MEDIUM/HIGH/CRITICAL)
- * while keeping backward-compatible AuditLevel alias for existing consumers.
  *
  * @see docs/⭐️/audit-layers/LAYER_4_CLASSIFICATION_ENGINE.md
  */
@@ -16,13 +15,6 @@ export enum EventSeverity {
   /** Critical incidents requiring immediate action */
   CRITICAL = 'CRITICAL'
 }
-
-/**
- * Backward-compatible alias used by existing imports.
- */
-export type AuditLevel = EventSeverity;
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const AuditLevel = EventSeverity;
 
 /**
  * Risk Score Thresholds

@@ -29,25 +29,5 @@ export enum EventCategory {
   /** External system integrations */
   INTEGRATION = 'INTEGRATION',
   /** Performance and capacity signals */
-  PERFORMANCE = 'PERFORMANCE',
-
-  // Legacy aliases (kept for backward compatibility in specs/services)
-  AUTH = 'USER_ACTION',
-  AUTHENTICATION = 'USER_ACTION',
-  AUTHORIZATION = 'SECURITY',
-  PERMISSION = 'SECURITY',
-  DATA_ACCESS = 'DATA_FLOW',
-  DATA_MODIFICATION = 'DATA_FLOW',
-  SYSTEM_EVENT = 'SYSTEM',
-  SECURITY_INCIDENT = 'SECURITY',
-  COMPLIANCE_EVENT = 'COMPLIANCE',
-  PERFORMANCE_ISSUE = 'PERFORMANCE',
-  ERROR_EXCEPTION = 'SYSTEM'
+  PERFORMANCE = 'PERFORMANCE'
 }
-
-/**
- * Backward-compatible alias used by existing imports.
- */
-export type AuditCategory = EventCategory;
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const AuditCategory = EventCategory;
