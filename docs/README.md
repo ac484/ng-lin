@@ -7,6 +7,7 @@ This document defines the structure, ownership, and governance of platform docum
 ## Structure Overview
 
 See [INDEX.md](INDEX.md) for complete documentation organization.
+See [documentation-audit.md](documentation-audit.md) for canonical sources, redundancy notes, and formatting rules.
 
 ## Folder Descriptions
 
