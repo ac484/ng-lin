@@ -18,6 +18,9 @@ export * from './event-validator.service';
 export * from './retry-manager.service';
 export * from './dead-letter-queue.service';
 
+// Event Identifier Service (Multi-tenant namespace#sequence)
+export * from './event-identifier.service';
+
 // Audit services (Phase 7A)
 export * from './auth-audit.service';
 export * from './permission-audit.service';
