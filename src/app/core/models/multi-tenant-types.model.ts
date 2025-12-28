@@ -1,5 +1,21 @@
 /**
- * Account Types & Multi-Tenant Architecture Models
+ * Multi-Tenant Account Architecture Types
+ * 
+ * ⚠️ IMPORTANT: This file defines FUTURE multi-tenant architecture types.
+ * 
+ * These types extend and complement existing account models:
+ * - src/app/features/account/core/models/account.model.ts (current Account)
+ * - src/app/core/models/organization.model.ts (CoreOrganization)
+ * - src/app/core/models/user.model.ts (CoreUserIdentity)
+ * 
+ * DO NOT USE THESE TYPES YET - They are for documentation and future implementation.
+ * The current MVP uses Personal Accounts only.
+ * 
+ * Future Migration Plan:
+ * - Phase 1 (MVP): Personal accounts only (existing Account model)
+ * - Phase 2: Add Organization account features (merge with CoreOrganization)
+ * - Phase 3: Add BOT accounts and Teams
+ * - Phase 4: Full multi-tenant collaboration layers
  * 
  * Following GitHub's multi-tenant design with support for:
  * - Personal Accounts
@@ -7,7 +23,7 @@
  * - BOT Accounts
  * - Collaboration layers (Teams, Partners, Collaborators)
  * 
- * @see docs/identity-tenancy/SaaS.md for architecture details
+ * @see docs/identity-tenancy/MULTI_TENANT_ACCOUNT_ARCHITECTURE.md for architecture details
  */
 
 /**

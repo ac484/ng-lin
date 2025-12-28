@@ -108,7 +108,7 @@ acme.project.issue#3
 
 ```typescript
 import { inject } from '@angular/core';
-import { EventIdentifierService } from '@core/services/event-identifier.service';
+import { EventIdentifierService } from '@core/event-bus/services/event-identifier.service';
 
 // In your component or service
 const identifierService = inject(EventIdentifierService);
@@ -417,7 +417,7 @@ const taskId = identifierService.generateEventId(
 
 ## API Reference
 
-See `EventIdentifierService` in `src/app/core/services/event-identifier.service.ts` for complete API documentation.
+See `EventIdentifierService` in `src/app/core/event-bus/services/event-identifier.service.ts` for complete API documentation.
 
 ### Key Methods
 

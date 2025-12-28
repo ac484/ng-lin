@@ -43,9 +43,9 @@ The problem statement identified three key areas requiring attention:
 ### 2. Event Identifier System Implementation ✅
 
 **New Files:**
-- `src/app/core/models/event-identifier.model.ts` - Type definitions
-- `src/app/core/services/event-identifier.service.ts` - Service implementation
-- `src/app/core/services/event-identifier.service.spec.ts` - Unit tests
+- `src/app/core/event-bus/models/event-identifier.model.ts` - Type definitions
+- `src/app/core/event-bus/services/event-identifier.service.ts` - Service implementation
+- `src/app/core/event-bus/services/event-identifier.service.spec.ts` - Unit tests
 - `docs/identity-tenancy/EVENT_IDENTIFIER_SYSTEM.md` - Documentation
 
 **Key Features:**
@@ -109,7 +109,7 @@ The identifier system supports all four event levels:
 ### 3. Multi-Tenant Account Architecture ✅
 
 **New Files:**
-- `src/app/core/models/account-types.model.ts` - Account type definitions
+- `src/app/core/models/multi-tenant-types.model.ts` - Future multi-tenant account type definitions (documentation)
 - `docs/identity-tenancy/MULTI_TENANT_ACCOUNT_ARCHITECTURE.md` - Architecture documentation
 
 **Account Types Defined:**

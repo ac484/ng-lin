@@ -4,6 +4,24 @@
 
 ng-lin implements a multi-tenant architecture inspired by GitHub's SaaS design, supporting multiple account types and collaboration layers for flexible, scalable project management.
 
+> **⚠️ IMPORTANT NOTE**: This document describes the FUTURE multi-tenant architecture vision.
+> 
+> **Current Implementation (MVP)**:
+> - Personal accounts only (using existing `Account` model from `features/account/core/models/account.model.ts`)
+> - Basic collaboration via Collaborators and Partners
+> 
+> **Relationship with Existing Models**:
+> - `CoreOrganization` (`core/models/organization.model.ts`) - Will be extended in Phase 2
+> - `CoreUserIdentity` (`core/models/user.model.ts`) - Foundation for Personal accounts
+> - `Account` (`features/account/core/models/account.model.ts`) - Current active model
+> 
+> **Future Types** (defined in `core/models/multi-tenant-types.model.ts`):
+> - Full Organization accounts with billing and teams
+> - BOT accounts for automation
+> - Advanced collaboration layers
+> 
+> See **Initial Version Support** section below for what's available now vs. future releases.
+
 ## Account Types
 
 The system supports three core account types at the Account Layer:
