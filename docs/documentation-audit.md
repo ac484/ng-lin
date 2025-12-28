@@ -59,7 +59,49 @@ post_date: '2025-12-28'
 - Link to canonical anchors above instead of duplicating content; mark overlaps explicitly.
 
 ## Immediate Actions Applied
+- Exported a full document index with filename, path, type, and last-modified timestamps at [document-index.md](document-index.md).
 - Completed full inventory and domain classification (table above).
 - Declared canonical sources per domain and listed redundancies with keep/archive decisions.
 - Published simplified canonical map and formatting rules to guide future edits.
 - No content deletions performed; follow status map before future removals.
+
+
+## Classification and Importance
+
+Purpose categories: user-guide, design/architecture, API/contract, operations/runbook, validation/reporting, governance/policy, onboarding/design-system, historical.
+Importance levels: Core (canonical source), Secondary (supporting or high-level summary), Outdated (historical/legacy only).
+
+### Domain classification map
+- ⭐️: design/architecture (Secondary unless master indexes noted as Core)
+- strategy-governance: governance/policy (Core: architecture/README.md; Secondary: others)
+- identity-tenancy: operations/runbook + validation/reporting (Core: identity/VALIDATION_REPORT.md; Secondary: other identity-tenancy files)
+- change-control: API/contract (Core: api/介面規格)/README.md)
+- automation-delivery: operations/runbook (Core: event-bus/VALIDATION_REPORT.md; Secondary: other event-bus docs)
+- observability-operations: operations/runbook (Core: operations/README.md)
+- enablement-experience: onboarding/design-system (Core: getting-started/README.md)
+- security-compliance: operations/runbook + validation/reporting (Core: audit/VALIDATION_REPORT.md; Outdated: security-compliance/README.md if superseded)
+- ai-governance: governance/policy (Core: ai-governance/README.md)
+- reference: design/architecture reference (Secondary)
+- legacy-archive + Layer L-1~L2.md: historical (Outdated)
+- Root loose files (firebase.md, Github.md, Permission.md, PRD/prd.md, event_sourcing_guide.md): Secondary until migrated to domains
+
+## Analysis of Structure and Redundancy
+- Headings inconsistent across ⭐️ snapshots vs. domain READMEs; normalize to start at H2 with concise titles.
+- Duplicates:
+  - Identity & Auth: keep identity-tenancy/Identity & Auth.md (Core), mark ⭐️/Identity & Auth.md as Historical.
+  - Global Event Bus: keep automation-delivery/event-bus/VALIDATION_REPORT.md (Core), keep ⭐️/Global Event Bus.md as Secondary overview.
+  - Global Audit Log: keep security-compliance/audit/VALIDATION_REPORT.md (Core), keep ⭐️/AUDIT_SYSTEM_MASTER_INDEX.md for architecture, archive Global-Audit-Log-系統拓撲分析與實施路徑.md.
+  - Blueprint structures: keep strategy-governance/blueprint/index.md (Core), keep ⭐️/Shared Module 完整結構樹圖與設計.md as Secondary visuals.
+- Naming inconsistencies: prefer kebab-case without spaces; avoid mixed languages in filenames for new docs.
+
+## Optimization and Standardization Steps
+- Redundant detail trimmed to canonical map; future updates should link to Core docs instead of duplicating content.
+- For long narrative sections, prefer bullet lists and tables; ensure status tags (Core/Secondary/Outdated) appear near the top.
+- Use unified metadata frontmatter fields: post_title, author1, post_slug, microsoft_alias, featured_image, categories, tags, ai_note, summary, post_date.
+- Heading policy: start at `##` within docs folder, limit to H3 for subsections; keep line length <=120 characters.
+
+## Maintenance Plan
+- Rescan docs monthly (or after major merges) and regenerate [document-index.md](document-index.md).
+- On new docs: assign purpose category + importance tag, add to canonical map if applicable, and ensure metadata/frontmatter present.
+- When archiving: move files to legacy-archive/ and update redundancy notes here.
+- Keep README links aligned with canonical anchors to avoid drift.
