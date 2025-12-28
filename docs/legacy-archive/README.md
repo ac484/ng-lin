@@ -1,18 +1,11 @@
----
-description: 'Legacy/archive docs: historical or duplicate content pending consolidation'
-applyTo: '**/*.md'
----
-
 # Legacy Archive
 
-This folder temporarily houses historical or duplicate documents pending rewrite or consolidation.
+This folder houses historical or duplicate documents pending consolidation.
 
-## Scope
-- Deprecated, superseded, or duplicate materials
-- Items awaiting migration into pillar folders
-- Notes on what to keep, rewrite, or remove
+## Status
+All legacy event-bus discussion files have been removed (2025-12-28).
 
-## Key files to place here
-- Legacy docs with a short status note
-- Migration plans and target destinations
-- Deprecation notices and timelines
+## Purpose
+- Track deprecated content
+- Document migration status
+- Temporary holding for docs awaiting review
