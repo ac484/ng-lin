@@ -22,6 +22,7 @@ Canonical navigation and ownership map. Use this page instead of `docs/INDEX.md`
 - Audit/Event Bus: keep `security-compliance/audit/` and `automation-delivery/event-bus/` as sources; ⭐️ files remain optional exec summaries.
 - Root loose files (`PRD`, `Permission.md`, `Layer L-1~L2.md`, `Github.md`) should migrate into `strategy-governance/` and be removed after merge.
 - Empty/minimal placeholders (e.g., `collaboration/`) should be folded into governance or deleted.
+- Delete legacy navigation files once links are updated; treat `optimized-index.md` as the single entry.
 
 ## Usage
 

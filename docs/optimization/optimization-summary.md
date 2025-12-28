@@ -52,6 +52,14 @@
 - Replacing `INDEX.md` (23 KB) + `document-index.md` (16 KB) with `optimized-index.md` (<5 KB) yields ~85% reduction for navigation content while preserving routing decisions.
 - Artifacts: `raw_doc_index.csv` (inventory), `optimized-index.md` (canonical nav), this summary (classification, analysis, gate, maintenance).
 
+## Next reductions (action queue)
+
+- Remove `docs/INDEX.md` and `docs/document-index.md` after consumers switch to `optimized-index.md`.
+- Relocate root loose files (`PRD`, `Permission.md`, `Layer L-1~L2.md`, `Github.md`) into `strategy-governance/` and delete originals.
+- Collapse duplicate audit/event-bus narratives in ⭐️ and legacy folders into links pointing to `security-compliance/audit/` and `automation-delivery/event-bus/`.
+- Fold `collaboration/` placeholder into governance or delete.
+- Convert verbose folder READMEs into concise pointers where they repeat pillar responsibilities.
+
 ## Maintenance policy
 
 - Reject new docs that duplicate pillars covered above; extend canonical files instead.
