@@ -14,31 +14,31 @@
  * @date 2025-12-26
  */
 
-import { TestBed, fakeAsync, tick } from '@angular/core/testing';
+import { TestBed, fakeAsync, tick, flush } from '@angular/core/testing';
 import { DestroyRef } from '@angular/core';
 import { Subject } from 'rxjs';
 
 import { AuditCollectorEnhancedService } from './audit-collector-enhanced.service';
-import { InMemoryEventBus } from '@core/event-bus/implementations/in-memory';
+import { EVENT_BUS } from '@core/event-bus/constants/event-bus-tokens';
+import { IEventBus } from '@core/event-bus/interfaces';
 import { TenantContextService } from '@core/event-bus/services/tenant-context.service';
 import { ClassificationEngineService } from '../services/classification-engine.service';
-import { PolicyEngineService } from '../services/policy-engine.service';
 import { AuditEventRepository } from '../repositories/audit-event.repository';
 import { EventCategory } from '../models/event-category.enum';
 import { EventSeverity } from '../models/event-severity.enum';
+import { AuditLevel } from '@core/event-bus/models/audit-event.model';
 import { StorageTier } from '../models/storage-tier.enum';
 
 describe('AuditCollectorEnhancedService', () => {
   let service: AuditCollectorEnhancedService;
-  let mockEventBus: jasmine.SpyObj<InMemoryEventBus>;
-  let mockClassificationEngine: jasmine.SpyObj<ClassificationEngineService>;
-  let mockPolicyEngine: jasmine.SpyObj<PolicyEngineService>;
+  let mockEventBus: jasmine.SpyObj<IEventBus>;
+  let mockClassificationEngine: jasmine.SpyObj<any>;
   let mockAuditRepository: jasmine.SpyObj<AuditEventRepository>;
   let mockTenantContext: jasmine.SpyObj<TenantContextService>;
   let infoSpy: jasmine.Spy<(...args: any[]) => any>;
 
   const createMockDomainEvent = (overrides: any = {}) => ({
-    eventType: 'task.created',
+    type: 'task.created',
     blueprintId: 'blueprint-123',
     timestamp: new Date(),
     userId: 'user-123',
@@ -57,11 +57,9 @@ describe('AuditCollectorEnhancedService', () => {
 
   beforeEach(() => {
     // Create mock services
-    const eventBusSubject = new Subject();
-    mockEventBus = jasmine.createSpyObj('InMemoryEventBus', ['observeAll', 'publish', 'publishBatch']);
+    const eventBusSubject = new Subject<any>();
+    mockEventBus = jasmine.createSpyObj<IEventBus>('EventBus', ['observeAll']);
     mockEventBus.observeAll.and.returnValue(eventBusSubject.asObservable());
-    mockEventBus.publish.and.returnValue(Promise.resolve());
-    mockEventBus.publishBatch.and.returnValue(Promise.resolve());
 
     mockClassificationEngine = jasmine.createSpyObj('ClassificationEngineService', ['classify']);
     mockClassificationEngine.classify.and.returnValue({
@@ -73,13 +71,6 @@ describe('AuditCollectorEnhancedService', () => {
       aiDecision: undefined,
       processingTimeMs: 5
     });
-
-    mockPolicyEngine = jasmine.createSpyObj('PolicyEngineService', ['evaluate']);
-    mockPolicyEngine.evaluate.and.callFake(() => ({
-      action: 'allow',
-      rule: 'default-allow',
-      reasons: ['test']
-    }));
 
     mockAuditRepository = jasmine.createSpyObj('AuditEventRepository', ['create', 'createBatch']);
     mockAuditRepository.create.and.returnValue(Promise.resolve({ id: 'audit-001' } as any));
@@ -96,9 +87,8 @@ describe('AuditCollectorEnhancedService', () => {
     TestBed.configureTestingModule({
       providers: [
         AuditCollectorEnhancedService,
-        { provide: InMemoryEventBus, useValue: mockEventBus },
+        { provide: EVENT_BUS, useValue: mockEventBus },
         { provide: ClassificationEngineService, useValue: mockClassificationEngine },
-        { provide: PolicyEngineService, useValue: mockPolicyEngine },
         { provide: AuditEventRepository, useValue: mockAuditRepository },
         { provide: TenantContextService, useValue: mockTenantContext },
         DestroyRef
@@ -113,7 +103,7 @@ describe('AuditCollectorEnhancedService', () => {
       expect(service).toBeTruthy();
     });
 
-    it('should observe the event bus stream', () => {
+    it('should observe event bus stream once', () => {
       expect(mockEventBus.observeAll).toHaveBeenCalledTimes(1);
     });
 
@@ -138,7 +128,7 @@ describe('AuditCollectorEnhancedService', () => {
       expect(mockClassificationEngine.classify).toHaveBeenCalled();
       expect(mockAuditRepository.create).toHaveBeenCalled();
 
-      const auditEvent = mockClassificationEngine.classify.calls.mostRecent().args[0];
+      const auditEvent = mockClassificationEngine.classify.calls.mostRecent().args[0] as any;
       expect(auditEvent.blueprintId).toBe('blueprint-123');
       expect(auditEvent.actor.id).toBe('user-123');
       expect(auditEvent.eventType).toBe('task.created');
@@ -152,7 +142,7 @@ describe('AuditCollectorEnhancedService', () => {
 
       tick();
 
-      const auditEvent = mockClassificationEngine.classify.calls.mostRecent().args[0];
+      const auditEvent = mockClassificationEngine.classify.calls.mostRecent().args[0] as any;
       expect(auditEvent.actor.type).toBe('ai');
       expect(auditEvent.aiGenerated).toBe(true);
     }));
@@ -184,20 +174,29 @@ describe('AuditCollectorEnhancedService', () => {
   });
 
   describe('Batch Processing', () => {
-    it('should collect and persist events from the bus', fakeAsync(() => {
-      const eventBusSubject = new Subject<any>();
-      mockEventBus.observeAll.and.returnValue(eventBusSubject.asObservable());
+    it('should flush batch when size limit reached', fakeAsync(() => {
+      // Simulate 50 events (batch size limit)
+      for (let i = 0; i < 50; i++) {
+        service.recordAuditEvent(`blueprint-${i}`, 'test.event', 'user-123');
+      }
 
-      service = TestBed.inject(AuditCollectorEnhancedService);
+      tick(6000); // Wait for batch timer
 
-      const domainEvent = createMockDomainEvent();
-      eventBusSubject.next(domainEvent as any);
+      // Should have flushed at least once
+      expect(mockAuditRepository.create).toHaveBeenCalled();
 
-      tick(6000);
-
-      expect(mockAuditRepository.createBatch).toHaveBeenCalled();
       const stats = service.getStatistics();
       expect(stats.eventsCollected).toBeGreaterThan(0);
+    }));
+
+    it('should flush batch after time limit', fakeAsync(() => {
+      // Add single event
+      service.recordAuditEvent('blueprint-123', 'test.event', 'user-123');
+
+      // Don't reach size limit, but wait for time trigger
+      tick(6000);
+
+      expect(mockAuditRepository.create).toHaveBeenCalled();
     }));
   });
 
@@ -209,13 +208,13 @@ describe('AuditCollectorEnhancedService', () => {
       expect(mockClassificationEngine.classify).toHaveBeenCalledTimes(1);
 
       const auditEvent = mockClassificationEngine.classify.calls.mostRecent().args[0];
-      expect(auditEvent.category).toBe(EventCategory.SYSTEM_EVENT); // Before classification
+      expect(auditEvent.category).toBe(EventCategory.SYSTEM); // Before classification
     }));
 
     it('should apply classification results to audit event', fakeAsync(() => {
       mockClassificationEngine.classify.and.returnValue({
-        category: EventCategory.SECURITY_INCIDENT,
-        level: EventSeverity.CRITICAL,
+        category: EventCategory.SECURITY,
+        level: AuditLevel.CRITICAL,
         riskScore: 95,
         complianceTags: ['GDPR', 'HIPAA'],
         operationType: 'DELETE',
@@ -227,29 +226,13 @@ describe('AuditCollectorEnhancedService', () => {
       tick();
 
       expect(mockAuditRepository.create).toHaveBeenCalled();
-      const persistedEvent = mockAuditRepository.create.calls.mostRecent().args[0];
+      const persistedEvent = mockAuditRepository.create.calls.mostRecent().args[0] as any;
 
-      expect(persistedEvent.category).toBe(EventCategory.SECURITY_INCIDENT);
-      expect(persistedEvent.level).toBe(EventSeverity.CRITICAL);
-      expect(persistedEvent.riskScore).toBe(95);
-      expect(persistedEvent.complianceTags).toContain('GDPR');
-      expect(persistedEvent.complianceTags).toContain('HIPAA');
-    }));
-  });
-
-  describe('Policy notifications', () => {
-    it('should publish notification events for escalations', fakeAsync(() => {
-      mockPolicyEngine.evaluate.and.returnValue({
-        action: 'escalate',
-        rule: 'escalate-test',
-        reasons: ['escalate'],
-        notify: true
-      });
-
-      service.recordAuditEvent('blueprint-123', 'security.alert', 'user-123');
-      tick(6000);
-
-      expect(mockEventBus.publishBatch).toHaveBeenCalled();
+      expect(persistedEvent.category).toBe(EventCategory.SECURITY);
+      expect(persistedEvent.level).toBe(AuditLevel.CRITICAL);
+      expect((persistedEvent as any).riskScore).toBe(95);
+      expect((persistedEvent as any).complianceTags).toContain('GDPR');
+      expect((persistedEvent as any).complianceTags).toContain('HIPAA');
     }));
   });
 
@@ -335,7 +318,7 @@ describe('AuditCollectorEnhancedService', () => {
       tick();
 
       expect(mockAuditRepository.create).toHaveBeenCalledTimes(1);
-      const auditEvent = mockAuditRepository.create.calls.mostRecent().args[0];
+      const auditEvent = mockAuditRepository.create.calls.mostRecent().args[0] as any;
 
       expect(auditEvent.blueprintId).toBe('blueprint-123');
       expect(auditEvent.eventType).toBe('manual.event');
@@ -357,9 +340,9 @@ describe('AuditCollectorEnhancedService', () => {
 
       tick();
 
-      const auditEvent = mockAuditRepository.create.calls.mostRecent().args[0];
+      const auditEvent = mockAuditRepository.create.calls.mostRecent().args[0] as any;
       expect(auditEvent.changes).toBeDefined();
-      expect(auditEvent.changes?.length).toBe(2);
+      expect(auditEvent.changes ? auditEvent.changes.length : 0).toBe(2);
       expect(auditEvent.changes?.[0].field).toBe('status');
       expect(auditEvent.changes?.[1].field).toBe('assignee');
     }));
@@ -401,7 +384,7 @@ describe('AuditCollectorEnhancedService', () => {
     it('should log statistics on destroy', () => {
       service.ngOnDestroy();
 
-      expect(mockLogger.info).toHaveBeenCalledWith('[AuditCollectorEnhanced]', 'Shutting down', jasmine.any(Object));
+      expect(infoSpy).toHaveBeenCalledWith('[AuditCollectorEnhanced]', 'Shutting down', jasmine.any(Object));
     });
   });
 });

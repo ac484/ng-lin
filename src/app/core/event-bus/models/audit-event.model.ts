@@ -15,6 +15,12 @@
  * 審計級別
  */
 export enum AuditLevel {
+  /** 低風險事件 (別名) */
+  LOW = 'LOW',
+  /** 中等風險事件 (別名) */
+  MEDIUM = 'MEDIUM',
+  /** 高風險事件 (別名) */
+  HIGH = 'HIGH',
   /** 資訊性事件 */
   INFO = 'INFO',
   /** 警告事件 */
@@ -29,6 +35,8 @@ export enum AuditLevel {
  * 審計類別
  */
 export enum AuditCategory {
+  /** 使用者操作（兼容舊規格） */
+  USER_ACTION = 'USER_ACTION',
   /** 認證相關 */
   AUTHENTICATION = 'AUTHENTICATION',
   /** 授權相關 */
@@ -70,8 +78,17 @@ export interface AuditEvent {
   
   /** 執行者 (用戶 ID) */
   readonly actor: string;
+  /** 兼容舊版 actor 物件格式 */
+  readonly actorDetails?: {
+    id: string;
+    type?: string;
+    name?: string;
+    metadata?: Record<string, unknown>;
+  };
   /** 租戶 ID (多租戶隔離) */
   readonly tenantId?: string;
+  /** 兼容 blueprint 租戶識別 */
+  readonly blueprintId?: string;
   
   /** 操作描述 */
   readonly action: string;
@@ -86,11 +103,21 @@ export interface AuditEvent {
   readonly result: 'success' | 'failure' | 'partial';
   /** 錯誤訊息 (如果失敗) */
   readonly errorMessage?: string;
+  /** 操作類型 */
+  readonly operationType?: 'CREATE' | 'READ' | 'UPDATE' | 'DELETE' | 'EXECUTE';
   
   /** 變更內容 (before/after snapshot) */
   readonly changes?: AuditChanges;
   /** 額外元數據 */
   readonly metadata?: Record<string, unknown>;
+  /** 分類標籤 */
+  readonly complianceTags?: string[];
+  /** AI 生成標記 */
+  readonly aiGenerated?: boolean;
+  /** 風險分數 */
+  readonly riskScore?: number;
+  /** 儲存層級 */
+  readonly storageTier?: string;
   
   /** IP 位址 */
   readonly ipAddress?: string;

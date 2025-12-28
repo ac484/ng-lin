@@ -1,6 +1,5 @@
 import { Routes } from '@angular/router';
-import { startPageGuard } from '@core';
-import { authSimpleCanActivate, authSimpleCanActivateChild } from '@delon/auth';
+import { authGuard, startPageGuard } from '@core';
 
 import { LayoutBasicComponent } from '../layout';
 
@@ -8,8 +7,8 @@ export const routes: Routes = [
   {
     path: '',
     component: LayoutBasicComponent,
-    canActivate: [startPageGuard, authSimpleCanActivate],
-    canActivateChild: [authSimpleCanActivateChild],
+    canActivate: [startPageGuard, authGuard],
+    canActivateChild: [authGuard],
     data: {},
     children: [
       // Redirect to user blueprints as default dashboard

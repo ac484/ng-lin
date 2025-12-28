@@ -108,6 +108,9 @@ export class AuditLogService {
   readonly statistics = computed((): AuditEventStatistics => ({
     totalEvents: this._totalEvents(),
     byLevel: {
+      [AuditLevel.LOW]: 0, // 別名，暫不統計
+      [AuditLevel.MEDIUM]: 0, // 別名，暫不統計
+      [AuditLevel.HIGH]: 0, // 別名，暫不統計
       [AuditLevel.INFO]: this._infoEvents(),
       [AuditLevel.WARNING]: this._warningEvents(),
       [AuditLevel.ERROR]: this._errorEvents(),
@@ -362,6 +365,7 @@ export class AuditLogService {
    */
   private calculateCategoryStatistics(): Record<AuditCategory, number> {
     const stats: Record<AuditCategory, number> = {
+      [AuditCategory.USER_ACTION]: 0,
       [AuditCategory.AUTHENTICATION]: 0,
       [AuditCategory.AUTHORIZATION]: 0,
       [AuditCategory.PERMISSION]: 0,

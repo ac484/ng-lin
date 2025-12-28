@@ -18,6 +18,10 @@ export class AuthFacade implements AuthPort {
     return this.impl.currentUser;
   }
 
+  getCurrentUserId(): string | null {
+    return this.impl.getCurrentUserId();
+  }
+
   signIn(email: string, password: string) {
     return this.impl.signIn(email, password);
   }
@@ -38,6 +42,18 @@ export class AuthFacade implements AuthPort {
 
   signOut() {
     return this.impl.signOut();
+  }
+  
+  signInWithGoogle() {
+    return this.impl.signInWithGoogle();
+  }
+  
+  signInAnonymous() {
+    return this.impl.signInAnonymous();
+  }
+  
+  refreshToken() {
+    return this.impl.refreshToken();
   }
 
   sendPasswordReset(email: string) {

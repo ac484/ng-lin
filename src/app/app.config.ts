@@ -10,7 +10,16 @@ import {
   RouterFeatures,
   withViewTransitions
 } from '@angular/router';
-import { I18NService, defaultInterceptor, provideBindAuthRefresh, provideStartup } from '@core';
+import {
+  I18NService,
+  authTokenInterceptor,
+  baseUrlInterceptor,
+  contextInterceptor,
+  errorHandlerInterceptor,
+  provideBindAuthRefresh,
+  provideStartup,
+  refreshTokenInterceptor
+} from '@core';
 import { provideCellWidgets } from '@delon/abc/cell';
 import { provideSTWidgets } from '@delon/abc/st';
 import { authSimpleInterceptor, provideAuth } from '@delon/auth';
@@ -31,6 +40,7 @@ import { provideAuditAutoSubscription } from './core/event-bus/initializers';
 import { EVENT_BUS, EVENT_STORE } from './core/event-bus/constants/event-bus-tokens';
 import { InMemoryEventBus } from './core/event-bus/implementations/in-memory/in-memory-event-bus';
 import { HybridEventStore } from './core/event-bus/implementations/hybrid/hybrid-event-store';
+import { provideAuditPolicyAlertSink } from './core/audit/initializers';
 
 const defaultLang: AlainProvideLang = {
   abbr: 'zh-CN',
@@ -123,7 +133,17 @@ const routerFeatures: RouterFeatures[] = [
 if (environment.useHash) routerFeatures.push(withHashLocation());
 
 const providers: Array<Provider | EnvironmentProviders> = [
-  provideHttpClient(withInterceptors([...(environment.interceptorFns ?? []), authSimpleInterceptor, defaultInterceptor])),
+  provideHttpClient(
+    withInterceptors([
+      ...(environment.interceptorFns ?? []),
+      authSimpleInterceptor,
+      baseUrlInterceptor,
+      contextInterceptor,
+      authTokenInterceptor,
+      refreshTokenInterceptor,
+      errorHandlerInterceptor
+    ])
+  ),
   provideAnimations(),
   provideRouter(routes, ...routerFeatures),
   provideAlain({ config: alainConfig, defaultLang, i18nClass: I18NService, icons: [...ICONS_AUTO, ...ICONS] }),
@@ -146,6 +166,7 @@ export const appConfig: ApplicationConfig = {
     ...providers,
     ...firebaseProviders,
     provideAuditAutoSubscription(), // Phase 1 P0 - Task 1.3: Event Bus Automatic Subscription
+    provideAuditPolicyAlertSink(),
     { provide: EVENT_BUS, useExisting: InMemoryEventBus },
     { provide: EVENT_STORE, useExisting: HybridEventStore }
   ]

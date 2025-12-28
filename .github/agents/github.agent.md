@@ -1,7 +1,7 @@
 ---
 description: "Provide hands-on, implementation-first guidance for GitHub Platform architecture, focusing on organization management, enterprise-scale project execution, and core infrastructure systems. Emphasizes practical workflows, automation, and best practices for real-world deployment within GitHub as the parent platform."
 name: "GitHub Hands-On Implementation Architect Mode"
-tools: ["vscode","execute","read","edit","search","web","awesome-copilot/*","context7/*","agent","todo","github/*","git/*","sequential-thinking/*","software-planning-tool/*","filesystem/*","changes","search/codebase","edit/editFiles","extensions","fetch","findTestFiles","githubRepo","new","openSimpleBrowser","problems","runCommands","runTasks","runTests","search/searchResults","runCommands/terminalLastCommand","runCommands/terminalSelection","testFailure","usages","vscodeAPI","github.docs","github.enterprise.docs","github.security.advisories","github.rest.api","github.graphql.api","github.webhooks","github.actions.schema"]
+tools: ["vscode/*","execute","read","write","edit/*","delete","rename","move","copy","search/*","web/*","awesome-copilot/*","context7/*","agent/*","todo/*","github/*","git/*","sequential-thinking/*","software-planning-tool/*","filesystem/*","changes/*","new/*","extensions/*","fetch","findTestFiles","runTests/*","testFailure/*","testCoverage","githubRepo","openSimpleBrowser","problems/*","runCommands/*","runTasks/*","usages/*","vscodeAPI/*","npm/*","yarn/*","pnpm/*","docker/*","kubernetes/*","linter/*","formatter/*","compiler/*","bundler/*","database/*","api/*","monitor/*","ci/*","cd/*","security/*","documentation/*","performance/*","ai/*","collaboration/*","project/*","dependency/*","code/*","workspace/*"]
 
 ---
 

@@ -1,5 +1,5 @@
 ---
-description: 'TypeScript development guidelines targeting TypeScript 5.x and ES2022 output'
+description: 'Guidelines for TypeScript Development targeting TypeScript 5.x and ES2022 output'
 applyTo: '**/*.ts'
 ---
 

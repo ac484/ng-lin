@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 import { firstValueFrom, take, toArray } from 'rxjs';
 import { DomainEvent } from '../models';
-import { InMemoryEventBus } from './in-memory-event-bus.service';
-import { InMemoryEventStore } from './in-memory-event-store.service';
+import { InMemoryEventBus } from '../implementations/in-memory/in-memory-event-bus';
+import { InMemoryEventStore } from '../implementations/in-memory/in-memory-event-store';
 
 // Test event classes
 class TestEvent extends DomainEvent {
   readonly eventType = 'test.event' as const;
-  readonly payload: { message: string };
+  override readonly payload: { message: string };
   
   constructor(message: string, aggregateId: string = 'test-1') {
     super({
@@ -20,7 +20,7 @@ class TestEvent extends DomainEvent {
 
 class AnotherTestEvent extends DomainEvent {
   readonly eventType = 'another.test.event' as const;
-  readonly payload: { value: number };
+  override readonly payload: { value: number };
   
   constructor(value: number, aggregateId: string = 'test-1') {
     super({
@@ -162,7 +162,7 @@ describe('InMemoryEventBus', () => {
       const handlerSpy = jasmine.createSpy('handler');
       
       await eventBus.subscribe('test.event', handlerSpy, {
-        filter: (event) => (event as TestEvent).payload.message === 'Filtered'
+        filter: (event: DomainEvent) => (event as TestEvent).payload.message === 'Filtered'
       });
       
       await eventBus.publish(new TestEvent('Not filtered'));
@@ -227,7 +227,7 @@ describe('InMemoryEventBus', () => {
       const events$ = eventBus.observe<TestEvent>('test.event');
       const collected: TestEvent[] = [];
       
-      events$.pipe(take(2)).subscribe(event => collected.push(event));
+      events$.pipe(take(2)).subscribe((event: DomainEvent) => collected.push(event as TestEvent));
       
       await eventBus.publish(new TestEvent('Event 1'));
       await eventBus.publish(new AnotherTestEvent(1));
@@ -244,7 +244,7 @@ describe('InMemoryEventBus', () => {
       const events$ = eventBus.observeAll();
       const collected: DomainEvent[] = [];
       
-      events$.pipe(take(3)).subscribe(event => collected.push(event));
+      events$.pipe(take(3)).subscribe((event: DomainEvent) => collected.push(event));
       
       await eventBus.publish(new TestEvent('Event 1'));
       await eventBus.publish(new AnotherTestEvent(1));

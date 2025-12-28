@@ -20,13 +20,16 @@
  */
 
 import { Injectable, inject } from '@angular/core';
-import { AuditLevel, AuditCategory, AuditEvent } from '../../event-bus/models/audit-event.model';
+import { AuditLevel, AuditCategory, AuditEvent as BusAuditEvent } from '../../event-bus/models/audit-event.model';
+import { AuditEvent as CoreAuditEvent } from '../models/audit-event.interface';
+
+type AnyAuditEvent = BusAuditEvent | CoreAuditEvent | (BusAuditEvent & Partial<CoreAuditEvent>) | any;
 
 /**
  * Classification Result
  * 增強的審計事件，包含分類後的元數據
  */
-export interface ClassifiedAuditEvent extends AuditEvent {
+export interface ClassifiedAuditEvent extends BusAuditEvent {
   /** 風險評分 (0-100, 越高越危險) */
   riskScore: number;
   /** 是否需要自動審查 */
@@ -370,7 +373,8 @@ export class ClassificationEngineService {
    * @param event - 原始審計事件
    * @returns 分類後的審計事件
    */
-  classify(event: AuditEvent): ClassifiedAuditEvent {
+  classify(event: AnyAuditEvent): ClassifiedAuditEvent {
+    const safeAction = (event.action ?? event.eventType ?? '').toString();
     // Find matching rule
     const rule = this.findMatchingRule(event.eventType);
 
@@ -387,17 +391,17 @@ export class ClassificationEngineService {
       level: rule.level,
       // Add classification metadata
       riskScore: this.calculateRiskScore(rule, event),
-      autoReviewRequired: rule.requiresReview || this.isHighRiskAction(event.action),
+      autoReviewRequired: rule.requiresReview || this.isHighRiskAction(safeAction),
       complianceTags: rule.complianceTags,
       aiGenerated: this.isAIGeneratedEvent(event.eventType),
-      operationType: rule.operationType || this.inferOperationType(event.action)
+      operationType: rule.operationType || this.inferOperationType(safeAction)
     };
   }
 
   /**
    * 批次分類
    */
-  classifyBatch(events: AuditEvent[]): ClassifiedAuditEvent[] {
+  classifyBatch(events: AnyAuditEvent[]): ClassifiedAuditEvent[] {
     return events.map(event => this.classify(event));
   }
 
@@ -448,21 +452,30 @@ export class ClassificationEngineService {
   /**
    * 私有方法: 應用預設分類
    */
-  private applyDefaultClassification(event: AuditEvent): ClassifiedAuditEvent {
+  private applyDefaultClassification(event: AnyAuditEvent): ClassifiedAuditEvent {
     return {
       ...event,
-      riskScore: 20,
-      autoReviewRequired: false,
-      complianceTags: [],
+      category: event.category ?? AuditCategory.BUSINESS_OPERATION,
+      level: event.level ?? AuditLevel.INFO,
+      actor: event.actor ?? (event as any).actorDetails?.id ?? 'system',
+      action: (event.action ?? event.eventType ?? 'unknown').toString(),
+      resourceType: event.resourceType ?? 'resource',
+      resourceId: event.resourceId ?? event.eventId ?? 'unknown',
+      result: event.result ?? 'success',
+      requiresReview: event.requiresReview ?? false,
+      reviewed: event.reviewed ?? false,
+      riskScore: event.riskScore ?? 20,
+      autoReviewRequired: event.autoReviewRequired ?? false,
+      complianceTags: event.complianceTags ?? [],
       aiGenerated: this.isAIGeneratedEvent(event.eventType),
-      operationType: this.inferOperationType(event.action)
+      operationType: this.inferOperationType((event.action ?? event.eventType ?? '').toString())
     };
   }
 
   /**
    * 私有方法: 計算風險評分 (可根據上下文調整)
    */
-  private calculateRiskScore(rule: ClassificationRule, event: AuditEvent): number {
+  private calculateRiskScore(rule: ClassificationRule, event: AnyAuditEvent): number {
     let baseScore = rule.riskScore;
 
     // Adjust based on result
@@ -486,7 +499,7 @@ export class ClassificationEngineService {
   private isHighRiskAction(action: string): boolean {
     const highRiskKeywords = ['delete', 'remove', 'revoke', 'disable', 'admin', 'owner', 'superuser', 'password', 'mfa', 'token'];
 
-    const actionLower = action.toLowerCase();
+    const actionLower = (action || '').toLowerCase();
     return highRiskKeywords.some(keyword => actionLower.includes(keyword));
   }
 
@@ -494,14 +507,14 @@ export class ClassificationEngineService {
    * 私有方法: 檢查是否為 AI 生成的事件
    */
   private isAIGeneratedEvent(eventType: string): boolean {
-    return eventType.toLowerCase().startsWith('ai.');
+    return (eventType || '').toLowerCase().startsWith('ai.');
   }
 
   /**
    * 私有方法: 推斷操作類型
    */
   private inferOperationType(action: string): 'CREATE' | 'READ' | 'UPDATE' | 'DELETE' | 'EXECUTE' | undefined {
-    const actionLower = action.toLowerCase();
+    const actionLower = (action || '').toLowerCase();
 
     if (actionLower.includes('create') || actionLower.includes('add')) {
       return 'CREATE';
