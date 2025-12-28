@@ -17,6 +17,14 @@ post_date: '2025-12-28'
 - Flagged redundant or outdated files and defined keep/retire decisions.
 - Added formatting and language rules to unify future edits.
 
+
+## Simplification Priority (精簡優先)
+- Focus on core messages first: remove duplicated paragraphs and keep only canonical references per domain map.
+- Convert long paragraphs into bullet lists or tables; avoid restating the same rationale in multiple sections.
+- Prefer short summaries (3-5 lines) at the top of each doc, followed by actionable checklists.
+- When overlaps exist, keep the Core doc and reduce Secondary/Historical versions to a one-paragraph pointer.
+- Normalize heading depth to H2/H3 only; strip decorative headings or repeated titles.
+
 ## Inventory by Domain
 
 | Domain | Purpose | File count | Canonical anchor |
