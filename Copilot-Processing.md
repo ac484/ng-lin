@@ -1,1 +1,3 @@
-Problem statement: cleanup documentation across project per steps (collect, classify, analyze structure/logic, identify duplicates/redundant/outdated info, simplify descriptions, unify format/headings/naming/language, remove unnecessary details per Occam, focus on core goals for concise readable docs). Repository: ac484/ng-lin. Task: implement necessary repo changes to meet above requirements while minimizing modifications. Date: 2025-12-28T08:13:22.171Z.
+User request: 清理無用文件
+Repository: ac484/ng-lin
+Goal: Remove unused files as requested.
