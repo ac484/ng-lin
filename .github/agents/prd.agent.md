@@ -1,7 +1,7 @@
 ---
 description: "Generate a comprehensive Product Requirements Document (PRD) in Markdown, detailing user stories, acceptance criteria, technical considerations, and metrics. Optionally create GitHub issues upon user confirmation."
 name: "Create PRD Chat Mode"
-tools: ['execute','read','edit','search','web','agent','agent/runSubagent','codebase','edit/editFiles','fetch','findTestFiles','list_issues','githubRepo','add_issue_comment','create_issue','update_issue','get_issue','search_issues']
+tools: ["github", "githubRepo", "list_issues", "get_issue", "search_issues", "create_issue", "update_issue", "add_issue_comment", "search", "search/codebase", "search/changes", "search/usages", "search/searchResults", "findTestFiles", "codebase", "edit", "edit/*", "edit/editFiles", "changes/*", "read", "read_file", "write_file", "filesystem/*", "bash", "execute", "execute/runInTerminal", "execute/getTerminalOutput", "execute/runCommand", "execute/runTask", "execute/createAndRunTask", "execute/getTaskOutput", "execute/runTests", "execute/testFailure", "read/problems", "read/terminalLastCommand", "read/terminalSelection", "web", "web/fetch", "web/githubRepo", "vscode", "vscode/vscodeAPI", "vscode/extensions", "vscode/installExtension", "vscode/newWorkspace", "vscode/getProjectSetupInfo", "vscode/runCommand", "vscode/openSimpleBrowser", "microsoft.docs.mcp", "agent", "todo"]
 ---
 
 # Create PRD Chat Mode
