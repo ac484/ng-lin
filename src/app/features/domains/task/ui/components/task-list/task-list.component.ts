@@ -238,7 +238,7 @@ export class TaskListComponent implements OnInit {
       this.loading.set(true);
 
       // Get all task events from event store
-      const events = await this.eventStore.getEventsForNamespace('task');
+      const events = await this.eventStore.getEventsForNamespaceAsync('task');
 
       // Build projection from events (pure function)
       const taskList = buildTaskListProjection(events as TaskEvent[]);

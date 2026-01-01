@@ -243,14 +243,16 @@ export class TaskDetailComponent implements OnInit {
       this.loading.set(true);
 
       // Get all events for this specific task aggregate
-      const events = await this.eventStore.getEventsForAggregate('task', taskId);
+      const events = await this.eventStore.getEventsForAggregateAsync('task', taskId);
 
       // Build detailed projection from events (pure function)
       const detail = buildTaskDetailProjection(events as TaskEvent[]);
 
       // Update reactive state
       this.taskDetail.set(detail);
-      this.cardTitle.set(`任務詳情 - ${detail.title}`);
+      if (detail) {
+        this.cardTitle.set(`任務詳情 - ${detail.title}`);
+      }
     } catch (error) {
       console.error('Failed to load task detail:', error);
       this.taskDetail.set(null);
