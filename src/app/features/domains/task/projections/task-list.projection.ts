@@ -12,7 +12,7 @@
  * ```
  */
 
-import type { DomainEvent } from '../../../core/event-bus';
+import type { DomainEvent } from '../../../../platform/event-bus/models';
 
 export interface TaskListProjection {
   readonly taskId: string;
@@ -30,6 +30,9 @@ export interface TaskListProjection {
   readonly attachmentCount: number;
   readonly discussionCount: number;
 }
+
+// Backward compatibility alias
+export type TaskListItem = TaskListProjection;
 
 /**
  * Alias for backward compatibility
@@ -147,25 +150,40 @@ function buildSingleTaskListItem(events: DomainEvent[]): TaskListProjection | nu
 
       // Count comments
       case 'task.comment.added':
-        projection.commentCount = (projection.commentCount || 0) + 1;
+        projection = {
+          ...projection,
+          commentCount: (projection.commentCount || 0) + 1
+        };
         break;
 
       case 'task.comment.deleted':
-        projection.commentCount = Math.max(0, (projection.commentCount || 0) - 1);
+        projection = {
+          ...projection,
+          commentCount: Math.max(0, (projection.commentCount || 0) - 1)
+        };
         break;
 
       // Count attachments
       case 'task.attachment.uploaded':
-        projection.attachmentCount = (projection.attachmentCount || 0) + 1;
+        projection = {
+          ...projection,
+          attachmentCount: (projection.attachmentCount || 0) + 1
+        };
         break;
 
       case 'task.attachment.deleted':
-        projection.attachmentCount = Math.max(0, (projection.attachmentCount || 0) - 1);
+        projection = {
+          ...projection,
+          attachmentCount: Math.max(0, (projection.attachmentCount || 0) - 1)
+        };
         break;
 
       // Count discussions
       case 'task.discussion.started':
-        projection.discussionCount = (projection.discussionCount || 0) + 1;
+        projection = {
+          ...projection,
+          discussionCount: (projection.discussionCount || 0) + 1
+        };
         break;
     }
   }

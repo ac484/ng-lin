@@ -3,16 +3,9 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { filter } from 'rxjs/operators';
 
-import {
-  AUDIT_POLICY_EVENTS,
-  EVENT_PATTERNS,
-  EVENT_SUFFIXES,
-  SYSTEM_EVENTS,
-  matchesPattern
-} from '@core/event-bus/constants/event-types.constants';
-import { EVENT_BUS } from '@core/event-bus/constants/event-bus-tokens';
-import { IEventBus } from '@core/event-bus/interfaces/event-bus.interface';
-import { DomainEvent } from '@core/event-bus/models';
+import { EVENT_BUS } from '../../../platform/event-bus/constants';
+import { IEventBus } from '../../../platform/event-bus/interfaces';
+import { DomainEvent } from '../../../platform/event-bus/models';
 
 type MessageType = 'success' | 'info' | 'warning' | 'error';
 
@@ -74,19 +67,25 @@ export class NotificationService {
   }
 
   private shouldHandle(eventType: string): boolean {
-    return (
-      eventType === SYSTEM_EVENTS.HANDLER_FAILED ||
-      matchesPattern(eventType, EVENT_PATTERNS.ACTION_ALL(EVENT_SUFFIXES.FAILED)) ||
-      eventType === AUDIT_POLICY_EVENTS.ESCALATED ||
-      eventType === AUDIT_POLICY_EVENTS.FLAGGED ||
-      matchesPattern(eventType, EVENT_PATTERNS.NAMESPACE_ALL('notification'))
-    );
+    // Handle failed events
+    if (eventType.endsWith('.failed')) {
+      return true;
+    }
+    // Handle notification namespace events
+    if (eventType.startsWith('notification.')) {
+      return true;
+    }
+    // Handle audit events
+    if (eventType.startsWith('audit.')) {
+      return true;
+    }
+    return false;
   }
 
   private normalize(event: DomainEvent<any>): NormalizedMessage {
     const { eventType, payload } = event;
 
-    if (eventType === SYSTEM_EVENTS.HANDLER_FAILED || eventType.endsWith(`.${EVENT_SUFFIXES.FAILED}`)) {
+    if (eventType.endsWith('.failed')) {
       return {
         type: 'error',
         message: '事件處理失敗',
@@ -94,7 +93,7 @@ export class NotificationService {
       };
     }
 
-    if (eventType === AUDIT_POLICY_EVENTS.ESCALATED) {
+    if (eventType === 'audit.escalated') {
       return {
         type: 'warning',
         message: 'Audit policy escalated',
@@ -102,7 +101,7 @@ export class NotificationService {
       };
     }
 
-    if (eventType === AUDIT_POLICY_EVENTS.FLAGGED) {
+    if (eventType === 'audit.flagged') {
       return {
         type: 'warning',
         message: 'Audit policy flagged for review',
@@ -110,7 +109,7 @@ export class NotificationService {
       };
     }
 
-    if (matchesPattern(eventType, EVENT_PATTERNS.NAMESPACE_ALL('notification'))) {
+    if (eventType.startsWith('notification.')) {
       return {
         type: 'info',
         message: payload?.title ?? '通知訊息',

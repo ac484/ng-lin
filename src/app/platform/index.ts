@@ -13,6 +13,15 @@ export * from './entities';
 // Event Store
 export * from './event-store';
 
+// Event Bus
+export * from './event-bus';
+
+// Audit System
+export * from './audit';
+
+// Services
+export * from './services';
+
 // Process Managers
 export * from './processes';
 

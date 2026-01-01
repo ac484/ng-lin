@@ -4,7 +4,7 @@
  * Events for task discussions and threaded conversations.
  */
 
-import { DomainEvent } from '../../../../core/foundation/base/domain-event.base';
+import { DomainEvent } from '../../../../platform/event-bus/models';
 
 export interface TaskDiscussionStartedEvent extends DomainEvent {
   readonly type: 'task.discussion.started';

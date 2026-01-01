@@ -23,7 +23,7 @@
 
 import { Injectable, inject } from '@angular/core';
 import { PlatformEventStoreService } from './platform-event-store.service';
-import type { DomainEvent } from '../../core/event-bus';
+import type { DomainEvent } from '../event-bus';
 
 /**
  * Helper to create a platform domain event
