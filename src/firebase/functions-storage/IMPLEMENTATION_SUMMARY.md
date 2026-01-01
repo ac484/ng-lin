@@ -407,8 +407,8 @@ BACKUP_PREFIX=projects/
 
 ### Context7 查詢記錄
 
-1. Firebase Functions v2: https://Context7.com/firebase/firebase-functions
-2. Firebase Admin Node.js: https://Context7.com/firebase/firebase-admin-node
+1. Firebase Functions v2: https://context7.com/firebase/firebase-functions
+2. Firebase Admin Node.js: https://context7.com/firebase/firebase-admin-node
 3. Firebase Security: https://firebase.google.com/docs/storage/security
 
 ### 官方文檔
