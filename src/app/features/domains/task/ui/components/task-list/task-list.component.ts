@@ -14,6 +14,7 @@ import { NzInputModule } from 'ng-zorro-antd/input';
 import { FormsModule } from '@angular/forms';
 
 import { PlatformEventStoreService } from '@app/platform/event-store';
+import { ErrorHandlingService } from '@app/shared/services/error-handling.service';
 import { buildTaskListProjection, filterByStatus, TaskListItem } from '../../../projections/task-list.projection';
 import type { TaskEvent } from '../../../events';
 
@@ -199,6 +200,7 @@ import type { TaskEvent } from '../../../events';
 export class TaskListComponent implements OnInit {
   private readonly eventStore = inject(PlatformEventStoreService);
   private readonly router = inject(Router);
+  private readonly errorHandler = inject(ErrorHandlingService);
 
   // Reactive state using Angular 19+ signals
   protected readonly loading = signal<boolean>(true);
@@ -246,7 +248,12 @@ export class TaskListComponent implements OnInit {
       // Update reactive state
       this.tasks.set(taskList);
     } catch (error) {
-      console.error('Failed to load tasks:', error);
+      this.errorHandler.handleError(error, {
+        userMessage: '載入任務列表失敗',
+        showToast: true,
+        context: 'TaskList.loadTasks',
+        sendToTracking: true
+      });
     } finally {
       this.loading.set(false);
     }
