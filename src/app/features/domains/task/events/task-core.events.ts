@@ -4,7 +4,7 @@
  * Core lifecycle events for task entities.
  */
 
-import { DomainEvent } from '../../../../core/foundation/base/domain-event.base';
+import { DomainEvent } from '../../../../platform/event-bus/models';
 
 export interface TaskCreatedEvent extends DomainEvent {
   readonly type: 'task.created';
