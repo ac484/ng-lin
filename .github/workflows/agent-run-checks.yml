@@ -1,0 +1,22 @@
+name: Agent Run Checks
+
+on:
+  pull_request:
+    branches: [ "copilot/**" ]
+
+jobs:
+  enforce-lint-and-size:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Check file sizes <= 4000 chars
+        run: |
+          find . -name "*.ts" -o -name "*.js" | while read file; do
+            count=$(wc -m < "$file")
+            if [ "$count" -gt 4000 ]; then
+              echo "🚫 $file too large ($count chars). Max 4000!"
+              exit 1
+            fi
+          done
