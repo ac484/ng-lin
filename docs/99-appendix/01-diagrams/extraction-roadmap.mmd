@@ -1,0 +1,25 @@
+---
+alt: "3-Phase Feature Extraction Roadmap"
+---
+gantt
+    accTitle: Feature Extraction Roadmap
+    accDescr: Timeline for extracting valuable features from old source in 3 phases
+    
+    title Feature Extraction Implementation Roadmap
+    dateFormat YYYY-MM-DD
+    
+    section Phase 1: Quick Wins
+    async-state.ts          :done, p1-1, 2025-12-30, 1d
+    Audit System Base       :active, p1-2, 2025-12-31, 2d
+    Testing Utilities       :p1-3, after p1-2, 1d
+    
+    section Phase 2: Core Enhancement
+    Event Bus Resilience    :p2-1, after p1-3, 3d
+    Permission Guard        :p2-2, after p2-1, 1d
+    Refresh Token Interceptor :p2-3, after p2-2, 2d
+    Event Persistence (Optional) :crit, p2-4, after p2-3, 3d
+    
+    section Phase 3: Advanced Features
+    Multi-Tenant System (If Needed) :p3-1, after p2-4, 5d
+    Policy Validation       :p3-2, after p3-1, 3d
+    Additional Features     :p3-3, after p3-2, 5d

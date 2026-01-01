@@ -1,0 +1,106 @@
+/* To learn more about Typescript configuration file: https://www.typescriptlang.org/docs/handbook/tsconfig-json.html. */
+/* To learn more about Angular compiler options: https://angular.dev/reference/configs/angular-compiler-options. */
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "outDir": "./dist/out-tsc",
+    "strict": true,
+    "noImplicitOverride": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "sourceMap": true,
+    "declaration": false,
+    "experimentalDecorators": true,
+    "moduleResolution": "bundler",
+    "importHelpers": true,
+    "target": "ES2022",
+    "module": "ES2022",
+    "useDefineForClassFields": false,
+    "isolatedModules": true,
+    "lib": [
+      "ES2022",
+      "dom"
+    ],
+    "baseUrl": "./",
+    "paths": {
+      "@shared": [
+        "src/app/shared/index"
+      ],
+      "@shared/*": [
+        "src/app/shared/*"
+      ],
+      "@core": [
+        "src/app/core/index"
+      ],
+      "@core/*": [
+        "src/app/core/*"
+      ],
+      "@core/account": [
+        "src/app/features/account/core"
+      ],
+      "@core/account/*": [
+        "src/app/features/account/core/*"
+      ],
+      "@core/models": [
+        "src/app/features/account/core/models"
+      ],
+      "@core/models/*": [
+        "src/app/features/account/core/models/*"
+      ],
+      "@core/types": [
+        "src/app/features/account/core/types"
+      ],
+      "@core/types/*": [
+        "src/app/features/account/core/types/*"
+      ],
+      "@core/repositories": [
+        "src/app/features/account/core/repositories"
+      ],
+      "@core/stores": [
+        "src/app/features/account/core/stores"
+      ],
+      "@core/domain": [
+        "src/app/features/account/core"
+      ],
+      "@core/domain/*": [
+        "src/app/features/account/core/*"
+      ],
+      "@core/data-access": [
+        "src/app/core/data-access"
+      ],
+      "@core/data-access/*": [
+        "src/app/core/data-access/*"
+      ],
+      "@core/state": [
+        "src/app/core/state"
+      ],
+      "@core/state/*": [
+        "src/app/core/state/*"
+      ],
+      "@core/blueprint": [
+        "src/app/features/blueprint/core"
+      ],
+      "@core/blueprint/*": [
+        "src/app/features/blueprint/core/*"
+      ],
+      "@routes/*": [
+        "src/app/routes/*"
+      ],
+      "@env/*": [
+        "src/environments/*"
+      ],
+      "@_mock": [
+        "_mock/index"
+      ]
+    }
+  },
+  "angularCompilerOptions": {
+    "enableI18nLegacyMessageIdFormat": false,
+    "strictInjectionParameters": true,
+    "strictInputAccessModifiers": true,
+    "strictTemplates": true
+  }
+}

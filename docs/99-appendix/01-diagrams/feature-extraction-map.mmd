@@ -1,0 +1,60 @@
+---
+alt: "Feature Extraction Mapping from old/src-old to current project"
+---
+graph TB
+    accTitle: Feature Extraction Mapping
+    accDescr: Visual mapping of valuable features from old source to new project structure
+    
+    subgraph OLD["old/src-old (Legacy Project)"]
+        OLD_UTILS["shared/utils/<br/>async-state.ts<br/>⭐⭐⭐⭐⭐"]
+        OLD_AUDIT["core/audit/<br/>Audit System<br/>⭐⭐⭐⭐⭐"]
+        OLD_EVENT_RES["event-bus/resilience/<br/>Retry & DLQ<br/>⭐⭐⭐⭐⭐"]
+        OLD_GUARDS["core/guards/<br/>Permission Guard<br/>⭐⭐⭐⭐⭐"]
+        OLD_INTER["core/interceptors/<br/>Token Refresh<br/>⭐⭐⭐⭐⭐"]
+        OLD_TENANT["core/tenant/<br/>Multi-Tenant<br/>⭐⭐⭐⭐"]
+        OLD_EVENT_PERS["event-bus/persistence/<br/>Event Store<br/>⭐⭐⭐⭐"]
+        OLD_POLICY["three-layer/services/<br/>Policy Validation<br/>⭐⭐⭐⭐"]
+        OLD_TEST["event-bus/testing/<br/>Test Utilities<br/>⭐⭐⭐⭐"]
+    end
+    
+    subgraph NEW["src/ (Current Project)"]
+        NEW_UTILS["shared-ui/utils/<br/>async-state.ts"]
+        NEW_AUDIT["core/observability/audit/<br/>Complete Audit System"]
+        NEW_EVENT_RES["core/event-system/resilience/<br/>Retry & DLQ"]
+        NEW_GUARDS["core/guards/<br/>permission.guard.ts"]
+        NEW_INTER["infrastructure/http/interceptors/<br/>refresh-token"]
+        NEW_TENANT["core/identity/multi-tenancy/<br/>Tenant Context"]
+        NEW_EVENT_PERS["core/event-system/persistence/<br/>Event Store"]
+        NEW_POLICY["core/governance/validation/<br/>Policy Service"]
+        NEW_TEST["core/event-system/testing/<br/>Test Utils"]
+    end
+    
+    OLD_UTILS -->|"🔴 High Priority<br/>5 min"| NEW_UTILS
+    OLD_AUDIT -->|"🔴 High Priority<br/>1-2 days"| NEW_AUDIT
+    OLD_EVENT_RES -->|"🔴 High Priority<br/>2-3 days"| NEW_EVENT_RES
+    OLD_GUARDS -->|"🔴 High Priority<br/>1 day"| NEW_GUARDS
+    OLD_INTER -->|"🔴 High Priority<br/>1-2 days"| NEW_INTER
+    OLD_TENANT -->|"🟡 Medium Priority<br/>3-5 days"| NEW_TENANT
+    OLD_EVENT_PERS -->|"🟡 Medium Priority<br/>2-3 days"| NEW_EVENT_PERS
+    OLD_POLICY -->|"🟡 Medium Priority<br/>2-3 days"| NEW_POLICY
+    OLD_TEST -->|"🟡 Medium Priority<br/>1 day"| NEW_TEST
+    
+    style OLD_UTILS fill:#ff6b6b
+    style OLD_AUDIT fill:#ff6b6b
+    style OLD_EVENT_RES fill:#ff6b6b
+    style OLD_GUARDS fill:#ff6b6b
+    style OLD_INTER fill:#ff6b6b
+    style OLD_TENANT fill:#ffd93d
+    style OLD_EVENT_PERS fill:#ffd93d
+    style OLD_POLICY fill:#ffd93d
+    style OLD_TEST fill:#ffd93d
+    
+    style NEW_UTILS fill:#51cf66
+    style NEW_AUDIT fill:#51cf66
+    style NEW_EVENT_RES fill:#51cf66
+    style NEW_GUARDS fill:#51cf66
+    style NEW_INTER fill:#51cf66
+    style NEW_TENANT fill:#74c0fc
+    style NEW_EVENT_PERS fill:#74c0fc
+    style NEW_POLICY fill:#74c0fc
+    style NEW_TEST fill:#74c0fc
