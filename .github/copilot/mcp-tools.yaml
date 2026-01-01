@@ -1,0 +1,36 @@
+version: '1.0'
+core_tools:
+  context7:
+    description: '查詢最新的 library 文檔和 best practices'
+    when_to_use:
+      - '需要最新的 Angular/Firebase/ng-alain 文檔'
+      - '檢查 library 版本和升級建議'
+      - '查詢 API 正確用法'
+    example: |
+      // 使用 Context7 查詢 Angular 20 最新用法
+      @context7 resolve-library-id angular
+      @context7 get-library-docs /angular/angular signals
+
+  sequential_thinking:
+    description: '逐步推理複雜問題'
+    when_to_use:
+      - '設計複雜的 Event-Sourcing 流程'
+      - '分析 Blueprint 權限邏輯'
+      - '規劃多步驟重構'
+    example: |
+      // 使用 Sequential-Thinking 分析問題
+      STEP 1: 理解當前 Event Store 架構
+      STEP 2: 識別 Causality 追蹤需求
+      STEP 3: 設計 Event Replay 機制
+
+  software_planning:
+    description: '管理任務和追蹤進度'
+    when_to_use:
+      - '拆解大型功能為小任務'
+      - '追蹤 Sprint 進度'
+      - '管理技術債務'
+    example: |
+      // 使用 Software-Planning-Tool 追蹤任務
+      Task: "實現 Task Event 查詢"
+      Dependencies: ["EventStore", "BlueprintService"]
+      Status: "In Progress"

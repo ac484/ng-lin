@@ -1,0 +1,9 @@
+version: '1.0'
+
+mcp:
+  enabled: true
+  servers_config: '.github/copilot/mcp-servers.json'
+
+instructions:
+  - '.github/instructions/mcp-integration.instructions.md'
+  - '.github/instructions/angular.instructions.md'

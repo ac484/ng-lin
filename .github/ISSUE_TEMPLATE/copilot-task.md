@@ -1,15 +1,17 @@
 ---
 name: Copilot Task
-about: 指派一個任務給 Copilot Coding Agent
+about: MCP-aware task definition
 ---
 
-### Description
-簡述你要 Copilot 完成的需求
+## Task Description
+[描述任務]
 
-### Constraints
-- 每個檔案 <= 4000 characters
-- 拆分請寫清楚命名規則
-- 測試需通過
+## MCP Tools to Use
+- [ ] Context7 (查詢文檔)
+- [ ] Sequential-Thinking (逐步分析)
+- [ ] Software-Planning-Tool (任務管理)
 
-### Files / Areas
-ex: src/features/foo
+## Steps
+- STEP 1: 
+- STEP 2: 
+- STEP 3: 
