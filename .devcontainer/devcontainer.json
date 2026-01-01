@@ -1,7 +1,7 @@
 {
   "name": "ng-lin",
   "image": "mcr.microsoft.com/devcontainers/javascript-node:22",
-  "postCreateCommand": "npm install",
+  "postCreateCommand": "yarn install --frozen-lockfile",
   "customizations": {
     "vscode": {
       "extensions": [
