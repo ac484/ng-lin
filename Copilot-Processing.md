@@ -1,0 +1,1 @@
+User request: 使用 Context7 查詢 能被動/自主 提升 github copilot agent tasks 被動優化配置然後應用對本angular(Event-Sourced Causality-Driven Task Process)專案有用的配置；運用 Sequential-Thinking 方法分析專案，並利用Software-Planning-Tool規劃工具制定實施計畫。生產把握率低於99.99%時需使用 Context7 get-library-docs 與 resolve-library-id。規範:沒有100%把握就查Context7。
