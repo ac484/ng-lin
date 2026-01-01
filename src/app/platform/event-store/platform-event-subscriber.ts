@@ -22,7 +22,7 @@ import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { PlatformEventStoreService } from './platform-event-store.service';
-import type { DomainEvent } from '../../core/event-bus';
+import type { DomainEvent } from '../event-bus';
 
 /**
  * Platform Event Subscriber Service

@@ -1,0 +1,17 @@
+{
+  "name": "ng-lin",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:22",
+  "postCreateCommand": "corepack enable && yarn install --frozen-lockfile",
+  "containerEnv": {
+    "NODE_MAX_OLD_SPACE_SIZE": "16384"
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "angular.ng-template",
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode"
+      ]
+    }
+  }
+}

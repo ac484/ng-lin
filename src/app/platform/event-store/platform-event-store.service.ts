@@ -25,8 +25,8 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { filter } from 'rxjs/operators';
-import type { IEventBus, DomainEvent } from '../../core/event-bus';
-import { EVENT_BUS } from '../../core/event-bus';
+import type { IEventBus, DomainEvent } from '../event-bus';
+import { EVENT_BUS } from '../event-bus';
 
 /**
  * Platform entity namespaces for event filtering

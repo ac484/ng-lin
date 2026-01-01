@@ -12,7 +12,7 @@
  * ```
  */
 
-import type { DomainEvent } from '../../../core/event-bus';
+import type { DomainEvent } from '../../../../platform/event-bus/models';
 
 export interface TaskDetailProjection {
   readonly taskId: string;
@@ -161,89 +161,110 @@ export function buildTaskDetailProjection(events: DomainEvent[]): TaskDetailProj
 
       // Comment events
       case 'task.comment.added':
-        projection.comments = [
-          ...(projection.comments || []),
-          {
-            commentId: payload.commentId,
-            authorId: payload.authorId,
-            content: payload.content,
-            addedAt: event.timestamp,
-            isDeleted: false
-          }
-        ];
+        projection = {
+          ...projection,
+          comments: [
+            ...(projection.comments || []),
+            {
+              commentId: payload.commentId,
+              authorId: payload.authorId,
+              content: payload.content,
+              addedAt: event.timestamp,
+              isDeleted: false
+            }
+          ]
+        };
         break;
 
       case 'task.comment.edited':
-        projection.comments = (projection.comments || []).map(c =>
-          c.commentId === payload.commentId
-            ? { ...c, content: payload.content, editedAt: event.timestamp }
-            : c
-        );
+        projection = {
+          ...projection,
+          comments: (projection.comments || []).map(c =>
+            c.commentId === payload.commentId
+              ? { ...c, content: payload.content, editedAt: event.timestamp }
+              : c
+          )
+        };
         break;
 
       case 'task.comment.deleted':
-        projection.comments = (projection.comments || []).map(c =>
-          c.commentId === payload.commentId
-            ? { ...c, isDeleted: true }
-            : c
-        );
+        projection = {
+          ...projection,
+          comments: (projection.comments || []).map(c =>
+            c.commentId === payload.commentId
+              ? { ...c, isDeleted: true }
+              : c
+          )
+        };
         break;
 
       // Discussion events
       case 'task.discussion.started':
-        projection.discussions = [
-          ...(projection.discussions || []),
-          {
-            discussionId: payload.discussionId,
-            topic: payload.topic,
-            startedBy: payload.startedBy,
-            startedAt: event.timestamp,
-            messages: []
-          }
-        ];
+        projection = {
+          ...projection,
+          discussions: [
+            ...(projection.discussions || []),
+            {
+              discussionId: payload.discussionId,
+              topic: payload.topic,
+              startedBy: payload.startedBy,
+              startedAt: event.timestamp,
+              messages: []
+            }
+          ]
+        };
         break;
 
       case 'task.discussion.message.posted':
-        projection.discussions = (projection.discussions || []).map(d =>
-          d.discussionId === payload.discussionId
-            ? {
-                ...d,
-                messages: [
-                  ...d.messages,
-                  {
-                    messageId: payload.messageId,
-                    authorId: payload.authorId,
-                    content: payload.content,
-                    postedAt: event.timestamp
-                  }
-                ]
-              }
-            : d
-        );
+        projection = {
+          ...projection,
+          discussions: (projection.discussions || []).map(d =>
+            d.discussionId === payload.discussionId
+              ? {
+                  ...d,
+                  messages: [
+                    ...d.messages,
+                    {
+                      messageId: payload.messageId,
+                      authorId: payload.authorId,
+                      content: payload.content,
+                      postedAt: event.timestamp
+                    }
+                  ]
+                }
+              : d
+          )
+        };
         break;
 
       // Attachment events
       case 'task.attachment.uploaded':
-        projection.attachments = [
-          ...(projection.attachments || []),
-          {
-            attachmentId: payload.attachmentId,
-            fileName: payload.fileName,
-            fileSize: payload.fileSize,
-            fileType: payload.fileType,
-            uploadedBy: payload.uploadedBy,
-            uploadedAt: event.timestamp,
-            isDeleted: false
-          }
-        ];
+        projection = {
+          ...projection,
+          attachments: [
+            ...(projection.attachments || []),
+            {
+              attachmentId: payload.attachmentId,
+              fileName: payload.fileName,
+              fileSize: payload.fileSize,
+              fileType: payload.fileType,
+              uploadedBy: payload.uploadedBy,
+              uploadedAt: event.timestamp,
+              isDeleted: false
+            }
+          ]
+        };
         break;
 
       case 'task.attachment.deleted':
-        projection.attachments = (projection.attachments || []).map(a =>
-          a.attachmentId === payload.attachmentId
-            ? { ...a, isDeleted: true }
-            : a
-        );
+        projection = {
+          ...projection,
+          attachments: (projection.attachments || []).map(a =>
+            a.attachmentId === payload.attachmentId
+              ? { ...a, isDeleted: true }
+              : a
+          )
+        };
         break;
     }
   }
