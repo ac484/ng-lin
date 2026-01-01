@@ -1,43 +1,30 @@
-# tasks.yaml
-# ⚡ MCP Context7 Task Definitions
-# Copilot Agent reads this file for passive, context-aware suggestions
+version: '1.0'
 
 tasks:
   - id: 1
-    task: "Implement Login Feature"
-    dependency: ["AuthService", "UI Components"]
-    priority: "High"
-    stakeholder: "Alice"
-    status: "In Progress"
-    notes: "Requires integration with OAuth2 provider"
+    task: 'Implement Login Feature'
+    dependency: ['AuthService', 'UI Components']
+    priority: 'High'
+    status: 'In Progress'
+    mcp_hints:
+      - '使用 @context7 查詢 Firebase Auth 20.x 最新用法'
+      - '用 @sequential-thinking 規劃登入流程'
     steps:
-      - "STEP 1: Design login UI"
-      - "STEP 2: Implement AuthService integration"
-      - "STEP 3: Write unit tests"
-      - "STEP 4: Validate OAuth2 flow"
+      - 'STEP 1: 查詢 Firebase Auth 文檔 (Context7)'
+      - 'STEP 2: 設計登入流程 (Sequential-Thinking)'
+      - 'STEP 3: 實作 AuthService'
+      - 'STEP 4: 撰寫測試'
 
   - id: 2
-    task: "Create Dashboard Page"
-    dependency: ["API Service", "Chart Library"]
-    priority: "Medium"
-    stakeholder: "Bob"
-    status: "Pending"
-    notes: "Include data visualization for user metrics"
+    task: 'Query task events by Blueprint'
+    dependency: ['EventStore', 'BlueprintService']
+    priority: 'High'
+    status: 'Active'
+    mcp_hints:
+      - '用 @context7 查詢 Firestore Query 最佳實踐'
+      - '用 @sequential-thinking 分析 Event Causality 邏輯'
+      - '用 @software-planning 追蹤子任務完成度'
     steps:
-      - "STEP 1: Fetch data from API"
-      - "STEP 2: Implement charts using Chart Library"
-      - "STEP 3: Add responsive UI"
-      - "STEP 4: Write integration tests"
-
-  - id: 3
-    task: "Refactor Notification System"
-    dependency: ["MessagingService", "Database"]
-    priority: "Low"
-    stakeholder: "Charlie"
-    status: "Pending"
-    notes: "Improve performance and reliability"
-    steps:
-      - "STEP 1: Analyze current system"
-      - "STEP 2: Optimize queries"
-      - "STEP 3: Implement caching"
-      - "STEP 4: Test with sample data"
+      - 'STEP 1: 驗證 Blueprint 權限'
+      - 'STEP 2: 查詢 Firestore collection'
+      - 'STEP 3: 追蹤 Event Causality'

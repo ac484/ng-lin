@@ -94,6 +94,9 @@
       ],
       "@_mock": [
         "_mock/index"
+      ],
+      "@app/*": [
+        "src/app/*"
       ]
     }
   },

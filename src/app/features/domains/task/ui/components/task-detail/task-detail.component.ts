@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
-import { NzCardModule } from 'nz-zorro-antd/card';
+import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
 import { NzTagModule } from 'ng-zorro-antd/tag';
 import { NzButtonModule } from 'ng-zorro-antd/button';
@@ -14,6 +14,8 @@ import { NzListModule } from 'ng-zorro-antd/list';
 import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 
 import { PlatformEventStoreService } from '@app/platform/event-store';
+import { ErrorHandlingService } from '@app/shared/services/error-handling.service';
+import { TaskCommandService } from '../../../services/task-command.service';
 import { buildTaskDetailProjection, TaskDetailProjection } from '../../../projections/task-detail.projection';
 import type { TaskEvent } from '../../../events';
 
@@ -217,6 +219,8 @@ export class TaskDetailComponent implements OnInit {
   private readonly eventStore = inject(PlatformEventStoreService);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
+  private readonly errorHandler = inject(ErrorHandlingService);
+  private readonly commandService = inject(TaskCommandService);
 
   // Reactive state using Angular 19+ signals
   protected readonly loading = signal<boolean>(true);
@@ -243,16 +247,24 @@ export class TaskDetailComponent implements OnInit {
       this.loading.set(true);
 
       // Get all events for this specific task aggregate
-      const events = await this.eventStore.getEventsForAggregate('task', taskId);
+      const events = await this.eventStore.getEventsForAggregateAsync('task', taskId);
 
       // Build detailed projection from events (pure function)
-      const detail = buildTaskDetailProjection(events as TaskEvent[]);
+      const detail = buildTaskDetailProjection(events as unknown as TaskEvent[]);
 
       // Update reactive state
       this.taskDetail.set(detail);
-      this.cardTitle.set(`任務詳情 - ${detail.title}`);
+      if (detail) {
+        this.cardTitle.set(`任務詳情 - ${detail.title}`);
+      }
     } catch (error) {
-      console.error('Failed to load task detail:', error);
+      this.errorHandler.handleError(error, {
+        userMessage: '載入任務詳情失敗',
+        showToast: true,
+        context: 'TaskDetail.loadTaskDetail',
+        metadata: { taskId },
+        sendToTracking: true
+      });
       this.taskDetail.set(null);
     } finally {
       this.loading.set(false);
