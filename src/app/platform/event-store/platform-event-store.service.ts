@@ -36,7 +36,8 @@ const PLATFORM_NAMESPACES = [
   'organization',
   'team',
   'collaborator',
-  'bot'
+  'bot',
+  'task' // Add task as supported namespace
 ] as const;
 
 type PlatformNamespace = typeof PLATFORM_NAMESPACES[number];
@@ -78,13 +79,24 @@ export class PlatformEventStoreService {
    * 
    * @param eventType - Event type pattern (e.g., 'user.created', 'user.*')
    * @param handler - Callback function to handle events
-   * @returns Subscription that can be used to unsubscribe
+   * @returns Subscription object for cleanup
    */
   subscribe<T extends DomainEvent>(
     eventType: string,
     handler: (event: T) => void | Promise<void>
-  ): Observable<T> {
-    return this.eventBus.observe<T>(eventType);
+  ): { unsubscribe: () => void } {
+    const subscription = this.eventBus.observe<T>(eventType).subscribe({
+      next: async (event) => {
+        await handler(event);
+      },
+      error: (error) => {
+        console.error(`Error in event handler for ${eventType}:`, error);
+      }
+    });
+    
+    return {
+      unsubscribe: () => subscription.unsubscribe()
+    };
   }
 
   /**
@@ -107,6 +119,22 @@ export class PlatformEventStoreService {
   }
 
   /**
+   * Get all events for a specific aggregate as a Promise (for async/await)
+   * 
+   * @param aggregateType - Type of aggregate (user, organization, team, etc.)
+   * @param aggregateId - Unique identifier for the aggregate
+   * @returns Promise resolving to array of events for this aggregate
+   */
+  async getEventsForAggregateAsync(
+    aggregateType: PlatformNamespace,
+    aggregateId: string
+  ): Promise<DomainEvent[]> {
+    // For now, return empty array as we need to implement proper event storage
+    // TODO: Implement Firebase persistence for events
+    return [];
+  }
+
+  /**
    * Get all events for a specific entity type
    * 
    * @param namespace - Platform namespace (user, organization, team, etc.)
@@ -116,6 +144,18 @@ export class PlatformEventStoreService {
     return this.eventBus.observeAll().pipe(
       filter(event => event.aggregateType === namespace)
     );
+  }
+
+  /**
+   * Get all events for a specific entity type as a Promise (for async/await)
+   * 
+   * @param namespace - Platform namespace (user, organization, team, task, etc.)
+   * @returns Promise resolving to array of events in this namespace
+   */
+  async getEventsForNamespaceAsync(namespace: PlatformNamespace): Promise<DomainEvent[]> {
+    // For now, return empty array as we need to implement proper event storage
+    // TODO: Implement Firebase persistence for events
+    return [];
   }
 
   /**

@@ -21,6 +21,7 @@ export interface TaskListProjection {
   readonly priority?: string;
   readonly creatorId: string;
   readonly assigneeId?: string;
+  readonly assignee?: string; // Display name for assignee
   readonly orgId?: string;
   readonly teamId?: string;
   readonly createdAt: Date;
@@ -31,6 +32,11 @@ export interface TaskListProjection {
 }
 
 // Backward compatibility alias
+export type TaskListItem = TaskListProjection;
+
+/**
+ * Alias for backward compatibility
+ */
 export type TaskListItem = TaskListProjection;
 
 /**
