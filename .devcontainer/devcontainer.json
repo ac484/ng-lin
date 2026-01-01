@@ -1,9 +1,10 @@
 {
   "name": "ng-lin",
   "image": "mcr.microsoft.com/devcontainers/javascript-node:22",
-  "postCreateCommand": "corepack enable && yarn install --frozen-lockfile",
+  "postCreateCommand": "corepack enable && yarn install --frozen-lockfile && yarn global add @angular/cli",
   "containerEnv": {
-    "NODE_MAX_OLD_SPACE_SIZE": "16384"
+    "NODE_MAX_OLD_SPACE_SIZE": "16384",
+    "PROJECT_TYPE": "angular"
   },
   "customizations": {
     "vscode": {
@@ -13,5 +14,7 @@
         "esbenp.prettier-vscode"
       ]
     }
-  }
+  },
+  "forwardPorts": [4200],
+  "remoteUser": "node"
 }
