@@ -38,6 +38,7 @@ import { getPerformance, providePerformance } from '@angular/fire/performance';
 import { getStorage, provideStorage } from '@angular/fire/storage';
 import { getRemoteConfig, provideRemoteConfig } from '@angular/fire/remote-config';
 import { getVertexAI, provideVertexAI } from '@angular/fire/vertexai';
+import { routes } from './features/routes';
 
 const defaultLang: AlainProvideLang = {
   abbr: 'zh-CN',
@@ -132,7 +133,7 @@ if ((environment as any).useHash) routerFeatures.push(withHashLocation());
 const providers: Array<Provider | EnvironmentProviders> = [
   provideHttpClient(withInterceptors([...((environment as any).interceptorFns ?? []), authSimpleInterceptor])),
   provideAnimations(),
-  provideRouter([], ...routerFeatures),
+  provideRouter(routes, ...routerFeatures),
   provideAlain({ config: alainConfig, defaultLang, i18nClass: I18NService, icons: [...ICONS_AUTO, ...ICONS] }),
   provideNzConfig(ngZorroConfig),
   provideAuth(),
