@@ -41,6 +41,19 @@ import { EVENT_BUS, EVENT_STORE } from './core/event-bus/constants/event-bus-tok
 import { InMemoryEventBus } from './core/event-bus/implementations/in-memory/in-memory-event-bus';
 import { HybridEventStore } from './core/event-bus/implementations/hybrid/hybrid-event-store';
 import { provideAuditPolicyAlertSink } from './core/audit/initializers';
+import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
+import { getAuth, provideAuth as provideAuth_alias } from '@angular/fire/auth';
+import { getAnalytics, provideAnalytics, ScreenTrackingService, UserTrackingService } from '@angular/fire/analytics';
+import { initializeAppCheck, ReCaptchaEnterpriseProvider, provideAppCheck } from '@angular/fire/app-check';
+import { getFirestore, provideFirestore } from '@angular/fire/firestore';
+import { getDatabase, provideDatabase } from '@angular/fire/database';
+import { getDataConnect, provideDataConnect } from '@angular/fire/data-connect';
+import { getFunctions, provideFunctions } from '@angular/fire/functions';
+import { getMessaging, provideMessaging } from '@angular/fire/messaging';
+import { getPerformance, providePerformance } from '@angular/fire/performance';
+import { getStorage, provideStorage } from '@angular/fire/storage';
+import { getRemoteConfig, provideRemoteConfig } from '@angular/fire/remote-config';
+import { getVertexAI, provideVertexAI } from '@angular/fire/vertexai';
 
 const defaultLang: AlainProvideLang = {
   abbr: 'zh-CN',
@@ -168,6 +181,38 @@ export const appConfig: ApplicationConfig = {
     provideAuditAutoSubscription(), // Phase 1 P0 - Task 1.3: Event Bus Automatic Subscription
     provideAuditPolicyAlertSink(),
     { provide: EVENT_BUS, useExisting: InMemoryEventBus },
-    { provide: EVENT_STORE, useExisting: HybridEventStore }
+    { provide: EVENT_STORE, useExisting: HybridEventStore },
+    provideFirebaseApp(() =>
+      initializeApp({
+        projectId: 'elite-chiller-455712-c4',
+        appId: '1:7807661688:web:ee35dd4cac0505071d1f8d',
+        databaseURL: 'https://elite-chiller-455712-c4-default-rtdb.asia-southeast1.firebasedatabase.app',
+        storageBucket: 'elite-chiller-455712-c4.firebasestorage.app',
+        apiKey: 'AIzaSyCJ-eayGjJwBKsNIh3oEAG2GjbfTrvAMEI',
+        authDomain: 'elite-chiller-455712-c4.firebaseapp.com',
+        messagingSenderId: '7807661688',
+        measurementId: 'G-93KBPRBYP7'
+        // projectNumber: '7807661688', // ❌ FirebaseOptions 不支援，TypeScript 會報錯
+        // version: '2', // ❌ FirebaseOptions 不支援
+      })
+    ),
+    provideAuth_alias(() => getAuth()),
+    provideAnalytics(() => getAnalytics()),
+    ScreenTrackingService,
+    UserTrackingService,
+    provideAppCheck(() => {
+      // TODO get a reCAPTCHA Enterprise here https://console.cloud.google.com/security/recaptcha?project=_
+      const provider = new ReCaptchaEnterpriseProvider('6LcGnSUsAAAAAMIm1aYeWqoYNEmLphGIbwEfWJlc');
+      return initializeAppCheck(undefined, { provider, isTokenAutoRefreshEnabled: true });
+    }),
+    provideFirestore(() => getFirestore()),
+    provideDatabase(() => getDatabase()),
+    provideDataConnect(() => getDataConnect({ connector: 'example', location: 'asia-southeast1', service: 'ng-lin' })),
+    provideFunctions(() => getFunctions()),
+    provideMessaging(() => getMessaging()),
+    providePerformance(() => getPerformance()),
+    provideStorage(() => getStorage()),
+    provideRemoteConfig(() => getRemoteConfig()),
+    provideVertexAI(() => getVertexAI())
   ]
 };

@@ -73,6 +73,8 @@
     "@delon/mock": "^20.1.0",
     "@delon/theme": "^20.1.0",
     "@delon/util": "^20.1.0",
+    "@tanstack-query-firebase/angular": "^1.0.0",
+    "@tanstack/angular-query-experimental": "5.66.4",
     "ng-zorro-antd": "^20.3.1",
     "ngx-tinymce": "^20.0.0",
     "reflect-metadata": "^0.2.2",

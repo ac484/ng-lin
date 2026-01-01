@@ -4164,6 +4164,46 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@tanstack-query-firebase/angular@npm:^1.0.0":
+  version: 1.0.2
+  resolution: "@tanstack-query-firebase/angular@npm:1.0.2"
+  peerDependencies:
+    "@angular/common": ^19.0.0
+    "@angular/core": ^19.0.0
+    "@angular/fire": ^19.0.0
+    "@angular/platform-browser-dynamic": ^19.0.0
+    "@tanstack/angular-query-experimental": 5.66.4
+  checksum: 10c0/3c466ee4813439494aa81ac60974b3955869cefb0e354d27ba9f0f7134b5f62907902ca46a13a8a86df2d6f64eb48417fe72252245ff15e651728477a1ea9ba9
+  languageName: node
+  linkType: hard
+
+"@tanstack/angular-query-experimental@npm:5.66.4":
+  version: 5.66.4
+  resolution: "@tanstack/angular-query-experimental@npm:5.66.4"
+  dependencies:
+    "@tanstack/query-core": "npm:5.66.4"
+    "@tanstack/query-devtools": "npm:5.65.0"
+  peerDependencies:
+    "@angular/common": ">=16.0.0"
+    "@angular/core": ">=16.0.0"
+  checksum: 10c0/9ab45734e341877b05ecfbfc1a5ebf760e0a5cf141d8f106eb4ef4668f7c8fb35d51c88e6ff1cea2bc65538af2cdc22357b45216b5441a996a8198a16d4e2cb0
+  languageName: node
+  linkType: hard
+
+"@tanstack/query-core@npm:5.66.4":
+  version: 5.66.4
+  resolution: "@tanstack/query-core@npm:5.66.4"
+  checksum: 10c0/ef0ebf572e0109791e53e9a7c2790a93cbfe1c6f3fb462793c621c0f2d44c0b38f78f22a32526e124790f69a017ae3254877281f418ffef06d83f4edb82df51a
+  languageName: node
+  linkType: hard
+
+"@tanstack/query-devtools@npm:5.65.0":
+  version: 5.65.0
+  resolution: "@tanstack/query-devtools@npm:5.65.0"
+  checksum: 10c0/7d223e267d7d807d8d597edf08403dbd08e033079fe235e1a37e1449a9922a00cf68d4d1feeb2852f99e2efe386d0c3242856cb0568da0f574778a3187e67a38
+  languageName: node
+  linkType: hard
+
 "@tootallnate/once@npm:2":
   version: 2.0.0
   resolution: "@tootallnate/once@npm:2.0.0"
@@ -11464,6 +11504,8 @@ __metadata:
     "@delon/util": "npm:^20.1.0"
     "@eslint/js": "npm:^9.35.0"
     "@ng-util/monaco-editor": "npm:^20.1.0"
+    "@tanstack-query-firebase/angular": "npm:^1.0.0"
+    "@tanstack/angular-query-experimental": "npm:5.66.4"
     "@types/jasmine": "npm:~5.1.0"
     "@types/jasminewd2": "npm:~2.0.13"
     "@types/node": "npm:^25.0.1"
