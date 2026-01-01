@@ -8,8 +8,8 @@
 import { Injectable } from '@angular/core';
 import { Subject, Observable } from 'rxjs';
 import { filter } from 'rxjs/operators';
-import { IEventBus } from '../../interfaces';
-import { DomainEvent, EventHandler, SubscribeOptions, Subscription, generateEventId } from '../../models';
+import { IEventBus } from '../interfaces';
+import { DomainEvent, EventHandler, SubscribeOptions, Subscription, generateEventId } from '../models';
 
 interface InternalSubscription {
   id: string;

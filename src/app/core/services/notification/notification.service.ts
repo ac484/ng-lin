@@ -3,9 +3,9 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { filter } from 'rxjs/operators';
 
-import { EVENT_BUS } from '@app/platform/event-bus/constants';
-import { IEventBus } from '@app/platform/event-bus/interfaces';
-import { DomainEvent } from '@app/platform/event-bus/models';
+import { EVENT_BUS } from '../../../platform/event-bus/constants';
+import { IEventBus } from '../../../platform/event-bus/interfaces';
+import { DomainEvent } from '../../../platform/event-bus/models';
 
 type MessageType = 'success' | 'info' | 'warning' | 'error';
 
