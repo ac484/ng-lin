@@ -1,0 +1,14 @@
+name: Validate MCP Configuration
+on: [pull_request]
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate JSON
+        run: |
+          cat .github/copilot/mcp-servers.json | jq empty
+      - name: Validate YAML
+        run: |
+          npx js-yaml .github/copilot/mcp-tools.yaml
+          npx js-yaml .github/copilot/tasks.yaml

@@ -1,0 +1,59 @@
+templates:
+  event_definition:
+    trigger: 'create.*event'
+    pattern: |
+      export interface {{EventName}}Data {
+        {{properties}}
+      }
+
+      export const {{EventName}} = {
+        type: '{{eventType}}' as const,
+        create: (aggregateId: string, data: {{EventName}}Data, causedBy: string): DomainEvent<{{EventName}}Data> => ({
+          id: generateEventId(),
+          aggregateId,
+          aggregateType: '{{AggregateType}}',
+          eventType: '{{eventType}}',
+          data,
+          metadata: {
+            causedBy,
+            causedByUser: getCurrentUserId(),
+            causedByAction: '{{actionName}}',
+            timestamp: serverTimestamp(),
+            blueprintId: getCurrentBlueprintId()
+          }
+        })
+      };
+
+  aggregate_replay:
+    trigger: 'replay.*events?'
+    pattern: |
+      static replayFrom(events: DomainEvent[]): {{AggregateName}} {
+        const aggregate = new {{AggregateName}}();
+        
+        // Validate causality chain
+        validateCausalityChain(events);
+        
+        // Apply events deterministically
+        for (const event of events) {
+          aggregate.apply(event);
+        }
+        
+        return aggregate;
+      }
+
+  repository_query:
+    trigger: 'query.*firestore'
+    pattern: |
+      async find{{EntityName}}ByBlueprint(
+        blueprintId: string,
+        filters?: QueryConstraint[]
+      ): Promise<{{EntityName}}[]> {
+        const q = query(
+          collection(this.firestore, '{{collectionName}}'),
+          where('blueprintId', '==', blueprintId),
+          ...(filters || [])
+        );
+        
+        const snapshot = await getDocs(q);
+        return snapshot.docs.map(doc => this.toEntity(doc));
+      }

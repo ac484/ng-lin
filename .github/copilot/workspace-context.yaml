@@ -1,0 +1,33 @@
+# 專案架構上下文
+project:
+  name: 'ng-lin (GigHub)'
+  type: 'Causality-Driven Event-Sourced Process System'
+  domain: 'Construction Site Progress Tracking'
+
+architecture:
+  paradigm: 'Event Sourcing + CQRS + Multi-Tenant SaaS'
+  layers:
+    - name: 'L0-Fact'
+      description: 'Immutable event definitions'
+      patterns: ['Event', 'ValueObject', 'DomainEvent']
+    - name: 'L1-Process'
+      description: 'Event orchestration with causality'
+      patterns: ['Saga', 'ProcessManager', 'CausalityChain']
+    - name: 'L2-Projection'
+      description: 'Read models and queries'
+      patterns: ['Projection', 'ReadModel', 'Query']
+
+domain_concepts:
+  aggregates: ['Task', 'Contract', 'Blueprint', 'Organization']
+  events: ['TaskCreated', 'TaskSplit', 'TaskCompleted', 'CausalityRecorded']
+  invariants:
+    - 'Events are immutable'
+    - 'All events have causality metadata'
+    - 'Replay must be deterministic'
+    - 'Blueprint boundaries enforce multi-tenancy'
+
+tech_stack:
+  frontend: 'Angular 20 + ng-alain + ng-zorro-antd'
+  backend: 'Firebase 20.0.1 (Firestore + Functions)'
+  language: 'TypeScript 5.9'
+  target: 'ES2022'
