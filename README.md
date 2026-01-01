@@ -145,6 +145,7 @@ ng-gighub/
 ### 開發者必讀
 
 - **[docs/README.md](docs/README.md)** - 文檔總覽與導航
+- **[docs/COPILOT_MEMORY_GUIDE.md](docs/COPILOT_MEMORY_GUIDE.md)** - 🧠 GitHub Copilot Memory 使用指南
 - **[原則.md](原則.md)** - GigHub 系統設計原則
 - **[Task.md](Task.md)** - 需求提交模板
 - **[AGENTS.md](AGENTS.md)** - AI Agent 使用指南
