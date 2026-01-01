@@ -11,11 +11,11 @@
         "ghcr.io/microsoft/mcp-dotnet-samples/awesome-copilot:latest"
       ]
     },
-    "context7": {
+    "Context7": {
       "type": "http",
-      "url": "https://mcp.context7.com/mcp",
+      "url": "https://mcp.Context7.com/mcp",
       "headers": {
-        "CONTEXT7_API_KEY": "ctx7sk-a6b61fdc-d440-4e26-bcb0-7fd6807c4787"
+        "Context7_API_KEY": "ctx7sk-a6b61fdc-d440-4e26-bcb0-7fd6807c4787"
       },
     }
   }

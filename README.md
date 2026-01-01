@@ -145,6 +145,7 @@ ng-gighub/
 ### 開發者必讀
 
 - **[docs/README.md](docs/README.md)** - 文檔總覽與導航
+- **[docs/COPILOT_MEMORY_GUIDE.md](docs/COPILOT_MEMORY_GUIDE.md)** - 🧠 GitHub Copilot Memory 使用指南
 - **[原則.md](原則.md)** - GigHub 系統設計原則
 - **[Task.md](Task.md)** - 需求提交模板
 - **[AGENTS.md](AGENTS.md)** - AI Agent 使用指南
@@ -187,9 +188,9 @@ ng-gighub/
 - RxJS 響應式程式設計
 
 ✅ **MCP 工具**（Model Context Protocol）
-- **context7**: 查詢最新函式庫文檔
-- **sequential-thinking**: 多步驟問題解決
-- **software-planning-tool**: 功能規劃與追蹤
+- **Context7**: 查詢最新函式庫文檔
+- **Sequential-Thinking**: 多步驟問題解決
+- **Software-Planning-Tool**: 功能規劃與追蹤
 
 ### 使用範例
 
@@ -204,7 +205,7 @@ ng-gighub/
 ```
 
 ```
-@workspace 使用 context7 展示 Angular Signals 用法
+@workspace 使用 Context7 展示 Angular Signals 用法
 ```
 
 ### 設定文檔

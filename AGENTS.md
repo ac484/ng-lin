@@ -419,7 +419,7 @@ This document provides general guidelines for all agents. For specialized tasks,
 
 - **Backend Development**: See `.github/agents/backend.agent.md` for Firebase Functions specific guidance
 - **Architecture Design**: Use `@arch` agent for architectural diagrams and NFR analysis
-- **Latest Documentation**: Use `@context7` agent for up-to-date library documentation
+- **Latest Documentation**: Use `@Context7` agent for up-to-date library documentation
 - **Code Modernization**: Use `@modernization` agent for legacy code updates
 - **Testing**: Use `@playwright-tester` agent for E2E test development
 
