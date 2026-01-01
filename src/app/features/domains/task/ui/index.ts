@@ -1,27 +1,28 @@
 /**
- * Task UI Components
- * 
- * UI components for task domain.
- * 
- * This module will contain:
- * - Task list component
- * - Task board (Kanban) component
- * - Task detail component
- * - Task timeline component
- * - Task discussion component
- * - Task comment component
+ * Task Domain UI Layer
+ *
+ * This module contains all UI components for the Task domain.
+ *
+ * Structure:
+ * - components/task-list - List view with filtering and search
+ * - components/task-detail - Detail view with comments, discussions, attachments
+ * - task.routes.ts - Routing configuration
+ *
+ * Components consume:
+ * - Task projections for read models (buildTaskDetailProjection, buildTaskListProjection)
+ * - Platform event store for real-time updates (PlatformEventStoreService)
+ * - Angular 19+ signals for reactive state management
+ *
+ * Key Features:
+ * - Event-driven reactive updates
+ * - Pure projection-based state (State = replay(events))
+ * - Real-time subscriptions to task events
+ * - Standalone components with lazy loading
  */
 
-// TODO: Implement task UI components
-// Components will include:
-// - components/task-list/
-// - components/task-board/
-// - components/task-detail/
-// - components/task-why/
-// - components/task-discussion/
-// - components/task-comment/
-// - components/task-timeline/
+// Export components
+export { TaskListComponent } from './components/task-list/task-list.component';
+export { TaskDetailComponent } from './components/task-detail/task-detail.component';
 
-export const TASK_UI_COMPONENTS = [
-  // Component exports will go here
-];
+// Export routes
+export { routes as taskRoutes } from './task.routes';

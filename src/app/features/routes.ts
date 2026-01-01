@@ -15,6 +15,12 @@ export const routes: Routes = [
       { path: '', redirectTo: 'blueprints/user', pathMatch: 'full' },
       { path: 'dashboard', redirectTo: 'blueprints/user', pathMatch: 'full' },
       { path: 'dashboard/user', redirectTo: 'blueprints/user', pathMatch: 'full' },
+      // Task domain - Event-driven task management
+      {
+        path: 'tasks',
+        loadChildren: () => import('./domains/task/ui/task.routes').then(m => m.routes),
+        data: { title: '任務管理' }
+      },
       // Account module - User, Organization, Team, Partner, Admin management
       {
         path: 'account',
