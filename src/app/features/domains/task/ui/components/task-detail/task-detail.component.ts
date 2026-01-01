@@ -246,7 +246,7 @@ export class TaskDetailComponent implements OnInit {
       const events = await this.eventStore.getEventsForAggregateAsync('task', taskId);
 
       // Build detailed projection from events (pure function)
-      const detail = buildTaskDetailProjection(events as TaskEvent[]);
+      const detail = buildTaskDetailProjection(events as unknown as TaskEvent[]);
 
       // Update reactive state
       this.taskDetail.set(detail);
