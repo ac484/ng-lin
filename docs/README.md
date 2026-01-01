@@ -4,6 +4,21 @@
 
 # 📁 Architecture / Technical Whitepaper
 
+## 🧠 GitHub Copilot Memory 使用指南
+
+**NEW!** 學習如何使用 GitHub Copilot 的記憶功能來儲存和查詢專案重要資訊：
+
+📖 **[Copilot Memory 使用指南](./COPILOT_MEMORY_GUIDE.md)** - 完整的 `store_memory` 和相關指令教學
+
+已儲存的專案核心資訊包括：
+- ✅ 專案定義與核心目標
+- ✅ 架構原則與分層模型
+- ✅ 任務階層結構規則
+- ✅ 技術棧版本資訊
+- ✅ 品質與性能目標
+
+---
+
 ## 建議資料夾結構（穩定版）
 
 ```text
