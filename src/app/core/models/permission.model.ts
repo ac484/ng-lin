@@ -2,11 +2,20 @@
  * Permission representation and evaluation helpers.
  */
 export type CorePermission = string;
+export type CoreRole = string;
 
 export interface PermissionRequirement {
   anyOf?: CorePermission[];
   allOf?: CorePermission[];
   noneOf?: CorePermission[];
+}
+
+export interface AccessCheckContext {
+  resource?: string;
+  action?: string;
+  attributes?: Record<string, unknown>;
+  requiredRoles?: CoreRole[];
+  requiredPermissions?: PermissionRequirement;
 }
 
 /**

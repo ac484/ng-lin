@@ -14,6 +14,7 @@ import {
   I18NService,
   authTokenInterceptor,
   baseUrlInterceptor,
+  contextPropagationInterceptor,
   errorHandlerInterceptor,
   provideBindAuthRefresh,
   provideStartup,
@@ -137,6 +138,7 @@ const providers: Array<Provider | EnvironmentProviders> = [
       ...(environment.interceptorFns ?? []),
       authSimpleInterceptor,
       baseUrlInterceptor,
+      contextPropagationInterceptor,
       authTokenInterceptor,
       refreshTokenInterceptor,
       errorHandlerInterceptor
