@@ -35,6 +35,6 @@
 
 ## 行動項目（本次）
 
-- [ ] 對 Copilot Agent（context7）回應時套用上述被動流程。
+- [ ] 對 Copilot Agent（Context7）回應時套用上述被動流程。
 - [ ] 在回答 Angular Event-Sourced 任務時預設引用 `/ngrx/platform` 並拉取 signals-store/effects 主題。
 - [ ] 以本檔為參考，持續在回應中附帶「Context7 來源 + 版本」標註。

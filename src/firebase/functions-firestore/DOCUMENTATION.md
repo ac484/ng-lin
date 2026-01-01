@@ -658,7 +658,7 @@ match /tasks/{taskId} {
 - [Firestore Triggers](https://firebase.google.com/docs/functions/firestore-events)
 - [Callable Functions](https://firebase.google.com/docs/functions/callable)
 - [Firebase Admin SDK](https://firebase.google.com/docs/admin/setup)
-- [Context7 Query Results](../docs/context7-queries.md)
+- [Context7 Query Results](../docs/Context7-queries.md)
 
 ---
 

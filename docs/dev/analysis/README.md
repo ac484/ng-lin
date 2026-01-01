@@ -10,7 +10,7 @@
 docs/dev/analysis/
 ├── README.md                                   ← 你在這裡
 ├── EXECUTIVE_SUMMARY.md                        ← ⭐ 開始閱讀這裡
-├── sequential-thinking-analysis.md             ← 詳細的思考過程分析
+├── Sequential-Thinking-analysis.md             ← 詳細的思考過程分析
 ├── software-planning-implementation-plan.md    ← 實施計畫與程式範例
 └── convergence-verification-report.md          ← 收斂性與合規性驗證
 ```
@@ -27,7 +27,7 @@ docs/dev/analysis/
 - 架構準備度：90%
 - 下一步行動建議
 
-### 2️⃣ 深入了解：sequential-thinking-analysis.md
+### 2️⃣ 深入了解：Sequential-Thinking-analysis.md
 **10 步思考流程詳細分析**
 
 1. 理解專案本質

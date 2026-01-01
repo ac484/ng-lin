@@ -30,7 +30,7 @@
 ## 📁 產出文檔
 
 ### 1. Sequential-Thinking 分析報告
-**檔案**: `sequential-thinking-analysis.md` (6951 字元)
+**檔案**: `Sequential-Thinking-analysis.md` (6951 字元)
 
 **內容**:
 - ✅ 10 步思考流程分析
