@@ -10,7 +10,16 @@ import {
   RouterFeatures,
   withViewTransitions
 } from '@angular/router';
-import { I18NService, provideBindAuthRefresh, provideStartup } from '@core';
+import {
+  I18NService,
+  authTokenInterceptor,
+  baseUrlInterceptor,
+  contextPropagationInterceptor,
+  errorHandlerInterceptor,
+  provideBindAuthRefresh,
+  provideStartup,
+  refreshTokenInterceptor
+} from '@core';
 import { provideCellWidgets } from '@delon/abc/cell';
 import { provideSTWidgets } from '@delon/abc/st';
 import { authSimpleInterceptor, provideAuth } from '@delon/auth';
@@ -25,6 +34,9 @@ import { zh_CN as zorroLang } from 'ng-zorro-antd/i18n';
 
 import { ICONS } from '../style-icons';
 import { ICONS_AUTO } from '../style-icons-auto';
+import { firebaseProviders } from './firebase/config/firebase.providers';
+import { routes } from './features/routes';
+import { EVENT_BUS, EVENT_STORE, InMemoryEventBus } from './platform/event-bus';
 import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
 import { getAuth, provideAuth as provideAuth_alias } from '@angular/fire/auth';
 import { getAnalytics, provideAnalytics, ScreenTrackingService, UserTrackingService } from '@angular/fire/analytics';
@@ -127,12 +139,22 @@ const routerFeatures: RouterFeatures[] = [
   withViewTransitions(),
   withInMemoryScrolling({ scrollPositionRestoration: 'top' })
 ];
-if ((environment as any).useHash) routerFeatures.push(withHashLocation());
+if (environment.useHash) routerFeatures.push(withHashLocation());
 
 const providers: Array<Provider | EnvironmentProviders> = [
-  provideHttpClient(withInterceptors([...((environment as any).interceptorFns ?? []), authSimpleInterceptor])),
+  provideHttpClient(
+    withInterceptors([
+      ...(environment.interceptorFns ?? []),
+      authSimpleInterceptor,
+      baseUrlInterceptor,
+      contextPropagationInterceptor,
+      authTokenInterceptor,
+      refreshTokenInterceptor,
+      errorHandlerInterceptor
+    ])
+  ),
   provideAnimations(),
-  provideRouter([], ...routerFeatures),
+  provideRouter(routes, ...routerFeatures),
   provideAlain({ config: alainConfig, defaultLang, i18nClass: I18NService, icons: [...ICONS_AUTO, ...ICONS] }),
   provideNzConfig(ngZorroConfig),
   provideAuth(),
@@ -140,17 +162,20 @@ const providers: Array<Provider | EnvironmentProviders> = [
   provideSTWidgets(...ST_WIDGETS),
   provideSFConfig({ widgets: SF_WIDGETS }),
   provideStartup(),
-  ...((environment as any).providers ?? [])
+  ...(environment.providers || [])
 ];
 
 // If you use `@delon/auth` to refresh the token, additional registration `provideBindAuthRefresh` is required
-if ((environment as any).api?.refreshTokenEnabled && (environment as any).api?.refreshTokenType === 'auth-refresh') {
+if (environment.api?.refreshTokenEnabled && environment.api.refreshTokenType === 'auth-refresh') {
   providers.push(provideBindAuthRefresh());
 }
 
 export const appConfig: ApplicationConfig = {
   providers: [
     ...providers,
+    ...firebaseProviders,
+    { provide: EVENT_BUS, useClass: InMemoryEventBus },
+    { provide: EVENT_STORE, useExisting: EVENT_BUS },
     provideFirebaseApp(() =>
       initializeApp({
         projectId: 'elite-chiller-455712-c4',

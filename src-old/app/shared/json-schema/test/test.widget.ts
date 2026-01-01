@@ -4,7 +4,7 @@ import { ControlWidget, DelonFormModule } from '@delon/form';
 @Component({
   selector: 'test',
   template: `
-    <sf-item-wrap [id]="id" [schema]="schema" [ui]="ui" [showError]="showError" [error]="error" [showTitle]="schema?.title ?? ''">
+    <sf-item-wrap [id]="id" [schema]="schema" [ui]="ui" [showError]="showError" [error]="error" [showTitle]="schema.title">
       test widget
     </sf-item-wrap>
   `,

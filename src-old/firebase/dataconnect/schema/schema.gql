@@ -1,0 +1,30 @@
+type User @table {
+  username: String!
+  email: String!
+  createdAt: Timestamp!
+  displayName: String
+}
+
+type Project @table {
+  name: String!
+  createdAt: Timestamp!
+  owner: User!
+  description: String
+}
+
+type Task @table {
+  title: String!
+  status: String!
+  createdAt: Timestamp!
+  project: Project!
+  assignee: User
+  description: String
+}
+
+type TaskEvent @table {
+  type: String!
+  timestamp: Timestamp!
+  payload: String! # Using String to represent a JSON blob
+  task: Task!
+  initiator: User!
+}
