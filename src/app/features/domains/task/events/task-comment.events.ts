@@ -4,7 +4,7 @@
  * Events for task comments and discussions.
  */
 
-import { DomainEvent } from '../../../../core/foundation/base/domain-event.base';
+import { DomainEvent } from '../../../../platform/event-bus/models';
 
 export interface TaskCommentAddedEvent extends DomainEvent {
   readonly type: 'task.comment.added';

@@ -4,7 +4,7 @@
  * Events for task lifecycle state transitions.
  */
 
-import { DomainEvent } from '../../../../core/foundation/base/domain-event.base';
+import { DomainEvent } from '../../../../platform/event-bus/models';
 
 export interface TaskStartedEvent extends DomainEvent {
   readonly type: 'task.started';

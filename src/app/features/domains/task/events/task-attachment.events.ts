@@ -4,7 +4,7 @@
  * Events for file attachments on tasks.
  */
 
-import { DomainEvent } from '../../../../core/foundation/base/domain-event.base';
+import { DomainEvent } from '../../../../platform/event-bus/models';
 
 export interface TaskAttachmentUploadedEvent extends DomainEvent {
   readonly type: 'task.attachment.uploaded';

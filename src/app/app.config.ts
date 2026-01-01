@@ -36,11 +36,7 @@ import { ICONS } from '../style-icons';
 import { ICONS_AUTO } from '../style-icons-auto';
 import { firebaseProviders } from './firebase/config/firebase.providers';
 import { routes } from './features/routes';
-import { provideAuditAutoSubscription } from './core/event-bus/initializers';
-import { EVENT_BUS, EVENT_STORE } from './core/event-bus/constants/event-bus-tokens';
-import { InMemoryEventBus } from './core/event-bus/implementations/in-memory/in-memory-event-bus';
-import { HybridEventStore } from './core/event-bus/implementations/hybrid/hybrid-event-store';
-import { provideAuditPolicyAlertSink } from './core/audit/initializers';
+import { EVENT_BUS, EVENT_STORE, InMemoryEventBus } from './platform/event-bus';
 import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
 import { getAuth, provideAuth as provideAuth_alias } from '@angular/fire/auth';
 import { getAnalytics, provideAnalytics, ScreenTrackingService, UserTrackingService } from '@angular/fire/analytics';
@@ -178,10 +174,8 @@ export const appConfig: ApplicationConfig = {
   providers: [
     ...providers,
     ...firebaseProviders,
-    provideAuditAutoSubscription(), // Phase 1 P0 - Task 1.3: Event Bus Automatic Subscription
-    provideAuditPolicyAlertSink(),
-    { provide: EVENT_BUS, useExisting: InMemoryEventBus },
-    { provide: EVENT_STORE, useExisting: HybridEventStore },
+    { provide: EVENT_BUS, useClass: InMemoryEventBus },
+    { provide: EVENT_STORE, useExisting: EVENT_BUS },
     provideFirebaseApp(() =>
       initializeApp({
         projectId: 'elite-chiller-455712-c4',
