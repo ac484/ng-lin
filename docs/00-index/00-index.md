@@ -67,6 +67,7 @@
 
 ### 📎 99-appendix/ - 附錄
 - [歷史記錄](./99-appendix/historical-notes.md)
+- [Context7 驅動的 Copilot 被動優化配置（2025+）](./99-appendix/04-copilot-passive-optimization.md)
 
 ## 🎓 推薦閱讀順序
 
