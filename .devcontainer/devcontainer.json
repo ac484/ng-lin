@@ -1,7 +1,7 @@
 {
   "name": "ng-lin",
   "image": "mcr.microsoft.com/devcontainers/javascript-node:22",
-  "postCreateCommand": "yarn install --frozen-lockfile",
+  "postCreateCommand": "corepack enable && yarn install --frozen-lockfile",
   "customizations": {
     "vscode": {
       "extensions": [
